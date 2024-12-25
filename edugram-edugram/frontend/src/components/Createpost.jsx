@@ -1,13 +1,39 @@
 import React, { useState } from "react";
 import "./Createpost.css";
 export default function Createpost(){
-const [body,setBody]= useState("");
-const [image,setImage]= useState("")
+const [body, setBody]= useState("");
+const [image, setImage]= useState("")
+const [url, setUrl] =useState("")
 
-
+// posting image to cloudinary 
 const postDetails =()=>{
     console.log(body,image)
-}
+    const data = new FormData()
+    data.append("file",image)
+    data.append("upload_preset","edugram")
+    data.append("cloud_name","educloud")  //cloudname:educloud
+    fetch("https://api.cloudinary.com/v1_1/educloud/image/upload",
+        {method:"post",
+            body:data
+        }).then(res=>res.json())
+        .then(data => setUrl(data.url))
+        .catch(err => console.log(err))
+
+        //saving post to mongodb
+        fetch("http://localhost:5000/createPost",{
+            method:"post",
+            header:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                body,
+                pic:url
+            })
+        }).then(res=>res.json())
+        .then(data=>console.loglog(data))
+        .catch(err => console.log(err))
+    }
+
   const loadfile = (event) =>{
         var output = document.getElementById('output');
         output.src = URL.createObjectURL(event.target.files[0]);
@@ -20,13 +46,19 @@ const postDetails =()=>{
         <h4  style={{margin:"3px auto"}}> Create New Post</h4>
         <button id="post-btn" onClick={()=>{postDetails()}}>Share</button>
     </div>
-    {/* image-preview  */}
-    <div className="main-div">
-        <img id="output" src="https://www.bing.com/th?id=OIP.JIo_erHjGUXp0-Z86gJAqAHaHa&w=150&h=150&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2" />
-        <input type="file" accept='image/*' onChange={(event)=>{loadfile(event)
-        setImage(event.target.file[0])}}
-        /> 
-    </div>
+ {/* image-preview  */}
+<div className="main-div">
+    <img id="output" src="https://www.bing.com/th?id=OIP.JIo_erHjGUXp0-Z86gJAqAHaHa&w=150&h=150&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2" alt="Preview" />
+    <input 
+        type="file" 
+        accept='image/*' 
+        onChange={(event) => {
+            loadfile(event);
+            setImage(event.target.files[0]);  // Corrected property name `files` instead of `file`
+        }} 
+    />
+</div>
+
     {/* details  */}
     <div className="details">
         <div className="card-header">
