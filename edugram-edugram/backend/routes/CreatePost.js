@@ -9,7 +9,7 @@ const Post = mongoose.model("POST")
 router.post("/createPost",requireLogin, (req,res)=>{
     const {title,body}=req.body;
     if(!title || body){
-        return res.status(422).json({error:"Please add all the feilds"})
+         return res.status(422).json({ error: "Please add all the fields" });
     }
     console.log(req.user)
    const post = new POST({
