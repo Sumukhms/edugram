@@ -1,10 +1,13 @@
-import React,{useState} from 'react'
+import React,{useState,useContext} from 'react'
 import './Signin.css'
 import logo from '../img/logo.PNG'
 import { Link, useNavigate} from 'react-router-dom'
 import {  toast } from 'react-toastify';
+import { LoginContext } from '../context/LoginContext';
 
 export default function Signin() {
+  const {setUserLogin}=useContext(LoginContext)
+
   const navigate = useNavigate()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -26,6 +29,7 @@ export default function Signin() {
       method:"post",
       headers:{
         "Content-Type":"application/json"
+        "Authorization": "Bearer " + localStorage.getItem("jwt")
       },
       body:JSON.stringify({
         email:email,
@@ -36,9 +40,12 @@ export default function Signin() {
       if(data.error){
         notifyA(data.error)
       }else{
+        notifyB("Signed In Successfully")
         notifyB(data.message)
         console.log(data.token)
         localStorage.setitem("jwt", data.token)
+        console.log(data)
+        localStorage.setItem("jwt",data)
         navigate("/")
       }
       console.log(data)})
