@@ -29,6 +29,7 @@ export default function Signin() {
       method:"post",
       headers:{
         "Content-Type":"application/json"
+        "Authorization": "Bearer " + localStorage.getItem("jwt")
       },
       body:JSON.stringify({
         email:email,
@@ -39,7 +40,13 @@ export default function Signin() {
       if(data.error){
         notifyA(data.error)
       }else{
+<<<<<<< HEAD
         notifyB("Signed In Successfully")
+=======
+        notifyB(data.message)
+        console.log(data)
+        localStorage.setItem("jwt",data)
+>>>>>>> b540e3554be7bd799611a2b381b70b1e9a9d9efc
         navigate("/")
       }
       console.log(data)})
