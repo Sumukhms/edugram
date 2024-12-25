@@ -1,0 +1,40 @@
+.signIn{
+    background-image: url(https://files.123freevectors.com/wp-content/original/202451-pastel-blue-plain-background-vector-eps.jpg);
+    background-size: cover;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loginForm{
+    background-color: rgb(171, 190, 191);
+    padding: 30px;
+    border: 1px solid rgb(118, 83, 83);
+    border-radius: 1px;
+}
+
+.loginForm2{
+    background-color: rgb(169, 169, 191);
+    padding: 20px;
+    margin-top: 30px;
+    border: 1px solid rgb(182, 124, 124);
+    border-radius: 1px;
+}
+
+#login-btn{
+    background-color: #1773ea;
+    border: none;
+    border-radius: 3px;
+    color: white;
+    font-weight: bold;
+    padding:5px 10px ;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.signInLogo{
+    width: 200px;
+    object-fit: contain;
+    padding: 10px 0px;
+}
