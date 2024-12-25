@@ -1,9 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import "./Createpost.css";
+import { toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
 export default function Createpost(){
 const [body, setBody]= useState("");
 const [image, setImage]= useState("")
 const [url, setUrl] =useState("")
+const navigate = useNavigate()
+
+
+    //Toast functions
+const notifyA = (msg) => toast.error(msg)
+const notifyB = (msg) =>toast.success(msg)
+
+useEffect(() =>{
+    
+     //saving post to mongodb
+    if(url){
+        fetch("http://localhost:5000/createPost",{
+            method:"post",
+            header:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                body,
+                pic:url
+            })
+        }).then(res=>res.json())
+        .then(data => { 
+            if(data.error){
+            notifyA(data.error)
+            } else{
+            notifyB("Successfully Posted")
+            navigate("/")
+            }
+        })
+        .catch(err => console.log(err))}
+
+},[url])
 
 // posting image to cloudinary 
 const postDetails =()=>{
@@ -19,19 +53,7 @@ const postDetails =()=>{
         .then(data => setUrl(data.url))
         .catch(err => console.log(err))
 
-        //saving post to mongodb
-        fetch("http://localhost:5000/createPost",{
-            method:"post",
-            header:{
-                "Content-Type":"application/json"
-            },
-            body:JSON.stringify({
-                body,
-                pic:url
-            })
-        }).then(res=>res.json())
-        .then(data=>console.loglog(data))
-        .catch(err => console.log(err))
+       
     }
 
   const loadfile = (event) =>{
