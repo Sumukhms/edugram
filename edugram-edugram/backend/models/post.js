@@ -13,7 +13,7 @@ const postSchema = new mongoose.Schema({
         type:String,
         default:"no photo"
     },
-    posted by:{
+    postedby:{
         type:ObjectId,
         ref: "USER"
     }

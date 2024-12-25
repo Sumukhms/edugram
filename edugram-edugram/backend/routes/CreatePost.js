@@ -7,7 +7,8 @@ const mongoose =require("mongoose");
 router.post("/createPost",(req,res)=>{
     const {title,body}=req.body;
     if(!title || body){
-        return res.status(422).json(error:"Please add all the feilds")
+        return res.status(422).json({ error: "Please add all the fields" });
+
     }
     req.json("ok")
 })
