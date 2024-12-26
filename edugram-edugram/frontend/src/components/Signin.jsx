@@ -41,14 +41,14 @@ export default function Signin() {
         notifyA(data.error)
       }else{
         notifyB("Signed In Successfully")
-        // console.log(data.token)
-        // localStorage.setitem("jwt", data.token)
-        // console.log(data)
-        localStorage.setItem("jwt",data)
+        console.log(data)
+        localStorage.setItem("jwt",data.token)
+        localStorage.setitem("user", JSON.stringify(data.user))
         setUserLogin(true)
         navigate("/")
       }
-      console.log(data)})
+      console.log(data)
+    })
     }
   
 

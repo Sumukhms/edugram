@@ -7,9 +7,9 @@ const jwt =require("jsonwebtoken");
 const {Jwt_secret}= require("../keys");
 const requireLogin = require('../middlewares/requireLogin');
 
-router.get('/',(req,res)=>{
-    res.send("hello")
-})
+// router.get('/',(req,res)=>{
+//     res.send("hello")
+// })
 
 router.get('/createPost',requireLogin,(req,res)=>{
     console.log("hello auth")
@@ -60,8 +60,10 @@ router.post("/signin",(req,res)=>{
             if(match){
                 // return res.status(200).json({message:"Signed in successfully"})
                 const token = jwt.sign({_id:savedUser.id},Jwt_secret)
-                res.send(token)
-                console.log(token)
+                const { _id, name, email, userName } = savedUser
+                res.json({ token, user: { _id, name, email, userName } })
+
+                console.log({ token, user: { _id, name, email, userName } })
             }else{
                 return res.status(422).json({error:"Invalid password"})
             }

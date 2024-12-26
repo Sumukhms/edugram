@@ -2,6 +2,7 @@ import React, { useState, useEffect} from "react";
 import "./Createpost.css";
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+
 export default function Createpost(){
 const [body, setBody]= useState("");
 const [image, setImage]= useState("")
@@ -53,8 +54,6 @@ const postDetails =()=>{
         }).then(res=>res.json())
         .then(data => setUrl(data.url))
         .catch(err => console.log(err))
-
-       
     }
 
   const loadfile = (event) =>{
