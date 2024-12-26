@@ -40,5 +40,5 @@ export default function Navbar({login}) {
          
         </ul>
     </div>
-  )
+  );
 }

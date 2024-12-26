@@ -43,7 +43,7 @@ export default function Signin() {
         notifyB("Signed In Successfully")
         console.log(data)
         localStorage.setItem("jwt",data.token)
-        localStorage.setitem("user", JSON.stringify(data.user))
+        localStorage.setItem("user", JSON.stringify(data.user))
         setUserLogin(true)
         navigate("/")
       }
