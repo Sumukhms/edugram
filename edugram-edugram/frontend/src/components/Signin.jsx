@@ -28,7 +28,7 @@ export default function Signin() {
     fetch("http://localhost:5000/signin",{
       method:"post",
       headers:{
-        "Content-Type":"application/json"
+        "Content-Type":"application/json",
         "Authorization": "Bearer " + localStorage.getItem("jwt")
       },
       body:JSON.stringify({
@@ -41,11 +41,11 @@ export default function Signin() {
         notifyA(data.error)
       }else{
         notifyB("Signed In Successfully")
-        notifyB(data.message)
-        console.log(data.token)
-        localStorage.setitem("jwt", data.token)
-        console.log(data)
+        // console.log(data.token)
+        // localStorage.setitem("jwt", data.token)
+        // console.log(data)
         localStorage.setItem("jwt",data)
+        setUserLogin(true)
         navigate("/")
       }
       console.log(data)})

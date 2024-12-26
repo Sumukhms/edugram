@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const mongoose =require("mongoose");
 const requireLogin = require("../middlewares/requireLogin");
-const POST = mongoose.model("POST")
+const Post = mongoose.model("Post")
 
 
 //Route
 router.get("/allposts",requireLogin,(req,res)=>{
-    POST.find()
+    Post.find()
     .populate("postedBy","_id name")
     .then(posts => res.json(posts))
     .catch(err => console.log(err))
@@ -21,7 +21,7 @@ router.post("/createPost",requireLogin, (req,res)=>{
          return res.status(422).json({ error: "Please add all the fields" })
     }
     console.log(req.user)
-   const post = new POST({
+   const post = new Post({
        body,
        photo:pic,
        postedBy:req.user
@@ -30,4 +30,5 @@ router.post("/createPost",requireLogin, (req,res)=>{
         return res.json({post:result})
     }).catch(err => console.log(err))
 })
+
 module.exports = router

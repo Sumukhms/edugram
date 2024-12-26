@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
 
-  const [data, setData] = useState([])
   const navigate = useNavigate();
+  const [data, setData] = useState([])
   
   useEffect(() => {
 
@@ -36,7 +36,7 @@ export default function Home() {
           <div className="card-pic">
             <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D" alt="" />
           </div>  
-          <h5>Ramesh</h5>     
+          <h5>{posts.postedBy.name}</h5>     
         </div>
         {/* card image  */}
         <div className="card-image">

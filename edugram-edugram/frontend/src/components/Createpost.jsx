@@ -20,7 +20,8 @@ useEffect(() =>{
         fetch("http://localhost:5000/createPost",{
             method:"post",
             header:{
-                "Content-Type":"application/json"
+                "Content-Type":"application/json",
+                "Authorization": "Bearer " + localStorage.getItem("jwt")
             },
             body:JSON.stringify({
                 body,
