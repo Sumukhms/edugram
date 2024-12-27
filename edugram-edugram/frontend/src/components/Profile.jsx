@@ -3,20 +3,18 @@ import './profile.css';
 export default function Profile() {
   const [pic, setPic] = useState([])
 
-  useEffect(()=>{
+  useEffect(() => {
     fetch("http://localhost:5000/myposts",{
       headers:{
         Authorization: "Bearer " + localStorage.getItem("jwt")
     }
   })
 .then(res=>res.json())
-.then((result)=> {
+.then((result)=>{
   setPic(result)
-
 })
 
-  },[])
-
+}, [])
   return <div className="profile">
     {/* {profile frame} */}
     <div className="profile-frame">
@@ -39,10 +37,10 @@ export default function Profile() {
     {/* Gallery  */}
     <div  className="gallery">
       {pic.map((pic)=>{
-        return <img key={pic._id} src={pic.photo} className='item'></img>
+        return < img key={pic._id} src={pic.photo} className='item'></img>
 
       }
-      )}
+      )}bjj
     </div>
   </div>
 }

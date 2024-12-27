@@ -13,7 +13,6 @@ router.get("/allposts",requireLogin,(req,res)=>{
     .catch(err => console.log(err))
 })
 
-
 router.post("/createPost",requireLogin, (req,res)=>{
     const {body, pic}=req.body;
     console.log(pic)
@@ -30,13 +29,13 @@ router.post("/createPost",requireLogin, (req,res)=>{
         return res.json({post:result})
     }).catch(err => console.log(err))
 })
-router.post("/myposts",requireLogin,(req,res)=>{
-    POST.find({ postedBy: req.user._id })
-    .populate("postedBy","id_ name")
+
+router.get("/myposts",requireLogin,(req,res)=>{
+POST.find({postedBy: req.user._id })
+    .populate("postedBy","_id name")
     .then(myposts=> {
         res.json(myposts)
     })
-
 })
 
 module.exports = router
