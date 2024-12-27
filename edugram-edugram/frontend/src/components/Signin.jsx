@@ -6,9 +6,8 @@ import {  toast } from 'react-toastify';
 import { LoginContext } from '../context/LoginContext';
 
 export default function Signin() {
-  const {setUserLogin}=useContext(LoginContext)
-
   const navigate = useNavigate()
+  const {setUserLogin}=useContext(LoginContext)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
