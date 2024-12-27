@@ -15,7 +15,7 @@ export default function Navbar({login}) {
         </Link>
         <Link to ="/createPost">Create Post</Link>
           </>
-       ]
+       ];
     }else{
       return[
         <>
@@ -25,7 +25,7 @@ export default function Navbar({login}) {
           <Link to="/signin">
             <li>Signin</li>
           </Link></>
-      ]
+      ];
     }
   };
 
