@@ -7,7 +7,7 @@ const POST = mongoose.model("Post")
 
 //Route
 router.get("/allposts",requireLogin,(req,res)=>{
-    Post.find()
+    POST.find()
     .populate("postedBy","_id name")
     .then(posts => res.json(posts))
     .catch(err => console.log(err))

@@ -12,15 +12,16 @@ export default function Home() {
 
     const token= localStorage.getItem("jwt");
     if(!token){
-      navigate("./signup")
+      navigate("./signup");
     }
 
     // Fetching all posts
     fetch("https://localhost:5000/allposts",{
       headers:{
-        "Authorization" : "Bearer " +localStorage.getItem("jwt")
+        "Authorization" : "Bearer " + localStorage.getItem("jwt"),
       },
-    }).then(res=>res.json())
+    })
+    .then(res=>res.json())
     .then(result => setData(result))
     .catch(err => console.log(err))
 
@@ -45,10 +46,9 @@ export default function Home() {
 
         {/* card content  */}
         <div className="card-content">
-        <span className="material-symbols-outlined">
-favorite</span>
-<p>1 Like</p>
-<p>{posts.body}</p>
+        <span className="material-symbols-outlined">favorite</span>
+        <p>1 Like</p>
+        <p>{posts.body}</p>
         </div>
           {/*  add-comment */}
         <div className="add-comment">
