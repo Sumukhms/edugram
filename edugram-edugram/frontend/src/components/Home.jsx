@@ -8,23 +8,34 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
-    const token= localStorage.getItem("jwt");
-    if(!token){
-      navigate("./signup")
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+      navigate("/signup"); // Use absolute path
+      return;
     }
 
     // Fetching all posts
-    fetch("https://localhost:5000/allposts",{
-      headers:{
-        "Authorization" : "Bearer " +localStorage.getItem("jwt")
+    fetch("http://localhost:5000/allposts", {
+      headers: {
+        Authorization: "Bearer " + token,
       },
-    }).then(res=>res.json())
-    .then(result => setData(result))
-    .catch(err => console.log(err))
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch posts");
+        }
+        return res.json();
+      })
+      .then((result) => {
+        setData(result);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, [navigate]);
 
-  }, [])
-  
   return (
     <div className="home">
       {loading ? (
@@ -50,22 +61,22 @@ export default function Home() {
               <img src={post.photo} alt="Post" />
             </div>
 
-        {/* card content  */}
-        <div className="card-content">
-        <span className="material-symbols-outlined">
-favorite</span>
-<p>1 Like</p>
-<p>{posts.body}</p>
-        </div>
-          {/*  add-comment */}
-        <div className="add-comment">
-        <span className="material-symbols-outlined">mood</span>
-        <input type="text" placeholder='Add a comment' />
-        <button className="comment">Post</button>
-        </div>
-      </div>)
-      })}
-    
-    </div>
-  );
+            {/* Card Content */}
+            <div className="card-content">
+              <span className="material-symbols-outlined">favorite</span>
+              <p>{post.likes?.length || 0} Likes</p>
+              <p>{post.body}</p>
+            </div>
+
+            {/* Add Comment */}
+            <div className="add-comment">
+              <span className="material-symbols-outlined">mood</span>
+              <input type="text" placeholder="Add a comment" />
+              <button className="comment">Post</button>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
 }
