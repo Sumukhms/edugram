@@ -1,119 +1,118 @@
-import React,{useEffect,useState} from 'react'
+import React, { useEffect, useState } from "react";
 import "./Home.css";
-import { useNavigate } from 'react-router-dom';
-
-
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
-
   const navigate = useNavigate();
-  const [data, setData] = useState([])
-  
-  useEffect(() => {
+  const [data, setData] = useState([]);
 
+  useEffect(() => {
     const token = localStorage.getItem("jwt");
-    if(!token){
-      navigate("./signup")
+    if (!token) {
+      navigate("./signup");
     }
 
-    // Fetching all posts
-    fetch("http://localhost:5000/allposts" , {
-      headers:{
-        "Authorization" : "Bearer " + localStorage.getItem("jwt")
+    fetch("http://localhost:5000/allposts", {
+      headers: {
+        "Authorization": "Bearer " + token,
       },
     })
-    .then(res=>res.json())
-    .then(result => setData(result))
-    .catch(err => console.log(err))
-
-  }, [navigate])
-
-  const likePost = (id)=>{
-    fetch("http://localhost:5000/like",{
-      method:"put",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization" : "Bearer " + localStorage.getItem("jwt")
-      },
-      body:JSON.stringify({
-        postId:id
-      })
-    }).then(res=>res.json())
-    .then((result)=>{
-      const newData=data.map((posts)=>{
-        if(posts._id === result._id){
-          return result
-        }else{
-          return posts
+      .then((res) => res.json())
+      .then((result) => {
+        console.log("Fetched posts:", result);
+        if (Array.isArray(result)) {
+          setData(result);
+        } else {
+          console.error("Unexpected response format:", result);
         }
       })
-      setData(newData)
-      console.log(result);
+      .catch((err) => console.log(err));
+  }, [navigate]);
+
+  const likePost = (id) => {
+    fetch("http://localhost:5000/like", {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({ postId: id }),
     })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log("Updated post (like):", result);
+        const newData = data.map((post) =>
+          post._id === result._id ? result : post
+        );
+        setData(newData);
+      });
+  };
+
+  const unlikePost = (id) => {
+    fetch("http://localhost:5000/unlike", {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({ postId: id }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log("Updated post (unlike):", result);
+        const newData = data.map((post) =>
+          post._id === result._id ? result : post
+        );
+        setData(newData);
+      });
+  };
+
+  if (!Array.isArray(data)) {
+    return <div>No posts available</div>;
   }
 
-    const unlikePost = (id)=>{
-      fetch("http://localhost:5000/unlike",{
-        method:"put",
-        headers:{
-          "Content-Type":"application/json",
-          "Authorization" : "Bearer " + localStorage.getItem("jwt")
-        },
-        body:JSON.stringify({
-          postId:id
-        })
-      }).then(res=>res.json())
-      .then((result)=>{
-        const newData=data.map((posts)=>{
-          if(posts._id === result._id){
-            return result
-          }else{
-            return posts
-          }
-        })
-        setData(newData)
-        console.log(result);
-      })
-  }
-  
   return (
     <div className="home">
-      {/* card */}
-      {data.map((posts)=>{
-       return (  <div className="card">
-        {/* card header */}
-        <div className="card-header">
-          <div className="card-pic">
-            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D" alt="" />
-          </div>  
-          <h5>{posts.postedBy.name}</h5>     
+      {data.map((post) => (
+        <div className="card" key={post._id}>
+          <div className="card-header">
+            <div className="card-pic">
+              <img
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D"
+                alt=""
+              />
+            </div>
+            <h5>{post.postedBy?.name || "Unknown User"}</h5>
+          </div>
+          <div className="card-image">
+            <img src={post.photo || "default-photo-url"} alt="Post" />
+          </div>
+          <div className="card-content">
+            {post.likes.includes(JSON.parse(localStorage.getItem("user"))._id) ? (
+              <span
+                className="material-symbols-outlined material-symbols-outilned-red"
+                onClick={() => unlikePost(post._id)}
+              >
+                favorite
+              </span>
+            ) : (
+              <span
+                className="material-symbols-outlined"
+                onClick={() => likePost(post._id)}
+              >
+                favorite
+              </span>
+            )}
+            <p>{post.likes.length} Likes</p>
+            <p>{post.body || "No description available"}</p>
+          </div>
+          <div className="add-comment">
+            <span className="material-symbols-outlined">mood</span>
+            <input type="text" placeholder="Add a comment" />
+            <button className="comment">Post</button>
+          </div>
         </div>
-        {/* card image  */}
-        <div className="card-image">
-          <img src={posts.photo} alt="" />
-        </div>
-
-        {/* card content */}
-        <div className="card-content">
-          {
-            posts.likes.includes(JSON.parse(localStorage.getItem("user"))._id)
-            ?
-            (<span className="material-symbols-outlined material-symbols-outilned-red" onClick={()=>unlikePost(posts._id)}>favorite</span>):
-            ( <span className="material-symbols-outlined"  onClick={()=>likePost(posts._id)}>favorite</span>)
-          }
-       
-          <p>{posts.like.length} Likes</p>
-          <p>{posts.body}</p>
-        </div>
-          {/*  add-comment */}
-        <div className="add-comment">
-        <span className="material-symbols-outlined">mood</span>
-        <input type="text" placeholder='Add a comment' />
-        <button className="comment">Post</button>
-        </div>
-      </div>)
-      })}
-    
+      ))}
     </div>
-  )
+  );
 }
