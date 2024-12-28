@@ -48,7 +48,20 @@
 .comment{
     border:none;
     background-color: none;
-    font-weight: border;
+    font-weight: bolder;
     cursor: pointer;
     color: #339ce3
+}
+
+
+.material-symbols-outlined-red {
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 700,
+  'GRAD' 0,
+  'opsz' 24
+}
+
+.material-symbols-outlined{
+    cursor: pointer;
 }

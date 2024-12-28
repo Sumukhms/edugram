@@ -1,82 +1,119 @@
-import React, { useEffect, useState } from 'react';
+import React,{useEffect,useState} from 'react'
 import "./Home.css";
 import { useNavigate } from 'react-router-dom';
 
-export default function Home() {
-  const navigate = useNavigate();
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
 
+
+export default function Home() {
+
+  const navigate = useNavigate();
+  const [data, setData] = useState([])
+  
   useEffect(() => {
+
     const token = localStorage.getItem("jwt");
-    if (!token) {
-      navigate("/signup"); // Use absolute path
-      return;
+    if(!token){
+      navigate("./signup")
     }
 
     // Fetching all posts
-    fetch("http://localhost:5000/allposts", {
-      headers: {
-        Authorization: "Bearer " + token,
+    fetch("http://localhost:5000/allposts" , {
+      headers:{
+        "Authorization" : "Bearer " + localStorage.getItem("jwt")
       },
     })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to fetch posts");
-        }
-        return res.json();
-      })
-      .then((result) => {
-        setData(result);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, [navigate]);
+    .then(res=>res.json())
+    .then(result => setData(result))
+    .catch(err => console.log(err))
 
+  }, [navigate])
+
+  const likePost = (id)=>{
+    fetch("http://localhost:5000/like",{
+      method:"put",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization" : "Bearer " + localStorage.getItem("jwt")
+      },
+      body:JSON.stringify({
+        postId:id
+      })
+    }).then(res=>res.json())
+    .then((result)=>{
+      const newData=data.map((posts)=>{
+        if(posts._id === result._id){
+          return result
+        }else{
+          return posts
+        }
+      })
+      setData(newData)
+      console.log(result);
+    })
+  }
+
+    const unlikePost = (id)=>{
+      fetch("http://localhost:5000/unlike",{
+        method:"put",
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization" : "Bearer " + localStorage.getItem("jwt")
+        },
+        body:JSON.stringify({
+          postId:id
+        })
+      }).then(res=>res.json())
+      .then((result)=>{
+        const newData=data.map((posts)=>{
+          if(posts._id === result._id){
+            return result
+          }else{
+            return posts
+          }
+        })
+        setData(newData)
+        console.log(result);
+      })
+  }
+  
   return (
     <div className="home">
-      {loading ? (
-        <p>Loading posts...</p>
-      ) : data.length === 0 ? (
-        <p>No posts available</p>
-      ) : (
-        data.map((post) => (
-          <div className="card" key={post._id}>
-            {/* Card Header */}
-            <div className="card-header">
-              <div className="card-pic">
-                <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D"
-                  alt="Profile"
-                />
-              </div>
-              <h5>{post.postedBy?.name || "Unknown"}</h5>
-            </div>
+      {/* card */}
+      {data.map((posts)=>{
+       return (  <div className="card">
+        {/* card header */}
+        <div className="card-header">
+          <div className="card-pic">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D" alt="" />
+          </div>  
+          <h5>{posts.postedBy.name}</h5>     
+        </div>
+        {/* card image  */}
+        <div className="card-image">
+          <img src={posts.photo} alt="" />
+        </div>
 
-            {/* Card Image */}
-            <div className="card-image">
-              <img src={post.photo} alt="Post" />
-            </div>
-
-            {/* Card Content */}
-            <div className="card-content">
-              <span className="material-symbols-outlined">favorite</span>
-              <p>{post.likes?.length || 0} Likes</p>
-              <p>{post.body}</p>
-            </div>
-
-            {/* Add Comment */}
-            <div className="add-comment">
-              <span className="material-symbols-outlined">mood</span>
-              <input type="text" placeholder="Add a comment" />
-              <button className="comment">Post</button>
-            </div>
-          </div>
-        ))
-      )}
-    </div>
-  );
+        {/* card content */}
+        <div className="card-content">
+          {
+            posts.likes.includes(JSON.parse(localStorage.getItem("user"))._id)
+            ?
+            (<span className="material-symbols-outlined material-symbols-outilned-red" onClick={()=>unlikePost(posts._id)}>favorite</span>):
+            ( <span className="material-symbols-outlined"  onClick={()=>likePost(posts._id)}>favorite</span>)
+          }
+       
+          <p>{posts.like.length} Likes</p>
+          <p>{posts.body}</p>
+        </div>
+          {/*  add-comment */}
+        <div className="add-comment">
+        <span className="material-symbols-outlined">mood</span>
+        <input type="text" placeholder='Add a comment' />
+        <button className="comment">Post</button>
+        </div>
+      </div>)
+      })}
+    
+    </div>
+  )
 }
