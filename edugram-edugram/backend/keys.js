@@ -1,5 +1,5 @@
 module.exports = {
-    Jwt_secret:"ufanisbiksivi"
+    Jwt_secret:"ufanisbiksiv"
 }
 
 

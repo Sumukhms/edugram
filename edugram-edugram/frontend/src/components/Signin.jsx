@@ -40,7 +40,7 @@ export default function Signin() {
         notifyA(data.error)
       }else{
         notifyB("Signed In Successfully")
-        console.log(data)
+        console.log(data.token)
         localStorage.setItem("jwt",data.token)
         localStorage.setItem("user", JSON.stringify(data.user))
         setUserLogin(true)

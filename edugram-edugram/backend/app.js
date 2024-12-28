@@ -13,12 +13,12 @@ app.use(require("./routes/CreatePost"))
 const uri = 'mongodb://127.0.0.1:27017/edugram';
  // Replace with your connection string
 
-async function connectDB() {
+ async function connectDB() {
     try {
         await mongoose.connect(uri, {});
-        console.log('Successfully connected to mongo');
+        console.log('Successfully connected to MongoDB');
     } catch (err) {
-        console.error('Error connecting to MongoDB:', err);
+        console.error('Error connecting to MongoDB:', err.message);
     }
 }
 
