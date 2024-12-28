@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose =require("mongoose");
 const requireLogin = require("../middlewares/requireLogin");
-const POST = mongoose.model("Post")
+const POST = mongoose.model("POST")
 
 
 //Route
@@ -14,13 +14,14 @@ router.get("/allposts",requireLogin,(req,res)=>{
 })
 
 router.post("/createPost",requireLogin, (req,res)=>{
-    const {body, pic}=req.body;
+    const {title,body, pic}=req.body;
     console.log(pic)
     if (!body || pic){
          return res.status(422).json({ error: "Please add all the fields" })
     }
     console.log(req.user)
    const post = new POST({
+       title, 
        body,
        photo:pic,
        postedBy:req.user
@@ -38,4 +39,31 @@ POST.find({postedBy: req.user._id })
     })
 })
 
+router.put("/like",requireLogin,(req,res)=>{
+    POST.findByIdAndUpdate(req.body.postId,{
+        $push:{likes:req.user._id}
+    },{
+        new:true
+    }).exec((err,result)=>{
+        if(err){
+            return res.status(422).json({error:err})
+        }else{
+            res.json(result)
+        }
+    })
+})
+
+router.put("/unlike",requireLogin,(req,res)=>{
+    POST.findByIdAndUpdate(req.body.postId,{
+        $pull:{likes:req.user._id}
+    },{
+        new:true
+    }).exec((err,result)=>{
+        if(err){
+            return res.status(422).json({error:err})
+        }else{
+            res.json(result)
+        }
+    })
+})
 module.exports = router

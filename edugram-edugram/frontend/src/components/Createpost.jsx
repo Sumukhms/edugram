@@ -4,7 +4,8 @@ import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 
 export default function Createpost(){
-const [body, setBody]= useState("");
+const [title, setTitle]= useState("");
+const [body, setBody]= useState("")
 const [image, setImage]= useState("")
 const [url, setUrl] =useState("")
 const navigate = useNavigate()
@@ -25,6 +26,7 @@ useEffect(() =>{
                 "Authorization": "Bearer " + localStorage.getItem("jwt")
             },
             body:JSON.stringify({
+                title,
                 body,
                 pic:url
             })
@@ -43,7 +45,7 @@ useEffect(() =>{
 
 // posting image to cloudinary 
 const postDetails =()=>{
-    console.log(body,image)
+    console.log(title,body,image)
     const data = new FormData()
     data.append("file",image)
     data.append("upload_preset","edugram")
@@ -61,13 +63,16 @@ const postDetails =()=>{
         output.src = URL.createObjectURL(event.target.files[0]);
         output.onload = function() {
           URL.revokeObjectURL(output.src)
-        }};
-    return <div className="createPost">createpost
+        };
+    };
+
+    return <div className="createPost">
     {/* //header  */}
     <div className="post-header">
         <h4  style={{margin:"3px auto"}}> Create New Post</h4>
         <button id="post-btn" onClick={()=>{postDetails()}}>Share</button>
     </div>
+
  {/* image-preview  */}
 <div className="main-div">
     <img id="output" src="https://www.bing.com/th?id=OIP.JIo_erHjGUXp0-Z86gJAqAHaHa&w=150&h=150&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2" alt="Preview" />
