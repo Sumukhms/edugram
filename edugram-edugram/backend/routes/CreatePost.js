@@ -15,6 +15,7 @@ router.get("/allposts", requireLogin, async (req, res) => {
       .skip(skip)
       .limit(limit)
       .populate({ path: "postedBy", select: "_id name" })
+      .populate("comments.postedBy","_id name")
       .exec();
 
     if (!posts || posts.length === 0) {
@@ -155,4 +156,27 @@ router.put("/unlike", requireLogin, (req, res) => {
     });
 });
 
+router.put("/comment",requireLogin,(req,res)=>{
+  const comment={
+    comment:req.body.text,
+    postedBy:req.user._id
+  }
+  POST.findByIdAndUpdate(req.body.postId,{
+    $push:{comments:comment}
+  },{
+    new:true
+  })
+  // .populate("postedBy", "_id name")
+  .populate("comments.postedBy","_id name")
+  .populate("postedBy","_id name")
+  .then((result) => {
+    if (!result) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+    res.json(result);
+  })
+  .catch((err) => {
+    res.status(422).json({ error: err.message });
+  });
+})
 module.exports = router;
