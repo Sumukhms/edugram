@@ -17,6 +17,10 @@ const postSchema = new mongoose.Schema({
       ref: "USER", // Ensure "USER" matches your user model name
     },
   ],
+  comments:[{
+    comment:{type:String},
+    postedBy:{type:ObjectId , ref:"USER"}
+  }],
   postedBy: {
     type: ObjectId,
     ref: "USER", // Ensure "USER" matches your user model name
