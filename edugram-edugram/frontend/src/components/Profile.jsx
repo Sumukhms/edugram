@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './profile.css';
+import PostDetail from './PostDetail';
 
 export default function Profile() {
   const [pic, setPic] = useState([]);  // Initialize as an empty array
@@ -7,6 +8,17 @@ export default function Profile() {
   const [postsCount, setPostsCount] = useState(0); // Count posts
   const [followersCount, setFollowersCount] = useState(0); // Count followers
   const [followingCount, setFollowingCount] = useState(0); // Count following
+  const [show, setShow] = useState(false);
+  const [posts, setPosts] = useState([]);  // Will hold selected post details
+
+  const toggleDetails = (post) => {
+    if (show) {
+      setShow(false);
+    } else {
+      setShow(true);
+      setPosts(post);  // Pass the specific post to be shown
+    }
+  };
 
   useEffect(() => {
     // Get user info from localStorage
@@ -79,12 +91,21 @@ export default function Profile() {
         {/* Ensure pic is an array before mapping */}
         {Array.isArray(pic) && pic.length > 0 ? (
           pic.map((item) => {
-            return <img key={item._id} src={item.photo} alt="User Post" className="item" />;
+            return (
+              <img
+                key={item._id}
+                src={item.photo}
+                alt="User Post"
+                className="item"
+                onClick={() => toggleDetails(item)}  // Pass the specific post here
+              />
+            );
           })
         ) : (
           <p>No posts available</p>
         )}
       </div>
+      {show && <PostDetail item={posts} toggleDetails={toggleDetails} />}
     </div>
   );
 }

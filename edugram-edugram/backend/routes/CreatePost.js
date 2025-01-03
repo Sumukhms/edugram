@@ -58,27 +58,36 @@ router.post("/createPost", requireLogin, async (req, res) => {
 // Route to get posts created by the logged-in user with pagination
 router.get("/myposts", requireLogin, async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    // Parse page and limit from query params with validation for positive integers
+    const page = Math.max(1, parseInt(req.query.page) || 1);  // Ensure page is at least 1
+    const limit = Math.max(1, parseInt(req.query.limit) || 10); // Ensure limit is at least 1
     const skip = (page - 1) * limit;
 
+    // Check if user is authenticated
     if (!req.user || !req.user._id) {
       return res.status(400).json({ error: "User not authenticated" });
     }
 
+    // Fetch posts with pagination, populated fields, and error handling
     const myposts = await POST.find({ postedBy: req.user._id })
       .skip(skip)
       .limit(limit)
-      .populate("postedBy", "_id name");
+      .populate({ path: "postedBy", select: "_id name" })
+      .populate({ path: "comments.postedBy", select: "_id name" });
 
+    // Handle case where no posts are found
     if (!myposts || myposts.length === 0) {
       return res.status(404).json({ error: "No posts found for this user" });
     }
+
+    // Return the posts
     res.json(myposts);
   } catch (err) {
+    // Error handling with more detailed information
     res.status(500).json({ error: "Internal server error", details: err.message });
   }
 });
+
 
 // Route to like a post
 router.put("/like", requireLogin, (req, res) => {
@@ -179,4 +188,22 @@ router.put("/comment",requireLogin,(req,res)=>{
     res.status(422).json({ error: err.message });
   });
 })
+
+// Delete Post Route
+router.delete("/deletePost/:postId", requireLogin, async (req, res) => {
+  try {
+    const postId = req.params.postId;
+
+    const deletedPost = await POST.findByIdAndDelete(postId);
+
+    if (!deletedPost) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    res.json({ message: "Post deleted successfully", deletedPost });
+  } catch (err) {
+    res.status(500).json({ error: "An error occurred while deleting the post", details: err.message });
+  }
+});
+
 module.exports = router;
