@@ -197,6 +197,8 @@ export default function Home() {
           </div>
         ))
       )}
+
+        {/* show Comment  */}
       {show && (
         <div className="showComment">
           <div className="container">
