@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Home.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [comments, setComments] = useState({}); // Track comments per post
   const [show, setShow] = useState(false);
-  const [item, setItem] = useState([]);
+  const [item, setItem] = useState([]); // Currently selected post
 
   // Toast functions
   const notifyA = (msg) => toast.error(msg);
@@ -21,7 +22,7 @@ export default function Home() {
     const storedUser = JSON.parse(localStorage.getItem("user"));
 
     if (!token || !storedUser) {
-      navigate("./signup");
+      navigate("/signup");
       return;
     }
 
@@ -149,7 +150,11 @@ export default function Home() {
                   alt="profile"
                 />
               </div>
-              <h5>{posts?.postedBy?.name || "Unknown User"}</h5>
+              <h5>
+                <Link to={`/profile/${posts.postedBy._id}`}>
+                  {posts?.postedBy?.name || "Unknown User"}
+                </Link>
+              </h5>
             </div>
             <div className="card-image">
               <img src={posts.photo || "default-photo-url"} alt="Post" />
@@ -198,7 +203,7 @@ export default function Home() {
         ))
       )}
 
-        {/* show Comment  */}
+      {/* Show Comments */}
       {show && (
         <div className="showComment">
           <div className="container">
@@ -210,13 +215,13 @@ export default function Home() {
                 <div className="card-pic">
                   <img src="https://via.placeholder.com/150" alt="profile" />
                 </div>
-                <h5>{item?.postedBy?.name || "Unknown User"} </h5>
+                <h5>{item?.postedBy?.name || "Unknown User"}</h5>
               </div>
               <div className="comment-section" style={{ borderBottom: "1px solid #00000029" }}>
                 {item.comments.map((comment) => (
                   <p className="comm" key={comment._id}>
                     <span className="commenter" style={{ fontWeight: "bolder" }}>
-                      {comment.postedBy.name} 
+                      {comment.postedBy.name}
                     </span>
                     <span style={{ margin: "0 5px" }}>:</span>
                     <span className="commentText">{comment.comment}</span>

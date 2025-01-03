@@ -1,74 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import './profile.css';
 import PostDetail from './PostDetail';
+import { useParams }  from "react-router-dom";
 
-export default function Profile() {
+export default function UserProfile() {
+    const {userid} =useParams()
+  const [user, setUser] =useState("")
   const [pic, setPic] = useState([]);  // Initialize as an empty array
-  const [user, setUser] = useState(null); // Store user info
   const [postsCount, setPostsCount] = useState(0); // Count posts
   const [followersCount, setFollowersCount] = useState(0); // Count followers
   const [followingCount, setFollowingCount] = useState(0); // Count following
-  const [show, setShow] = useState(false);
   const [posts, setPosts] = useState([]);  // Will hold selected post details
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
 
-  const toggleDetails = (post) => {
-    if (show) {
-      setShow(false);
-    } else {
-      setShow(true);
-      setPosts(post);  // Pass the specific post to be shown
-    }
-  };
-
-  useEffect(() => {
+   useEffect(() => {
     // Get user info from localStorage
     const userData = JSON.parse(localStorage.getItem("user"));
     setUser(userData);
 
     // Fetch user posts
-    fetch("http://localhost:5000/myposts", {
+    fetch('http://localhost:5000/user/${userid}', {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
       },
     })
       .then(res => res.json())
       .then((result) => {
+        // Ensure result is an array
         if (Array.isArray(result)) {
-          setPic(result);
-          setPostsCount(result.length);
+          setUser(result.user);
+          setPosts(result.post);
 
           // Set followers and following count if userData is available
           if (userData) {
             setFollowersCount(userData.followers?.length || 0); // Adjust if needed
             setFollowingCount(userData.following?.length || 0); // Adjust if needed
           }
-          setError(null); // Clear previous error
         } else {
           setPic([]);  // Reset to empty array if data is not an array
-          setError('Received data is not in the expected format.');
         }
       })
       .catch((err) => {
         console.error("Error fetching posts:", err);
         setPic([]);  // Reset to empty array on error
-        setError('Failed to load posts. Please try again later.');
-      })
-      .finally(() => {
-        setLoading(false); // Set loading to false once fetch is complete
       });
   }, []);
-
-  // Return loading state if user data is not yet available
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  // Return error message if an error occurred
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   // Return loading state if user data is not yet available
   if (!user) {
@@ -114,7 +89,7 @@ export default function Profile() {
                 src={item.photo}
                 alt="User Post"
                 className="item"
-                onClick={() => toggleDetails(item)}  // Pass the specific post here
+               // onClick={() => toggleDetails(item)}  // Pass the specific post here
               />
             );
           })
@@ -122,7 +97,9 @@ export default function Profile() {
           <p>No posts available</p>
         )}
       </div>
-      {show && <PostDetail item={posts} toggleDetails={toggleDetails} />}
+      {/*show && 
+      <PostDetail item={posts} toggleDetails={toggleDetails} />
+      */}
     </div>
   );
 }
