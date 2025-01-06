@@ -28,7 +28,7 @@ export default function MyFollowingPost() {
 
     setUser(storedUser);
 
-    fetch("http://localhost:5000/myfollowingpost", {
+    fetch("/myfollowingpost", {
       headers: {
         Authorization: "Bearer " + token,
       },
@@ -77,7 +77,7 @@ export default function MyFollowingPost() {
 
   const likePost = (id) => {
     handleFetch(
-      "http://localhost:5000/like",
+      "/like",
       "PUT",
       { postId: id },
       (result) => {
@@ -92,7 +92,7 @@ export default function MyFollowingPost() {
 
   const unlikePost = (id) => {
     handleFetch(
-      "http://localhost:5000/unlike",
+      "/unlike",
       "PUT",
       { postId: id },
       (result) => {
@@ -111,7 +111,7 @@ export default function MyFollowingPost() {
       return;
     }
     handleFetch(
-      "http://localhost:5000/comment",
+      "/comment",
       "PUT",
       { text, postId: id },
       (result) => {

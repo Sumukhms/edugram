@@ -45,7 +45,7 @@ export default function Profile() {
 
     setUser(userData);
 
-    fetch(`http://localhost:5000/user/${userData._id}`, {
+    fetch(`/user/${userData._id}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
       },
