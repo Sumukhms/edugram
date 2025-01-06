@@ -1,17 +1,17 @@
 import React,{createContext,useState} from 'react';
 import './App.css';
-import Home from './components/Home';
+import Home from './screens/Home';
 import Navbar from './components/Navbar';
 import { BrowserRouter,Routes, Route } from 'react-router-dom';
 import Signup from './components/Signup';
 import Signin from './components/Signin';
-import Profile from './components/Profile';
+import Profile from './screens/Profile';
 import { ToastContainer } from 'react-toastify';
-import Createpost from './components/Createpost';
+import Createpost from './screens/Createpost';
 import { LoginContext } from './context/LoginContext';
 import Modal from './components/Modal';
 import UserProfile from './components/UserProfile';
-import MyFollowingPost from './components/MyfollowingPost';
+import MyFollowingPost from './screens/MyfollowingPost';
 
 
 

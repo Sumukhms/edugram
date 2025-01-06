@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from "react";
-import "./Home.css";
+import "../css/Home.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
-export default function Home() {
+export default function MyFollowingPost() {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const [comments, setComments] = useState({});
   const [show, setShow] = useState(false);
-  const [item, setItem] = useState([]);
+  const [item, setItem] = useState(null);
 
   const defaultProfilePic = "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
-  const defaultPostPic = "https://via.placeholder.com/150";
-
-  // Toast functions
   const notifyA = (msg) => toast.error(msg);
   const notifyB = (msg) => toast.success(msg);
 
@@ -25,13 +22,13 @@ export default function Home() {
     const storedUser = JSON.parse(localStorage.getItem("user"));
 
     if (!token || !storedUser) {
-      navigate("./signup");
+      navigate("/signup");
       return;
     }
 
     setUser(storedUser);
 
-    fetch("http://localhost:5000/allposts", {
+    fetch("http://localhost:5000/myfollowingpost", {
       headers: {
         Authorization: "Bearer " + token,
       },
@@ -44,89 +41,87 @@ export default function Home() {
           setError("Unexpected response format");
         }
       })
-      .catch((err) => {
+      .catch(() => {
         setError("Failed to fetch posts. Please try again later.");
-        console.log(err);
       });
   }, [navigate]);
 
   const toggleComment = (posts) => {
     setShow(!show);
-    if (!show) {
-      setItem(posts);
-    }
-  };
-
-  const likePost = (id) => {
-    fetch("http://localhost:5000/like", {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-      body: JSON.stringify({ postId: id }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        const updatedPosts = data.map((post) =>
-          post._id === result._id ? { ...post, likes: result.likes } : post
-        );
-        setData(updatedPosts);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const unlikePost = (id) => {
-    fetch("http://localhost:5000/unlike", {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-      body: JSON.stringify({ postId: id }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        const updatedPosts = data.map((post) =>
-          post._id === result._id ? { ...post, likes: result.likes } : post
-        );
-        setData(updatedPosts);
-      })
-      .catch((err) => console.log(err));
+    setItem(posts);
   };
 
   const handleCommentChange = (postId, text) => {
-    setComments((prevComments) => ({
-      ...prevComments,
+    setComments((prev) => ({
+      ...prev,
       [postId]: text,
     }));
   };
 
-  const makeComment = (text, id) => {
-    fetch("http://localhost:5000/comment", {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-      body: JSON.stringify({
-        text,
-        postId: id,
-      }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        const updatedPosts = data.map((post) =>
-          post._id === result._id ? result : post
+  const handleFetch = async (url, method, body, callback) => {
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("jwt"),
+        },
+        body: JSON.stringify(body),
+      });
+      const result = await res.json();
+      callback(result);
+    } catch {
+      notifyA("Something went wrong. Please try again.");
+    }
+  };
+
+  const likePost = (id) => {
+    handleFetch(
+      "http://localhost:5000/like",
+      "PUT",
+      { postId: id },
+      (result) => {
+        setData((prevData) =>
+          prevData.map((post) =>
+            post._id === result._id ? { ...post, likes: result.likes } : post
+          )
         );
-        setData(updatedPosts);
-        setComments((prevComments) => ({
-          ...prevComments,
-          [id]: "",
-        }));
+      }
+    );
+  };
+
+  const unlikePost = (id) => {
+    handleFetch(
+      "http://localhost:5000/unlike",
+      "PUT",
+      { postId: id },
+      (result) => {
+        setData((prevData) =>
+          prevData.map((post) =>
+            post._id === result._id ? { ...post, likes: result.likes } : post
+          )
+        );
+      }
+    );
+  };
+
+  const makeComment = (text, id) => {
+    if (!text.trim()) {
+      notifyA("Comment cannot be empty");
+      return;
+    }
+    handleFetch(
+      "http://localhost:5000/comment",
+      "PUT",
+      { text, postId: id },
+      (result) => {
+        setData((prevData) =>
+          prevData.map((post) => (post._id === result._id ? result : post))
+        );
+        setComments((prev) => ({ ...prev, [id]: "" }));
         notifyB("Comment posted");
-      })
-      .catch((err) => console.log(err));
+      }
+    );
   };
 
   if (error) {
@@ -151,12 +146,14 @@ export default function Home() {
                   alt="profile"
                 />
               </div>
-              <Link to={`/profile/${post.postedBy._id}`}>
-                <h5>{post?.postedBy?.name || "Unknown User"}</h5>
-              </Link>
+              <h5>
+                <Link to={`/profile/${post.postedBy._id}`}>
+                  {post?.postedBy?.name || "Unknown User"}
+                </Link>
+              </h5>
             </div>
             <div className="card-image">
-              <img src={post.photo || defaultPostPic} alt="Post" />
+              <img src={post.photo || "https://via.placeholder.com/150"} alt="Post" />
             </div>
             <div className="card-content">
               {post.likes.includes(user._id) ? (
@@ -202,38 +199,33 @@ export default function Home() {
         ))
       )}
 
-      {show && (
+      {show && item && (
         <div className="showComment">
           <div className="container">
             <div className="postPic">
-              <img src={item.photo || defaultPostPic} alt="Post" />
+              <img src={item.photo || "https://via.placeholder.com/150"} alt="" />
             </div>
             <div className="details">
-              <div
-                className="card-header"
-                style={{ borderBottom: "1px solid #00000029" }}
-              >
+              <div className="card-header" style={{ borderBottom: "1px solid #00000029" }}>
                 <div className="card-pic">
-                  <img
-                    src={item?.postedBy?.photo || defaultProfilePic}
-                    alt="profile"
-                  />
+                  <img src={item.postedBy?.photo || "https://via.placeholder.com/150"} alt="profile" />
                 </div>
                 <h5>{item?.postedBy?.name || "Unknown User"}</h5>
               </div>
-              <div
-                className="comment-section"
-                style={{ borderBottom: "1px solid #00000029" }}
-              >
-                {item.comments.map((comment) => (
-                  <p className="comm" key={comment._id}>
-                    <span className="commenter" style={{ fontWeight: "bolder" }}>
-                      {comment.postedBy.name}
-                    </span>
-                    <span style={{ margin: "0 5px" }}>:</span>
-                    <span className="commentText">{comment.comment}</span>
-                  </p>
-                ))}
+              <div className="comment-section" style={{ borderBottom: "1px solid #00000029" }}>
+                {item.comments?.length > 0 ? (
+                  item.comments.map((comment) => (
+                    <p className="comm" key={comment._id}>
+                      <span className="commenter" style={{ fontWeight: "bolder" }}>
+                        {comment.postedBy?.name || "Anonymous"}
+                      </span>
+                      <span style={{ margin: "0 5px" }}>:</span>
+                      <span className="commentText">{comment.comment}</span>
+                    </p>
+                  ))
+                ) : (
+                  <p>No comments yet.</p>
+                )}
               </div>
               <div className="card-content">
                 <p>{item.likes.length} Likes</p>

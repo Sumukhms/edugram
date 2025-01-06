@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import "./profile.css";
-import PostDetail from "./PostDetail";
-import ProfilePic from "./ProfilePic";
+import "../css/profile.css";
+import PostDetail from "../components/PostDetail";
+import ProfilePic from "../components/ProfilePic";
 
 export default function Profile() {
   const [pic, setPic] = useState([]); // Store posts

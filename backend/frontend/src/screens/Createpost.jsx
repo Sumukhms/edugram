@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./Createpost.css";
+import "../css/Createpost.css";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
