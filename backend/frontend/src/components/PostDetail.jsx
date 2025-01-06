@@ -8,7 +8,7 @@ export default function PostDetail({ item, toggleDetails }) {
   const removePost = async (postId) => {
     if (window.confirm("Do you really want to delete the post?")) {
       try {
-        const response = await fetch(`http://localhost:5000/deletePost/${postId}`, {
+        const response = await fetch(`/deletePost/${postId}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",

@@ -71,7 +71,7 @@ export default function ProfilePic({ changeProfile, updateProfilePic }) {
   // Save the profile picture in the database
   const updateProfilePicInDB = async (newPic) => {
     try {
-        const response = await fetch(`http://localhost:5000/uploadProfilePic`, {
+        const response = await fetch(`/uploadProfilePic`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

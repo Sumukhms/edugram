@@ -14,7 +14,7 @@ export default function UserProfile() {
   
   // Function to follow user
   const followUser = (userId) => {
-    fetch("http://localhost:5000/follow", {
+    fetch("/follow", {
       method: "put",
       headers: {
         "Content-Type": "application/json",
@@ -34,7 +34,7 @@ export default function UserProfile() {
 
   // Function to unfollow user
   const unfollowUser = (userId) => {
-    fetch("http://localhost:5000/unfollow", {
+    fetch("/unfollow", {
       method: "put",
       headers: {
         "Content-Type": "application/json",

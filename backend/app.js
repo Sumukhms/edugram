@@ -3,6 +3,7 @@ const app = express();
 const port = process.env.port || 5000;
 const mongoose =require("mongoose");
 const cors =require("cors");
+const path = require("path");
 
 app.use(cors())
 require('./models/model')
@@ -25,6 +26,15 @@ const uri = 'mongodb://127.0.0.1:27017/edugram';
 
 connectDB();
 
+// serving the frontend
+app.use(express.static(path.join(__dirname, "./frontend/build")));
+
+app.get("*", (req, res) => {  
+    res.sendFile(path.join(__dirname, "./frontend/build/index.html")),
+    function (err){
+        res.status(500).send(err)
+    }
+});
 app.listen(port,()=>{
     console.log("server is running on port"+" " +port)
 });
