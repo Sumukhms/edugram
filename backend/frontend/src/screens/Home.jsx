@@ -11,8 +11,12 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [comments, setComments] = useState({});
   const [show, setShow] = useState(false);
-  const [item, setItem] = useState([]);
+  const [item, setItem] = useState({});
+  const [skip, setSkip] = useState(0);
+  const [loading, setLoading] = useState(false);
 
+  const limit = 10;
+  const token = localStorage.getItem("jwt");
   const defaultProfilePic = "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
   const defaultPostPic = "https://via.placeholder.com/150";
 
@@ -21,34 +25,58 @@ export default function Home() {
   const notifyB = (msg) => toast.success(msg);
 
   useEffect(() => {
-    const token = localStorage.getItem("jwt");
     const storedUser = JSON.parse(localStorage.getItem("user"));
 
     if (!token || !storedUser) {
       navigate("./signup");
       return;
     }
-
+    fetchPosts();
     setUser(storedUser);
 
-    fetch("/allposts", {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [navigate]);
+
+  const fetchPosts = () => {
+    setLoading(true);
+    fetch(`/allposts?limit=${limit}&skip=${skip}`, {
       headers: {
         Authorization: "Bearer " + token,
       },
     })
       .then((res) => res.json())
       .then((result) => {
+        setLoading(false);
         if (Array.isArray(result)) {
-          setData(result);
+          setData((prevData) => [...prevData, ...result]);
         } else {
           setError("Unexpected response format");
         }
       })
       .catch((err) => {
+        setLoading(false);
         setError("Failed to fetch posts. Please try again later.");
         console.log(err);
       });
-  }, [navigate]);
+  };
+
+  const handleScroll = () => {
+    if (
+      document.documentElement.clientHeight + window.pageYOffset >=
+      document.documentElement.scrollHeight
+    ) {
+      setSkip((prevSkip) => prevSkip + 10);
+    }
+  };
+
+  useEffect(() => {
+    if (skip > 0) {
+      fetchPosts();
+    }
+  }, [skip]);
 
   const toggleComment = (posts) => {
     setShow(!show);
@@ -62,7 +90,7 @@ export default function Home() {
       method: "put",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
+        Authorization: "Bearer " + token,
       },
       body: JSON.stringify({ postId: id }),
     })
@@ -81,7 +109,7 @@ export default function Home() {
       method: "put",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
+        Authorization: "Bearer " + token,
       },
       body: JSON.stringify({ postId: id }),
     })
@@ -107,7 +135,7 @@ export default function Home() {
       method: "put",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
+        Authorization: "Bearer " + token,
       },
       body: JSON.stringify({
         text,
@@ -202,6 +230,8 @@ export default function Home() {
         ))
       )}
 
+      {loading && <div>Loading...</div>}
+
       {show && (
         <div className="showComment">
           <div className="container">
@@ -227,7 +257,10 @@ export default function Home() {
               >
                 {item.comments.map((comment) => (
                   <p className="comm" key={comment._id}>
-                    <span className="commenter" style={{ fontWeight: "bolder" }}>
+                    <span
+                      className="commenter"
+                      style={{ fontWeight: "bolder" }}
+                    >
                       {comment.postedBy.name}
                     </span>
                     <span style={{ margin: "0 5px" }}>:</span>
@@ -245,7 +278,9 @@ export default function Home() {
                   type="text"
                   placeholder="Add a comment"
                   value={comments[item._id] || ""}
-                  onChange={(e) => handleCommentChange(item._id, e.target.value)}
+                  onChange={(e) =>
+                    handleCommentChange(item._id, e.target.value)
+                  }
                 />
                 <button
                   className="comment"
