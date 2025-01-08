@@ -7,11 +7,25 @@ export default function Createpost() {
     const [body, setBody] = useState("");
     const [image, setImage] = useState("");
     const [url, setUrl] = useState("");
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
+
+    // Default profile picture
+    const defaultProfilePic = "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
 
     // Toast functions
     const notifyA = (msg) => toast.error(msg);
     const notifyB = (msg) => toast.success(msg);
+
+    // Fetch user details from localStorage
+    useEffect(() => {
+        const loggedInUser = JSON.parse(localStorage.getItem("user"));
+        if (!loggedInUser) {
+            navigate("/signup");
+        } else {
+            setUser(loggedInUser);
+        }
+    }, [navigate]);
 
     // Posting image to Cloudinary
     const postDetails = async () => {
@@ -49,7 +63,7 @@ export default function Createpost() {
                 method: "post",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer " + localStorage.getItem("jwt"),
+                    Authorization: "Bearer " + localStorage.getItem("jwt"),
                 },
                 body: JSON.stringify({
                     body,
@@ -107,11 +121,11 @@ export default function Createpost() {
                 <div className="card-header">
                     <div className="card-pic">
                         <img
-                            src="https://plus.unsplash.com/premium_photo-1665663927587-a5b343dff128?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDE2fHx8ZW58MHx8fHx8"
+                            src={user?.photo || defaultProfilePic}
                             alt="User"
                         />
                     </div>
-                    <h5>Ramesh</h5>
+                    <h5>{user?.name || "Unknown User"}</h5>
                 </div>
                 <textarea
                     value={body}
