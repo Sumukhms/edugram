@@ -1,10 +1,10 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const mongoose =require("mongoose");
+const mongoose = require("mongoose");
 const USER = mongoose.model("USER");
 const bcrypt = require('bcrypt');
-const jwt =require("jsonwebtoken");
-const {Jwt_secret}= require("../keys");
+const jwt = require("jsonwebtoken")
+const requireLogin = require("../middlewares/requireLogin");
 
 
 router.post("/signup",(req,res)=>{
@@ -36,33 +36,27 @@ router.post("/signup",(req,res)=>{
 
 })
 
-router.post("/signin",(req,res)=>{
-    const {email , password } = req.body;
-
-    if( !email || !password ){
-        return res.status(422).json({error:"Please add email and password"})
+router.post("/signin", (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(422).json({ error: "Please add email and password" });
     }
-
-    USER.findOne({email:email}).then((savedUser) => {
-        if(!savedUser){
-            return res.status(422).json({error: "Invalid email"})
+    USER.findOne({ email: email }).then((savedUser) => {
+        if (!savedUser) {
+            return res.status(422).json({ error: "Invalid email" });
         }
-        bcrypt.compare(password ,savedUser.password).
-        then((match)=>{
-            if(match){
-                // return res.status(200).json({message:"Signed in successfully"})
-                const token = jwt.sign({_id:savedUser.id},Jwt_secret)
-                const { _id, name, email, userName } = savedUser
-                res.json({ token, user: { _id, name, email, userName } })
-
-                console.log({ token, user: { _id, name, email, userName } })
-            }else{
-                return res.status(422).json({error:"Invalid password"})
+        bcrypt.compare(password, savedUser.password).then((match) => {
+            if (match) {
+                // return res.status(200).json({ message: "Signed in Successfully" })
+                const token = jwt.sign({ _id: savedUser.id }, process.env.Jwt_secret); // <-- CHANGE THIS LINE
+                const { _id, name, email, Photo } = savedUser;
+                res.json({ token, user: { _id, name, email, Photo } });
+                console.log({ token, user: { _id, name, email, Photo } });
+            } else {
+                return res.status(422).json({ error: "Invalid password" });
             }
-        })
-        .catch(err => console.log(err))
-    })
-})
+        }).catch(err => console.log(err));
+    });
+});
 
-
-module.exports = router
+module.exports = router;
