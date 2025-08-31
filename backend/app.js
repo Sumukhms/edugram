@@ -1,40 +1,54 @@
-const express = require('express')
+require('dotenv').config();
+const express = require('express');
 const app = express();
-const port = process.env.port || 5000;
-const mongoose =require("mongoose");
-const cors =require("cors");
+const PORT = process.env.PORT || 5000; // Corrected to uppercase PORT
+const mongoose = require("mongoose");
+const cors = require("cors");
 const path = require("path");
 
-app.use(cors())
-require('./models/model')
-require('./models/post')
-app.use(express.json())
-app.use(require("./routes/auth"))
-app.use(require("./routes/CreatePost"))
-app.use(require("./routes/user"))
-const uri = 'mongodb://127.0.0.1:27017/edugram';
- // Replace with your connection string
+app.use(cors());
 
- async function connectDB() {
+// Require models
+require('./models/model');
+require('./models/post');
+
+app.use(express.json());
+
+// Require routes
+app.use(require("./routes/auth"));
+app.use(require("./routes/CreatePost"));
+app.use(require("./routes/user"));
+
+// Use the MONGO_URI from your .env file
+const mongoUri = process.env.MONGO_URI;
+
+async function connectDB() {
     try {
-        await mongoose.connect(uri, {});
+        await mongoose.connect(mongoUri, {});
         console.log('Successfully connected to MongoDB');
     } catch (err) {
         console.error('Error connecting to MongoDB:', err.message);
+        // Exit process with failure
+        process.exit(1);
     }
 }
 
 connectDB();
 
-// serving the frontend
+// Serving the frontend
 app.use(express.static(path.join(__dirname, "./frontend/build")));
 
-app.get("*", (req, res) => {  
-    res.sendFile(path.join(__dirname, "./frontend/build/index.html")),
-    function (err){
-        res.status(500).send(err)
-    }
+app.get("*", (req, res) => {
+    res.sendFile(
+        path.join(__dirname, "./frontend/build/index.html"),
+        function (err) {
+            if (err) {
+                res.status(500).send(err);
+            }
+        }
+    );
 });
-app.listen(port,()=>{
-    console.log("server is running on port"+" " +port)
+
+app.listen(PORT, () => {
+    console.log("Server is running on port" + " " + PORT);
 });
