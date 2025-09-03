@@ -1,130 +1,161 @@
-.card{
-    max-width: 500px;
-    height: max-content;
-    margin: 25px auto;
-    border: 1px solid rgb(173,173,173);
-    border-radius: 5px;
-}
-.card-header{
-    display: flex;
-}
-
-.card-header h5{
-    margin: 0px;
-    padding: 11px ;
-
-}
-.card-pic img{
-    width: 30px;
-    border-radius: 300px;
-    height:auto;
-    object-fit: contain;
-    padding: 5px;
-
+.card {
+  max-width: 550px;
+  margin: 30px auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background-color: var(--container-background);
+  box-shadow: var(--card-shadow);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.card-image img{
-    width: 100%;
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
-.card-content{
-    text-align: left;
-    line-height: 4px;
-    padding: 3px 10px;
-    border-bottom: 1px solid rgb(173,173,173);
-}
-.add-comment{
-    display: flex;
-    align-items: center;
+.card-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
 }
 
-.add-cooment-input{
-    margin: 0;
-    outline: none;
-    border: none;
-    padding: 10px;
-}
-.comment{
-    border:none;
-    background-color: none;
-    font-weight: bolder;
-    cursor: pointer;
-    color: #339ce3
+.card-header h5 {
+  margin: 0;
+  padding-left: 12px;
+  font-weight: 600;
 }
 
+.card-pic img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.card-image img {
+  width: 100%;
+  height: auto;
+}
+
+.card-content {
+  text-align: left;
+  line-height: 1.5;
+  padding: 10px 16px;
+}
+
+.card-content p {
+  margin: 5px 0;
+}
+
+.add-comment {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-top: 1px solid var(--border-color);
+  position: relative; /* Needed for emoji picker positioning */
+}
+
+.add-comment input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+.comment {
+  border: none;
+  background-color: transparent;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--accent-color);
+  font-size: 14px;
+}
+
+/* --- Emoji Picker Styles --- */
+.picker-container {
+  position: absolute;
+  bottom: 60px; /* Position above the input */
+  left: 10px;
+  z-index: 10;
+}
 
 .material-symbols-outlined-red {
-   color: red;
-  font-variation-settings:
-  'FILL' 1,
-  'wght' 700,
-  'GRAD' 0,
-  'opsz' 24
+  color: var(--error-color);
+  font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 24;
 }
 
-.material-symbols-outlined{
-    cursor: pointer;
+.material-symbols-outlined {
+  cursor: pointer;
 }
 
-.showComment{
-    width: 100vw;
-    min-height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: rgba(16,13,13,0.4);
+.showComment {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.container{
-    display: flex;
-    width: 80%;
-    background-color: white;
-    position: absolute;
-    top: 10%;
-    left: 10%;
-    height: 500px;
+.showComment .container {
+  display: flex;
+  width: 100%;
+  max-width: 950px;
+  height: 600px;
+  max-height: 90vh;
+  background-color: var(--container-background);
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  overflow: hidden;
+  position: relative; 
+  top: auto;
+  left: auto;
+  transform: none;
 }
 
-.postPic{
-    background-color: black;
-    display: flex;
-    align-items: center;
+.postPic {
+  background-color: black;
+  display: flex;
+  align-items: center;
+  flex: 1.5;
 }
 
-.postPic img{
-    object-fit: contain;
-    width: 100%;
+.postPic img {
+  object-fit: contain;
+  width: 100%;
 }
 
-.details{
-    width: 100%;
-    height: inherit;
-    display: flex;
-    flex-direction: column;
+.details {
+  width: 100%;
+  height: inherit;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
-.comment-section{
-    flex-grow: 4;
-    text-align: left;
-    margin-left: 10px;
-
+.comment-section {
+  flex-grow: 1;
+  text-align: left;
+  padding: 15px;
+  overflow-y: auto;
 }
 
-.close-comment{
-    position: fixed;
-    top: 1%;
-    right: 5%;
-    color: white;
-    border: none;
-    cursor: pointer;
+.close-comment {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  background: none;
 }
-
 
 .material-symbols-outlined-comment {
-    font-size: 40px;
-  font-variation-settings:
-  'FILL' 0,
-  'wght' 700,
-  'GRAD' 0,
-  'opsz' 24
+  font-size: 40px;
 }

@@ -8,16 +8,14 @@ export default function Createpost() {
     const [image, setImage] = useState("");
     const [url, setUrl] = useState("");
     const [user, setUser] = useState(null);
+    const [imagePreview, setImagePreview] = useState("");
     const navigate = useNavigate();
 
-    // Default profile picture
     const defaultProfilePic = "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
 
-    // Toast functions
     const notifyA = (msg) => toast.error(msg);
     const notifyB = (msg) => toast.success(msg);
 
-    // Fetch user details from localStorage
     useEffect(() => {
         const loggedInUser = JSON.parse(localStorage.getItem("user"));
         if (!loggedInUser) {
@@ -27,7 +25,6 @@ export default function Createpost() {
         }
     }, [navigate]);
 
-    // Posting image to Cloudinary
     const postDetails = async () => {
         if (!body || !image) {
             notifyA("Please add both a caption and an image");
@@ -56,7 +53,6 @@ export default function Createpost() {
         }
     };
 
-    // Saving post to MongoDB when image upload is successful
     useEffect(() => {
         if (url) {
             fetch("/createPost", {
@@ -84,54 +80,59 @@ export default function Createpost() {
     }, [url, body, navigate]);
 
     const loadfile = (event) => {
-        const output = document.getElementById("output");
-        output.src = URL.createObjectURL(event.target.files[0]);
-        setImage(event.target.files[0]);
-        output.onload = function () {
-            URL.revokeObjectURL(output.src);
-        };
+        const file = event.target.files[0];
+        if (file) {
+            setImage(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
     };
-
+    
     return (
         <div className="createPost">
-            {/* Header */}
             <div className="post-header">
-                <h4 style={{ margin: "3px auto" }}>Create New Post</h4>
+                <h4>Create New Post</h4>
                 <button id="post-btn" onClick={postDetails}>
                     Share
                 </button>
             </div>
 
-            {/* Image Preview */}
-            <div className="main-div">
-                <img
-                    id="output"
-                    src="https://www.bing.com/th?id=OIP.JIo_erHjGUXp0-Z86gJAqAHaHa&w=150&h=150&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2"
-                    alt="Preview"
-                />
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(event) => loadfile(event)}
-                />
-            </div>
-
-            {/* Details */}
-            <div className="details">
-                <div className="card-header">
-                    <div className="card-pic">
-                        <img
-                            src={user?.photo || defaultProfilePic}
-                            alt="User"
-                        />
-                    </div>
-                    <h5>{user?.name || "Unknown User"}</h5>
+            {/* New Wrapper for two-column layout */}
+            <div className="create-post-body">
+                <div className="main-div">
+                    {imagePreview ? (
+                        <img id="output" src={imagePreview} alt="Image preview" />
+                    ) : (
+                        <label htmlFor="file-upload" className="upload-label">
+                            <span className="material-symbols-outlined upload-icon">
+                                cloud_upload
+                            </span>
+                            <p>Click to select an image</p>
+                        </label>
+                    )}
+                    <input
+                        id="file-upload"
+                        type="file"
+                        accept="image/*"
+                        onChange={loadfile}
+                    />
                 </div>
-                <textarea
-                    value={body}
-                    onChange={(e) => setBody(e.target.value)}
-                    placeholder="Write a caption..."
-                ></textarea>
+
+                <div className="details">
+                    <div className="card-header">
+                        <div className="card-pic">
+                            <img
+                                src={user?.photo || defaultProfilePic}
+                                alt="User"
+                            />
+                        </div>
+                        <h5>{user?.name || "Unknown User"}</h5>
+                    </div>
+                    <textarea
+                        value={body}
+                        onChange={(e) => setBody(e.target.value)}
+                        placeholder="Write a caption..."
+                    ></textarea>
+                </div>
             </div>
         </div>
     );

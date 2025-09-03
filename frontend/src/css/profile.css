@@ -1,73 +1,182 @@
-.profile{
-    max-width: 600px;
-     margin:10px auto;
-}
-.profile-frame{
-    display: flex;
-    justify-content: space-evenly;
+.profile {
+  max-width: 935px;
+  margin: 40px auto;
+  padding: 0 20px;
 }
 
-.profile-pic{
-    height: fit-content;
-}
-.profile-pic>img{
-    width: 160px;
-    height: 160px;
-    object-fit: contain;
-    border-radius: 100px;
-   
+/* Profile Header Section */
+.profile-frame {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.profile-data{
-    text-align: center;
-}
-.profile-info p{
-    padding: 0px 5px;
-   
+.profile-pic {
+  margin-right: 80px;
+  flex-shrink: 0;
 }
 
-.gallery{
-    display:flex;
-    flex-wrap: wrap;
-    text-align: center;
+.profile-pic img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 }
 
-.gallery img{
-width: 30%;
-margin: 10px;
-}
- 
-.followBtn{
-    cursor:pointer;
-    font-weight: bolder;
-    padding: 13px 25px;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    border: none;
-    color: white;
-    margin-left: 20px;
-    background: #535feb;
-    transition: all 0.25s ease;
+.profile-data {
+  text-align: left;
 }
 
-.followBtn:hover{
-    transform: scale(1.1);
-    box-shadow: 0 10px 20px -10px #535feb;
+.profile-data-top {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.changePic{
-    background-color: #fff;
-    border-radius: 20px;
+.profile-data-top h1 {
+  font-size: 28px;
+  font-weight: 300;
+  margin: 0;
 }
 
-.changePic div{
-    padding:15px 80px ;
+.profile-info {
+  display: flex;
+  gap: 40px;
 }
-.upload-btn{
-    cursor: pointer;
-    background: none;
-    border: none;
-    font-weight: bolder;
-    font-size: 15px;
 
+.profile-info p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.profile-info span {
+  font-weight: 600;
+}
+
+/* Gallery Section */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-top: 40px;
+}
+
+.item {
+  position: relative;
+  cursor: pointer;
+  width: 100%;
+  padding-bottom: 100%;
+}
+
+.item img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.post-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.item:hover .post-overlay {
+  opacity: 1;
+}
+
+.overlay-info {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.overlay-info .material-symbols-outlined {
+  margin-right: 8px;
+}
+
+/* --- New Styles for Profile Picture Modal --- */
+.changePic {
+  background-color: var(--container-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  width: 90%;
+  max-width: 400px;
+}
+
+.changePic h2 {
+  font-size: 18px;
+  font-weight: 600;
+  padding: 20px;
+  margin: 0;
+  border-bottom: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.action-div {
+  border-top: 1px solid var(--border-color);
+}
+
+.upload-btn {
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 14px;
+  width: 100%;
+  padding: 15px;
+}
+
+.image-preview-container {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.image-preview {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  min-height: 150px;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: var(--accent-color);
+  animation: spin 1s ease infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

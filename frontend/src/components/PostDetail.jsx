@@ -22,9 +22,8 @@ export default function PostDetail({ item, toggleDetails }) {
 
         const result = await response.json();
         console.log("Post deleted successfully:", result);
-
-        // Navigate to home page after deletion
-        navigate("/");
+        
+        navigate("/"); // Navigate to home page after deletion
       } catch (error) {
         console.error("Error deleting post:", error);
         alert("Failed to delete the post. Please try again.");
@@ -32,7 +31,6 @@ export default function PostDetail({ item, toggleDetails }) {
     }
   };
 
-  // Ensure item is defined
   if (!item) {
     return <div>Loading...</div>;
   }
@@ -92,26 +90,8 @@ export default function PostDetail({ item, toggleDetails }) {
             <p>{item.body || "No description available"}</p>
           </div>
 
-          <div className="add-comment">
-            <span className="material-symbols-outlined">mood</span>
-            <input
-              type="text"
-              placeholder="Add a comment"
-              // Uncomment and implement comment handling logic
-              // value={comments[item._id] || ""}
-              // onChange={(e) => handleCommentChange(item._id, e.target.value)}
-            />
-            <button
-              className="comment"
-              // Uncomment and implement makeComment function
-              // onClick={() => {
-              //   makeComment(comments[item._id], item._id);
-              //   toggleDetails(); // Close the comment section
-              // }}
-            >
-              Post
-            </button>
-          </div>
+          {/* The "add-comment" div has been removed. */}
+
         </div>
       </div>
 

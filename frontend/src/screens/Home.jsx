@@ -3,6 +3,7 @@ import "../css/Home.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import Picker from 'emoji-picker-react';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -15,18 +16,20 @@ export default function Home() {
   const [skip, setSkip] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  // New state for emoji picker
+  const [showPicker, setShowPicker] = useState(false);
+  const [currentPostId, setCurrentPostId] = useState(null);
+
   const limit = 10;
   const token = localStorage.getItem("jwt");
   const defaultProfilePic = "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
   const defaultPostPic = "https://via.placeholder.com/150";
 
-  // Toast functions
   const notifyA = (msg) => toast.error(msg);
   const notifyB = (msg) => toast.success(msg);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
-
     if (!token || !storedUser) {
       navigate("./signup");
       return;
@@ -38,7 +41,7 @@ export default function Home() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [navigate]);
+  }, []);
 
   const fetchPosts = () => {
     setLoading(true);
@@ -51,7 +54,12 @@ export default function Home() {
       .then((result) => {
         setLoading(false);
         if (Array.isArray(result)) {
-          setData((prevData) => [...prevData, ...result]);
+          // New logic to prevent duplicates
+          setData((prevData) => {
+            const existingIds = new Set(prevData.map(p => p._id));
+            const newPosts = result.filter(p => !existingIds.has(p._id));
+            return [...prevData, ...newPosts];
+          });
         } else {
           setError("Unexpected response format");
         }
@@ -83,6 +91,12 @@ export default function Home() {
     if (!show) {
       setItem(posts);
     }
+  };
+
+   const onEmojiClick = (emojiObject) => {
+    const currentComment = comments[currentPostId] || "";
+    handleCommentChange(currentPostId, currentComment + emojiObject.emoji);
+    setShowPicker(false);
   };
 
   const likePost = (id) => {
@@ -212,7 +226,10 @@ export default function Home() {
               </p>
             </div>
             <div className="add-comment">
-              <span className="material-symbols-outlined">mood</span>
+              <span className="material-symbols-outlined" onClick={() => {
+              setCurrentPostId(post._id);
+              setShowPicker(!showPicker);
+            }}>mood</span>
               <input
                 type="text"
                 placeholder="Add a comment"
@@ -225,6 +242,11 @@ export default function Home() {
               >
                 Post
               </button>
+              {showPicker && currentPostId === post._id && (
+                <div className="emoji-picker">
+                  <Picker onEmojiClick={onEmojiClick} />
+                </div>
+              )}
             </div>
           </div>
         ))

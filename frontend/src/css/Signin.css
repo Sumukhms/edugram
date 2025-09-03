@@ -1,40 +1,71 @@
-.signIn{
-    background-image: url(https://files.123freevectors.com/wp-content/original/202451-pastel-blue-plain-background-vector-eps.jpg);
-    background-size: cover;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.signIn {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--primary-gradient);
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.loginForm{
-    background-color: rgb(171, 190, 191);
-    padding: 30px;
-    border: 1px solid rgb(118, 83, 83);
-    border-radius: 1px;
+.loginForm {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 30px 40px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  text-align: center;
+  width: 100%;
+  max-width: 380px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-.loginForm2{
-    background-color: rgb(169, 169, 191);
-    padding: 20px;
-    margin-top: 30px;
-    border: 1px solid rgb(182, 124, 124);
-    border-radius: 1px;
+.loginForm2 {
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 20px;
+  margin-top: 15px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  width: 100%;
+  max-width: 380px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-#login-btn{
-    background-color: #1773ea;
-    border: none;
-    border-radius: 3px;
-    color: white;
-    font-weight: bold;
-    padding:5px 10px ;
-    cursor: pointer;
-    margin-top: 8px;
+.signInLogo {
+  width: 180px;
+  object-fit: contain;
+  margin-bottom: 20px;
 }
 
-.signInLogo{
-    width: 200px;
-    object-fit: contain;
-    padding: 10px 0px;
+input {
+  padding: 12px;
+  margin: 5px 0;
+  outline: none;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+}
+
+#login-btn {
+  background: var(--primary-gradient);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  padding: 12px 10px;
+  cursor: pointer;
+  margin-top: 15px;
+  width: 100%;
+  font-size: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }

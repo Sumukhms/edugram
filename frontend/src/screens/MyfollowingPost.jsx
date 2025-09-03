@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../css/Home.css";
+import "../css/Home.css"; // We can reuse the home page styles
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 export default function MyFollowingPost() {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true); // Added loading state
   const [user, setUser] = useState(null);
   const [comments, setComments] = useState({});
   const [show, setShow] = useState(false);
@@ -35,14 +35,12 @@ export default function MyFollowingPost() {
     })
       .then((res) => res.json())
       .then((result) => {
-        if (Array.isArray(result)) {
-          setData(result);
-        } else {
-          setError("Unexpected response format");
-        }
+        setData(result);
+        setLoading(false); // Set loading to false after fetch
       })
-      .catch(() => {
-        setError("Failed to fetch posts. Please try again later.");
+      .catch((err) => {
+        console.log(err);
+        setLoading(false); // Also set loading to false on error
       });
   }, [navigate]);
 
@@ -52,10 +50,7 @@ export default function MyFollowingPost() {
   };
 
   const handleCommentChange = (postId, text) => {
-    setComments((prev) => ({
-      ...prev,
-      [postId]: text,
-    }));
+    setComments((prev) => ({ ...prev, [postId]: text, }));
   };
 
   const handleFetch = async (url, method, body, callback) => {
@@ -76,66 +71,49 @@ export default function MyFollowingPost() {
   };
 
   const likePost = (id) => {
-    handleFetch(
-      "/like",
-      "PUT",
-      { postId: id },
-      (result) => {
-        setData((prevData) =>
-          prevData.map((post) =>
-            post._id === result._id ? { ...post, likes: result.likes } : post
-          )
-        );
-      }
-    );
+    handleFetch("/like", "put", { postId: id }, (result) => {
+      setData((prevData) =>
+        prevData.map((post) =>
+          post._id === result._id ? { ...post, likes: result.likes } : post
+        )
+      );
+    });
   };
 
   const unlikePost = (id) => {
-    handleFetch(
-      "/unlike",
-      "PUT",
-      { postId: id },
-      (result) => {
-        setData((prevData) =>
-          prevData.map((post) =>
-            post._id === result._id ? { ...post, likes: result.likes } : post
-          )
-        );
-      }
-    );
+    handleFetch("/unlike", "put", { postId: id }, (result) => {
+      setData((prevData) =>
+        prevData.map((post) =>
+          post._id === result._id ? { ...post, likes: result.likes } : post
+        )
+      );
+    });
   };
 
   const makeComment = (text, id) => {
-    if (!text.trim()) {
-      notifyA("Comment cannot be empty");
-      return;
+    if (!text || !text.trim()) {
+      return notifyA("Comment cannot be empty");
     }
-    handleFetch(
-      "/comment",
-      "PUT",
-      { text, postId: id },
-      (result) => {
-        setData((prevData) =>
-          prevData.map((post) => (post._id === result._id ? result : post))
-        );
-        setComments((prev) => ({ ...prev, [id]: "" }));
-        notifyB("Comment posted");
-      }
-    );
+    handleFetch("/comment", "put", { text, postId: id }, (result) => {
+      setData((prevData) =>
+        prevData.map((post) => (post._id === result._id ? result : post))
+      );
+      setComments((prev) => ({ ...prev, [id]: "" }));
+      notifyB("Comment posted");
+    });
   };
 
-  if (error) {
-    return <div className="error">Error: {error}</div>;
-  }
-
-  if (!user) {
-    return <div>Loading...</div>;
+  if (loading || !user) {
+    return <div style={{ textAlign: 'center', marginTop: '50px' }}><h1>Loading...</h1></div>;
   }
 
   return (
     <div className="home">
       {data.length === 0 ? (
-        <div>No posts available</div>
+        <div style={{ textAlign: 'center', marginTop: '50px' }}>
+          <h1>No posts to display</h1>
+          <p>Follow other users to see their posts here.</p>
+        </div>
       ) : (
         data.map((post) => (
           <div className="card" key={post._id}>
