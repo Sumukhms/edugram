@@ -36,11 +36,11 @@ async function connectDB() {
 connectDB();
 
 // Serving the frontend
-app.use(express.static(path.join(__dirname, "./frontend/build")));
+app.use(express.static(path.join(__dirname, "../frontend/build")));
 
 app.get("*", (req, res) => {
     res.sendFile(
-        path.join(__dirname, "./frontend/build/index.html"),
+        path.join(__dirname, "../frontend/build/index.html"),
         function (err) {
             if (err) {
                 res.status(500).send(err);
