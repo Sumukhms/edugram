@@ -35,13 +35,22 @@ export default function Home() {
       },
     })
       .then((res) => {
+        // Handle unauthorized access by navigating to signin
         if (res.status === 401) {
           navigate("/signin");
+          return;
+        }
+        // Handle no posts found gracefully
+        if (res.status === 404) {
+          setData([]);
+          setHasMore(false);
+          setLoading(false);
           return;
         }
         return res.json();
       })
       .then((result) => {
+        // Ensure result exists before processing
         if (!result) return;
         if (result.posts.length < limit) setHasMore(false);
         setData((prev) => [...prev, ...result.posts]);
