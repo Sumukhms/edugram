@@ -52,7 +52,6 @@ const postSchema = new mongoose.Schema(
         createdAt: {
           type: Date,
           default: Date.now,
-          index: true,
         },
       },
     ],
@@ -68,9 +67,8 @@ const postSchema = new mongoose.Schema(
   }
 );
 
-// Compound index for efficient queries
+// Single compound index for efficient queries
 postSchema.index({ postedBy: 1, createdAt: -1 });
-postSchema.index({ "comments.createdAt": 1 });
 
 // Add virtual for comment count
 postSchema.virtual("commentCount").get(function () {
