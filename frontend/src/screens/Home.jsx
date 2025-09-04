@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
 import { LoginContext } from "../context/LoginContext";
 import { ToastContainer, toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Picker from "emoji-picker-react";
 import "react-toastify/dist/ReactToastify.css";
 
-// 👇 Base URL from .env
 const API_BASE = process.env.REACT_APP_API_URL;
 
 const defaultProfilePic =
@@ -14,8 +13,9 @@ const defaultPostPic =
   "https://cdn-icons-png.flaticon.com/128/564/564619.png";
 
 export default function Home() {
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
-  const { state: user } = useContext(LoginContext); // ✅ Fixed user
+  const [user, setUser] = useState(null);
   const [skip, setSkip] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -27,7 +27,6 @@ export default function Home() {
   const [currentPostId, setCurrentPostId] = useState(null);
   const limit = 5;
 
-  // 🔹 Fetch posts
   const fetchPosts = () => {
     setLoading(true);
     fetch(`${API_BASE}/allposts?limit=${limit}&skip=${skip}`, {
@@ -49,11 +48,25 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchPosts();
-    // eslint-disable-next-line
-  }, [skip]);
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+        setUser(storedUser);
+    } else {
+        navigate("/signin");
+    }
 
-  // 🔹 Like a post
+    fetchPosts();
+  }, [skip, navigate]);
+
+  const onEmojiClick = (emojiObject) => {
+    if (currentPostId) {
+      setComments((prev) => ({
+        ...prev,
+        [currentPostId]: (prev[currentPostId] || "") + emojiObject.emoji,
+      }));
+    }
+  };
+  
   const likePost = (id) => {
     fetch(`${API_BASE}/like`, {
       method: "PUT",
@@ -72,8 +85,7 @@ export default function Home() {
       })
       .catch(() => toast.error("Error liking post"));
   };
-
-  // 🔹 Unlike a post
+  
   const unlikePost = (id) => {
     fetch(`${API_BASE}/unlike`, {
       method: "PUT",
@@ -92,8 +104,7 @@ export default function Home() {
       })
       .catch(() => toast.error("Error unliking post"));
   };
-
-  // 🔹 Comment on a post
+  
   const makeComment = (text, postId) => {
     fetch(`${API_BASE}/comment`, {
       method: "PUT",
@@ -113,25 +124,13 @@ export default function Home() {
       .catch(() => toast.error("Error posting comment"));
   };
 
-  // 🔹 Toggle comment modal
   const toggleComment = (post = null) => {
     setShow(!show);
     setItem(post);
   };
 
-  // 🔹 Handle comment input
   const handleCommentChange = (postId, value) => {
     setComments((prev) => ({ ...prev, [postId]: value }));
-  };
-
-  // 🔹 Emoji picker
-  const onEmojiClick = (emojiObject) => {
-    if (currentPostId) {
-      setComments((prev) => ({
-        ...prev,
-        [currentPostId]: (prev[currentPostId] || "") + emojiObject.emoji,
-      }));
-    }
   };
 
   if (error) return <div className="error">Error: {error}</div>;
@@ -144,7 +143,6 @@ export default function Home() {
       ) : (
         data.map((post) => (
           <div className="card" key={post._id}>
-            {/* 🔹 Post Header */}
             <div className="card-header">
               <div className="card-pic">
                 <img
@@ -157,7 +155,6 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* 🔹 Post Content */}
             <div className="card-image">
               {post.mediaType === "video" ? (
                 <video src={post.photo} controls muted loop />
@@ -166,7 +163,6 @@ export default function Home() {
               )}
             </div>
 
-            {/* 🔹 Like / Comment */}
             <div className="card-content">
               {post.likes.includes(user._id) ? (
                 <span
@@ -193,7 +189,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* 🔹 Add Comment */}
             <div className="add-comment">
               <span
                 className="material-symbols-outlined"
@@ -230,7 +225,6 @@ export default function Home() {
 
       {loading && <div>Loading...</div>}
 
-      {/* 🔹 Comment Modal */}
       {show && item && (
         <div className="showComment">
           <div className="container">

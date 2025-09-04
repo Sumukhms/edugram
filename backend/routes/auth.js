@@ -26,12 +26,12 @@ router.post("/signup",(req,res)=>{
                 userName,
                 password:hashedPassword
             })
-        
+
             user.save()
             .then(user => {res.json({message:"Registered succesfully"})})
             .catch(err => {console.log(err)})
         })
-      
+
     })
 
 })
@@ -48,10 +48,10 @@ router.post("/signin", (req, res) => {
         bcrypt.compare(password, savedUser.password).then((match) => {
             if (match) {
                 // return res.status(200).json({ message: "Signed in Successfully" })
-                const token = jwt.sign({ _id: savedUser.id }, process.env.Jwt_secret); // <-- CHANGE THIS LINE
-                const { _id, name, email, Photo } = savedUser;
-                res.json({ token, user: { _id, name, email, Photo } });
-                console.log({ token, user: { _id, name, email, Photo } });
+                const token = jwt.sign({ _id: savedUser.id }, process.env.Jwt_secret);
+                const { _id, name, email, photo } = savedUser;
+                res.json({ token, user: { _id, name, email, photo } });
+                console.log({ token, user: { _id, name, email, photo } });
             } else {
                 return res.status(422).json({ error: "Invalid password" });
             }

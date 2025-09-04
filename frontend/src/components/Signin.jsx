@@ -2,7 +2,7 @@ import React,{useState,useContext} from 'react'
 import '../css/Signin.css'
 import logo from '../img/logo.PNG'
 import { Link, useNavigate} from 'react-router-dom'
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { LoginContext } from '../context/LoginContext';
 
 export default function Signin() {
@@ -29,8 +29,7 @@ export default function Signin() {
     fetch(`${API_BASE}/signin`,{
       method:"post",
       headers:{
-        "Content-Type":"application/json",
-        "Authorization": "Bearer " + localStorage.getItem("jwt")
+        "Content-Type":"application/json"
       },
       body:JSON.stringify({
         email:email,
@@ -51,7 +50,7 @@ export default function Signin() {
       console.log(data)
     })
     }
-  
+
 
   return (
     <div className="signIn">
@@ -67,7 +66,7 @@ export default function Signin() {
           <input type="submit" id='login-btn' value="Sign In" onClick={()=>{postData()}}/>
         </div>
         <div className="loginForm2">
-          Don't have an account ? 
+          Don't have an account ?
           <Link to="/signup">
           <span style={{color:"blue" , cursor:"pointer"}}>Sign Up</span>
           </Link>

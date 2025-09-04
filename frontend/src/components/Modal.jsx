@@ -1,12 +1,12 @@
-import React, { useContext } from 'react'; // 1. Import useContext
+import React, { useContext } from 'react';
 import { RiCloseLine } from "react-icons/ri";
-import "../css/Modal.css";  
+import "../css/Modal.css";
 import { useNavigate } from 'react-router-dom';
-import { LoginContext } from '../context/LoginContext'; // 2. Import LoginContext
+import { LoginContext } from '../context/LoginContext';
 
 export default function Modal({ setModalOpen }) {
     const navigate = useNavigate();
-    const { setUserLogin } = useContext(LoginContext); // 3. Get setUserLogin from context
+    const { setUserLogin } = useContext(LoginContext) || {};
 
     return (
         <div className="darkBg" onClick={() => setModalOpen(false)}>
@@ -22,7 +22,7 @@ export default function Modal({ setModalOpen }) {
                     <button className="logOutBtn" onClick={() => {
                         setModalOpen(false);
                         localStorage.clear();
-                        setUserLogin(false); // THIS IS THE FIX
+                        setUserLogin(false);
                         navigate("/signin");
                     }}>
                         Log Out

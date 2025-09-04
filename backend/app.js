@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 5000; // Corrected to uppercase PORT
+const PORT = process.env.PORT || 5000;
 const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");

@@ -30,7 +30,7 @@ const [modalOpen, setModalOpen] = useState(false)
         <Route exact path='/profile' element={<Profile/>}></Route>
         <Route path='/createPost' element={<Createpost/>}></Route>
         <Route path='/profile/:userid' element={<UserProfile/>}></Route>
-        <Route path="/followingpost" element={< MyFollowingPost />} />
+        <Route path="/followingpost" element={< MyFollowingPost />} />
       </Routes>
       <ToastContainer  theme='dark'/>
 
@@ -38,7 +38,7 @@ const [modalOpen, setModalOpen] = useState(false)
       </LoginContext.Provider>
     </div>
     </BrowserRouter>
-      
+
   );
 }
 
