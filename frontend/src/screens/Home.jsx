@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { UserContext } from "../App";
+import { LoginContext } from "../context/LoginContext";
 import { ToastContainer, toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import Picker from "emoji-picker-react";
@@ -15,7 +15,7 @@ const defaultPostPic =
 
 export default function Home() {
   const [data, setData] = useState([]);
-  const { state: user } = useContext(UserContext); // ✅ Fixed user
+  const { state: user } = useContext(LoginContext); // ✅ Fixed user
   const [skip, setSkip] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
