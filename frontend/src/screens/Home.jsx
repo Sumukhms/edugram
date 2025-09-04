@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useContext } from "react";
 import { LoginContext } from "../context/LoginContext";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import Picker from "emoji-picker-react";
-import "react-toastify/dist/ReactToastify.css";
+import "../css/Home.css";
 
 const API_BASE = process.env.REACT_APP_API_URL;
 
@@ -34,8 +34,15 @@ export default function Home() {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
       },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.status === 401) {
+          navigate("/signin");
+          return;
+        }
+        return res.json();
+      })
       .then((result) => {
+        if (!result) return;
         if (result.posts.length < limit) setHasMore(false);
         setData((prev) => [...prev, ...result.posts]);
         setLoading(false);
@@ -50,12 +57,11 @@ export default function Home() {
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
-        setUser(storedUser);
+      setUser(storedUser);
+      fetchPosts();
     } else {
-        navigate("/signin");
+      navigate("/signin");
     }
-
-    fetchPosts();
   }, [skip, navigate]);
 
   const onEmojiClick = (emojiObject) => {
@@ -66,7 +72,7 @@ export default function Home() {
       }));
     }
   };
-  
+
   const likePost = (id) => {
     fetch(`${API_BASE}/like`, {
       method: "PUT",
@@ -85,7 +91,7 @@ export default function Home() {
       })
       .catch(() => toast.error("Error liking post"));
   };
-  
+
   const unlikePost = (id) => {
     fetch(`${API_BASE}/unlike`, {
       method: "PUT",
@@ -104,7 +110,7 @@ export default function Home() {
       })
       .catch(() => toast.error("Error unliking post"));
   };
-  
+
   const makeComment = (text, postId) => {
     fetch(`${API_BASE}/comment`, {
       method: "PUT",
@@ -313,8 +319,6 @@ export default function Home() {
           </div>
         </div>
       )}
-
-      <ToastContainer />
     </div>
   );
 }
