@@ -31,13 +31,13 @@ router.get("/allposts", requireLogin, async (req, res) => {
 
 // Route to create a post
 router.post("/createPost", requireLogin, async (req, res) => {
-  const { body, pic } = req.body;
+  // Add mediaType to the destructured body
+  const { body, pic, mediaType } = req.body;
 
   if (!body || !pic) {
     return res.status(422).json({ error: "Please add all the fields" });
   }
 
-  // Ensure req.user is available
   if (!req.user || !req.user._id) {
     return res.status(400).json({ error: "User not authenticated" });
   }
@@ -46,6 +46,7 @@ router.post("/createPost", requireLogin, async (req, res) => {
     const post = new POST({
       body,
       photo: pic,
+      mediaType: mediaType || 'image', // Save the mediaType, default to 'image'
       postedBy: req.user._id,
     });
 
@@ -212,14 +213,14 @@ router.delete("/deletePost/:postId", requireLogin, async (req, res) => {
 router.get("/myfollowingpost", requireLogin, async (req, res) => {
   try {
     const posts = await POST.find({ postedBy: { $in: req.user.following } })
-      .populate("postedBy", "_id name photo") // Ensure correct case
+      .populate("postedBy", "_id name photo")
       .populate("comments.postedBy", "_id name")
-      .sort("-createdAt")
-    if (!posts || posts.length === 0) {
-      return res.status(404).json({ error: "No posts found" });
-    }
-
-    res.json(posts);
+      .sort("-createdAt");
+      
+    // This now sends an empty array [] if no posts are found,
+    // which fixes the frontend error.
+    res.json(posts); 
+    
   } catch (err) {
     res.status(500).json({ error: "Internal server error", details: err.message });
   }

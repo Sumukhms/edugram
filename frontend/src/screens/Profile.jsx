@@ -4,37 +4,32 @@ import PostDetail from "../components/PostDetail";
 import ProfilePic from "../components/ProfilePic";
 
 export default function Profile() {
-  const [pic, setPic] = useState([]); // Store posts
-  const [user, setUser] = useState(null); // Store user info
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
-  const [show, setShow] = useState(false); // Toggle post details
-  const [posts, setPosts] = useState([]); // Specific post details
-  const [changePic, setChangePic] = useState(false); // Toggle profile pic modal
+  const [pic, setPic] = useState([]);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [show, setShow] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [changePic, setChangePic] = useState(false);
 
-  // Default profile picture
   const defaultProfilePic = "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
 
-  // Toggle Post Details
   const toggleDetails = (post) => {
     setShow(!show);
-    if (!show) setPosts(post); // Pass specific post details
+    if (!show) setPosts(post);
   };
 
-  // Toggle Profile Picture Modal
   const changeProfile = () => {
     setChangePic(!changePic);
   };
 
-  // Update Profile Picture Callback
   const updateProfilePic = (newPic) => {
     setUser((prev) => ({
       ...prev,
-      photo: newPic, // Update the user's profile picture URL
+      photo: newPic,
     }));
   };
 
-  // Fetch user data and posts
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user"));
     if (!userData) {
@@ -42,8 +37,6 @@ export default function Profile() {
       setLoading(false);
       return;
     }
-
-    setUser(userData);
 
     fetch(`/user/${userData._id}`, {
       headers: {
@@ -55,74 +48,72 @@ export default function Profile() {
         return res.json();
       })
       .then((result) => {
-        setPic(result.posts || []); // Ensure result.posts is an array
-        setUser(result.user); // Set user data, which includes the photo
-        setLoading(false); // Stop loading
+        setPic(result.posts || []);
+        setUser(result.user);
+        setLoading(false);
       })
       .catch((err) => {
         setError("Error fetching user posts. Please try again later.");
         console.error(err);
         setLoading(false);
       });
-  }, []); // Make sure this effect runs only once when the component mounts
+  }, []);
 
   if (loading) {
-    return <div className="loading">Loading profile...</div>;
+    return <div className="loading" style={{textAlign: "center", marginTop: "50px"}}><h1>Loading profile...</h1></div>;
   }
 
   if (error) {
-    return <div className="error">{error}</div>;
+    return <div className="error" style={{textAlign: "center", marginTop: "50px"}}><h1>{error}</h1></div>;
   }
 
   return (
-    <div className={`profile ${show || changePic ? "active" : ""}`}>
-      {/* Profile Frame */}
-      <div className="profile-frame">
-        <div className="profile-pic">
-          {/* Display the photo from user data or default */}
-          <img
-            src={user.photo || defaultProfilePic}
-            onClick={changeProfile}
-            alt="profile"
-          />
-        </div>
-        {/* Profile Data */}
-        <div className="profile-data">
-          <h1>{user.name}</h1>
-          <div className="profile-info" style={{ display: "flex" }}>
-            <p>{pic.length} posts</p>
-            <p>{user.followers?.length || 0} followers</p>
-            <p>{user.following?.length || 0} following</p>
+    <div className="profile">
+      <div className="profile-container">
+        {/* Profile Frame */}
+        <div className="profile-frame">
+          <div className="profile-pic" onClick={changeProfile}>
+            <img src={user.photo || defaultProfilePic} alt="profile" />
+          </div>
+          
+          <div className="profile-data">
+            <div className="profile-data-top">
+              <h1>{user.name}</h1>
+            </div>
+            <div className="profile-info">
+              <p><span>{pic.length}</span> posts</p>
+              <p><span>{user.followers?.length || 0}</span> followers</p>
+              <p><span>{user.following?.length || 0}</span> following</p>
+            </div>
           </div>
         </div>
+        
+        {/* Gallery */}
+        <div className="gallery">
+          {pic.map((item) => (
+            <div className="item" key={item._id} onClick={() => toggleDetails(item)}>
+               {item.mediaType === 'video' ? (
+                <video src={item.photo} muted />
+              ) : (
+                <img src={item.photo} alt="User Post" />
+              )}
+               <div className="post-overlay">
+                  <div className="overlay-info">
+                      <span className="material-symbols-outlined">favorite</span>
+                      {item.likes.length}
+                  </div>
+                  <div className="overlay-info">
+                      <span className="material-symbols-outlined">chat_bubble</span>
+                      {item.comments.length}
+                  </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-      <hr
-        style={{
-          width: "90%",
-          margin: "auto",
-          opacity: "0.8",
-          margin: "25px auto",
-        }}
-      />
-      {/* Gallery */}
-      <div className="gallery">
-        {pic.length > 0 ? (
-          pic.map((item) => (
-            <img
-              key={item._id}
-              src={item.photo}
-              alt="User Post"
-              className="item"
-              onClick={() => toggleDetails(item)}
-            />
-          ))
-        ) : (
-          <p>No posts available</p>
-        )}
-      </div>
-      {/* Post Details Modal */}
+      
+      {/* Modals remain outside the container */}
       {show && <PostDetail item={posts} toggleDetails={toggleDetails} />}
-      {/* Profile Picture Modal */}
       {changePic && (
         <ProfilePic
           changeProfile={changeProfile}

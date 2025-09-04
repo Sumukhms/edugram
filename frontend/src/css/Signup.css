@@ -1,62 +1,67 @@
-.signUp{
-    background-image: url(https://files.123freevectors.com/wp-content/original/202451-pastel-blue-plain-background-vector-eps.jpg);
-    background-size: cover;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.signUp {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--primary-gradient);
+  padding: 40px 20px;
+  box-sizing: border-box;
 }
 
-.form{
-    background-color: rgb(103, 184, 188);
-    padding: 30px;
-    border: 1px solid rgb(118, 83, 83);
-    border-radius: 1px;
+.form, .form2 {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 30px 40px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-.signUpLogo{
-    width: 150px;
-    object-fit: contain;
+.form2 {
+    margin-top: 15px;
+    padding: 20px;
 }
 
-.loginPara{
-    color: rgbs(var(--f52,142,142,142),1);
-    font-size: 17px;
-    font-weight: 600;
-    line-height:  20px; 
-    margin: 0px 40px 20px 40px;
+.signUpLogo {
+  width: 150px;
+  object-fit: contain;
+  margin-bottom: 10px;
 }
 
-input{
-    padding: 5px;
-    margin: 3px 0px;
-    outline: none;
-    font-size: 16px;
-    width: 100%;
-    box-sizing: border-box;
+.loginPara {
+  color: var(--secondary-text);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  margin: 0px 10px 20px 10px;
 }
 
-.form > div{
-    width: 80%;
-    margin: auto;
+.form > div {
+  width: 100%;
+  margin: auto;
 }
 
-#submit-btn{
-    background-color: #1773ea;
-    border: none;
-    border-radius: 3px;
-    color: white;
-    font-weight: bold;
-    padding:5px 10px ;
-    width: 80%;
-    cursor: pointer;
-    margin-top: 8px;
+#submit-btn {
+ background: var(--accent-color); /* Updated from gradient */
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  padding: 12px 10px;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 15px;
+  font-size: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.form2{
-    background-color: rgb(103, 184, 188);
-    padding: 30px;
-    margin-top: 30px;
-    border: 1px solid rgb(118, 83, 83);
-    border-radius: 1px;
+#submit-btn:hover {
+    background: var(--accent-hover-color); /* Updated */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2)
 }

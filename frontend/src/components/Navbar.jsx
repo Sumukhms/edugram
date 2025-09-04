@@ -22,19 +22,22 @@ export default function Navbar({ login }) {
     if (login || token) {
       return (
         <>
+          {/* HOME LINK ADDED FOR DESKTOP */}
+          <Link to="/">
+            <li>Home</li>
+          </Link>
           <Link to="/profile">
             <li>Profile</li>
           </Link>
           <Link to="/createPost">
             <li>Create Post</li>
           </Link>
-          <Link to="/followingpost" style={{ marginLeft: "20px" }}>
+          <Link to="/followingpost">
             <li>My Following</li>
           </Link>
           <button
             className="primaryBtn"
             onClick={() => setModalOpen && setModalOpen(true)}
-            style={{ marginLeft: "20px" }}
           >
             Log Out
           </button>
@@ -61,7 +64,9 @@ export default function Navbar({ login }) {
       return (
         <>
           <Link to="/">
-            <span className="material-symbols-outlined">home</span>
+            <li>
+              <span className="material-symbols-outlined">home</span>
+            </li>
           </Link>
           <Link to="/profile">
             <li>
@@ -73,7 +78,7 @@ export default function Navbar({ login }) {
               <span className="material-symbols-outlined">add_box</span>
             </li>
           </Link>
-          <Link to="/followingpost" style={{ marginLeft: "20px" }}>
+          <Link to="/followingpost">
             <li>
               <span className="material-symbols-outlined">explore</span>
             </li>
@@ -81,7 +86,6 @@ export default function Navbar({ login }) {
           <li
             className="logout-mobile-btn"
             onClick={() => setModalOpen && setModalOpen(true)}
-            style={{ marginLeft: "20px" }}
           >
             <span className="material-symbols-outlined">logout</span>
           </li>

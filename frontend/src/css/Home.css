@@ -1,130 +1,110 @@
-.card{
-    max-width: 500px;
-    height: max-content;
-    margin: 25px auto;
-    border: 1px solid rgb(173,173,173);
-    border-radius: 5px;
-}
-.card-header{
-    display: flex;
-}
-
-.card-header h5{
-    margin: 0px;
-    padding: 11px ;
-
-}
-.card-pic img{
-    width: 30px;
-    border-radius: 300px;
-    height:auto;
-    object-fit: contain;
-    padding: 5px;
-
+/* New Animation for cards */
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.card-image img{
-    width: 100%;
+.card {
+  max-width: 550px;
+  margin: 30px auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background-color: var(--container-background);
+  box-shadow: var(--card-shadow);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  animation: cardEnter 0.6s ease-out;
+  cursor: pointer; /* This is the new line */
 }
 
-.card-content{
-    text-align: left;
-    line-height: 4px;
-    padding: 3px 10px;
-    border-bottom: 1px solid rgb(173,173,173);
-}
-.add-comment{
-    display: flex;
-    align-items: center;
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
-.add-cooment-input{
-    margin: 0;
-    outline: none;
-    border: none;
-    padding: 10px;
-}
-.comment{
-    border:none;
-    background-color: none;
-    font-weight: bolder;
-    cursor: pointer;
-    color: #339ce3
+.card-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
 }
 
+.card-header h5 {
+  margin: 0;
+  padding-left: 12px;
+  font-weight: 600;
+}
+
+.card-pic img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.card-image img,
+.card-image video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.card-content {
+  text-align: left;
+  line-height: 1.5;
+  padding: 10px 16px;
+}
+
+.card-content p {
+  margin: 5px 0;
+}
+
+.add-comment {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-top: 1px solid var(--border-color);
+  position: relative;
+}
+
+.add-comment input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+.comment {
+  border: none;
+  background-color: transparent;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--accent-color);
+  font-size: 14px;
+}
+
+/* --- Emoji Picker Styles --- */
+.picker-container {
+  position: absolute;
+  bottom: 60px;
+  left: 10px;
+  z-index: 10;
+}
 
 .material-symbols-outlined-red {
-   color: red;
-  font-variation-settings:
-  'FILL' 1,
-  'wght' 700,
-  'GRAD' 0,
-  'opsz' 24
+  color: var(--error-color);
+  font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 24;
 }
 
-.material-symbols-outlined{
-    cursor: pointer;
+.material-symbols-outlined {
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-.showComment{
-    width: 100vw;
-    min-height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: rgba(16,13,13,0.4);
-}
-
-.container{
-    display: flex;
-    width: 80%;
-    background-color: white;
-    position: absolute;
-    top: 10%;
-    left: 10%;
-    height: 500px;
-}
-
-.postPic{
-    background-color: black;
-    display: flex;
-    align-items: center;
-}
-
-.postPic img{
-    object-fit: contain;
-    width: 100%;
-}
-
-.details{
-    width: 100%;
-    height: inherit;
-    display: flex;
-    flex-direction: column;
-}
-
-.comment-section{
-    flex-grow: 4;
-    text-align: left;
-    margin-left: 10px;
-
-}
-
-.close-comment{
-    position: fixed;
-    top: 1%;
-    right: 5%;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-
-.material-symbols-outlined-comment {
-    font-size: 40px;
-  font-variation-settings:
-  'FILL' 0,
-  'wght' 700,
-  'GRAD' 0,
-  'opsz' 24
+.material-symbols-outlined:active {
+  transform: scale(0.9); /* Add feedback on click */
 }

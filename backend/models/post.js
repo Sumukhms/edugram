@@ -5,16 +5,22 @@ const { ObjectId } = mongoose.Schema.Types;
 const postSchema = new mongoose.Schema({
   body: {
     type: String,
-    required: [true, "Post body is required"], // Improved error message
+    required: [true, "Post body is required"],
   },
   photo: {
     type: String,
-    required: [true, "Photo URL is required"], // Fixed typo in `require` and added validation message
+    required: [true, "Media URL is required"],
+  },
+  // ADD THIS NEW FIELD
+  mediaType: {
+    type: String,
+    enum: ['image', 'video'],
+    default: 'image'
   },
   likes: [
     {
       type: ObjectId,
-      ref: "USER", // Ensure "USER" matches your user model name
+      ref: "USER",
     },
   ],
   comments:[{
@@ -23,12 +29,11 @@ const postSchema = new mongoose.Schema({
   }],
   postedBy: {
     type: ObjectId,
-    ref: "USER", // Ensure "USER" matches your user model name
-    required: [true, "PostedBy user reference is required"], // Add required field validation
+    ref: "USER",
+    required: [true, "PostedBy user reference is required"],
   },
 }, {
-  timestamps: true, // Automatically add `createdAt` and `updatedAt` fields
+  timestamps: true,
 });
 
-// Register the model
 mongoose.model("POST", postSchema);
