@@ -5,6 +5,13 @@ const requireLogin = require("../middlewares/requireLogin");
 const POST = mongoose.model("POST");
 const rateLimit = require("express-rate-limit");
 
+// Configure rate limiting
+const createPostLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 create requests per windowMs
+  message: "Too many posts created, please try again after 15 minutes",
+});
+
 // Validation middleware for post inputs
 const validatePostInput = (req, res, next) => {
   const { body, pic, mediaType } = req.body;
@@ -31,15 +38,6 @@ const paginateResults = ({ page = 1, limit = 10 }) => {
     limit: validLimit,
   };
 };
-
-// Rate limiting middleware
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-});
-
-// Apply rate limiting to all requests
-router.use(limiter);
 
 /**
  * @route   GET /api/posts/allposts
@@ -75,28 +73,28 @@ router.get("/allposts", requireLogin, async (req, res) => {
   }
 });
 
-// Route to create a post
+// Apply rate limiting only to post creation
 router.post(
   "/createPost",
+  createPostLimiter,
   requireLogin,
   validatePostInput,
   async (req, res) => {
-    // Add mediaType to the destructured body
-    const { body, pic, mediaType } = req.body;
-
-    if (!body || !pic) {
-      return res.status(422).json({ error: "Please add all the fields" });
-    }
-
-    if (!req.user || !req.user._id) {
-      return res.status(400).json({ error: "User not authenticated" });
-    }
-
     try {
+      const { body, pic, mediaType } = req.body;
+
+      if (!body || !pic) {
+        return res.status(422).json({ error: "Please add all the fields" });
+      }
+
+      if (!req.user || !req.user._id) {
+        return res.status(400).json({ error: "User not authenticated" });
+      }
+
       const post = new POST({
         body,
         photo: pic,
-        mediaType: mediaType || "image", // Save the mediaType, default to 'image'
+        mediaType: mediaType || "image",
         postedBy: req.user._id,
       });
 
