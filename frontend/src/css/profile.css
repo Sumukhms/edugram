@@ -4,17 +4,25 @@
   padding: 0 20px;
 }
 
-/* Profile Header Section */
+.profile-container {
+  background-color: var(--container-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 40px;
+}
+
 .profile-frame {
   display: flex;
-  align-items: center;
+  flex-direction: row; 
+  align-items: center;    
   justify-content: flex-start;
-  padding-bottom: 40px;
+  padding-bottom: 30px;
   border-bottom: 1px solid var(--border-color);
 }
 
 .profile-pic {
-  margin-right: 80px;
+  margin-right: 80px;      
+  margin-bottom: 0;        
   flex-shrink: 0;
 }
 
@@ -28,12 +36,13 @@
 }
 
 .profile-data {
-  text-align: left;
+  text-align: left; 
 }
 
 .profile-data-top {
   display: flex;
   align-items: center;
+  justify-content: flex-start; 
   margin-bottom: 20px;
 }
 
@@ -46,6 +55,7 @@
 .profile-info {
   display: flex;
   gap: 40px;
+  justify-content: flex-start; 
 }
 
 .profile-info p {
@@ -57,7 +67,50 @@
   font-weight: 600;
 }
 
-/* Gallery Section */
+.followBtn, .unfollowBtn {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 10px 28px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-left: 20px;
+  transition: all 0.25s ease;
+}
+
+.followBtn {
+  border: none;
+  color: white;
+  background: var(--accent-color);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.followBtn:hover {
+  background: var(--accent-hover-color);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px -10px var(--accent-color);
+}
+
+.followBtn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px -10px var(--accent-color);
+}
+
+.unfollowBtn {
+  border: 1px solid var(--border-color);
+  color: var(--primary-text);
+  background: var(--container-background);
+}
+
+.unfollowBtn:hover {
+  background-color: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.unfollowBtn:active {
+    transform: scale(0.98);
+    background-color: #e9ecef;
+}
+
 .gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -67,12 +120,13 @@
 
 .item {
   position: relative;
-  cursor: pointer;
   width: 100%;
   padding-bottom: 100%;
+  cursor: pointer; /* This is the new line */
 }
 
-.item img {
+.item img,
+.item video {
   position: absolute;
   top: 0;
   left: 0;
@@ -80,103 +134,4 @@
   height: 100%;
   object-fit: cover;
   border-radius: 4px;
-}
-
-.post-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 30px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.item:hover .post-overlay {
-  opacity: 1;
-}
-
-.overlay-info {
-  display: flex;
-  align-items: center;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.overlay-info .material-symbols-outlined {
-  margin-right: 8px;
-}
-
-/* --- New Styles for Profile Picture Modal --- */
-.changePic {
-  background-color: var(--container-background);
-  border-radius: var(--border-radius);
-  box-shadow: var(--card-shadow);
-  width: 90%;
-  max-width: 400px;
-}
-
-.changePic h2 {
-  font-size: 18px;
-  font-weight: 600;
-  padding: 20px;
-  margin: 0;
-  border-bottom: 1px solid var(--border-color);
-  text-align: center;
-}
-
-.action-div {
-  border-top: 1px solid var(--border-color);
-}
-
-.upload-btn {
-  cursor: pointer;
-  background: none;
-  border: none;
-  font-size: 14px;
-  width: 100%;
-  padding: 15px;
-}
-
-.image-preview-container {
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-}
-
-.image-preview {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.loader-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
-  min-height: 150px;
-}
-
-.spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border-left-color: var(--accent-color);
-  animation: spin 1s ease infinite;
-  margin-bottom: 20px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }

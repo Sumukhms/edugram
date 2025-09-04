@@ -31,13 +31,13 @@ router.get("/allposts", requireLogin, async (req, res) => {
 
 // Route to create a post
 router.post("/createPost", requireLogin, async (req, res) => {
-  const { body, pic } = req.body;
+  // Add mediaType to the destructured body
+  const { body, pic, mediaType } = req.body;
 
   if (!body || !pic) {
     return res.status(422).json({ error: "Please add all the fields" });
   }
 
-  // Ensure req.user is available
   if (!req.user || !req.user._id) {
     return res.status(400).json({ error: "User not authenticated" });
   }
@@ -46,6 +46,7 @@ router.post("/createPost", requireLogin, async (req, res) => {
     const post = new POST({
       body,
       photo: pic,
+      mediaType: mediaType || 'image', // Save the mediaType, default to 'image'
       postedBy: req.user._id,
     });
 

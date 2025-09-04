@@ -1,3 +1,15 @@
+/* New Animation for cards */
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .card {
   max-width: 550px;
   margin: 30px auto;
@@ -6,6 +18,8 @@
   background-color: var(--container-background);
   box-shadow: var(--card-shadow);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
+  animation: cardEnter 0.6s ease-out;
+  cursor: pointer; /* This is the new line */
 }
 
 .card:hover {
@@ -32,9 +46,11 @@
   object-fit: cover;
 }
 
-.card-image img {
+.card-image img,
+.card-image video {
   width: 100%;
   height: auto;
+  display: block;
 }
 
 .card-content {
@@ -52,7 +68,7 @@
   align-items: center;
   padding: 8px 16px;
   border-top: 1px solid var(--border-color);
-  position: relative; /* Needed for emoji picker positioning */
+  position: relative;
 }
 
 .add-comment input {
@@ -74,7 +90,7 @@
 /* --- Emoji Picker Styles --- */
 .picker-container {
   position: absolute;
-  bottom: 60px; /* Position above the input */
+  bottom: 60px;
   left: 10px;
   z-index: 10;
 }
@@ -86,76 +102,9 @@
 
 .material-symbols-outlined {
   cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-.showComment {
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.65);
-  z-index: 100;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.showComment .container {
-  display: flex;
-  width: 100%;
-  max-width: 950px;
-  height: 600px;
-  max-height: 90vh;
-  background-color: var(--container-background);
-  border-radius: var(--border-radius);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  overflow: hidden;
-  position: relative; 
-  top: auto;
-  left: auto;
-  transform: none;
-}
-
-.postPic {
-  background-color: black;
-  display: flex;
-  align-items: center;
-  flex: 1.5;
-}
-
-.postPic img {
-  object-fit: contain;
-  width: 100%;
-}
-
-.details {
-  width: 100%;
-  height: inherit;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.comment-section {
-  flex-grow: 1;
-  text-align: left;
-  padding: 15px;
-  overflow-y: auto;
-}
-
-.close-comment {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  color: white;
-  border: none;
-  cursor: pointer;
-  background: none;
-}
-
-.material-symbols-outlined-comment {
-  font-size: 40px;
+.material-symbols-outlined:active {
+  transform: scale(0.9); /* Add feedback on click */
 }

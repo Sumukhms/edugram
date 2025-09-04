@@ -69,35 +69,35 @@ export default function Profile() {
 
   return (
     <div className="profile">
-      {/* Profile Frame */}
-      <div className="profile-frame">
-        <div className="profile-pic" onClick={changeProfile}>
-          <img src={user.photo || defaultProfilePic} alt="profile" />
+      <div className="profile-container">
+        {/* Profile Frame */}
+        <div className="profile-frame">
+          <div className="profile-pic" onClick={changeProfile}>
+            <img src={user.photo || defaultProfilePic} alt="profile" />
+          </div>
+          
+          <div className="profile-data">
+            <div className="profile-data-top">
+              <h1>{user.name}</h1>
+            </div>
+            <div className="profile-info">
+              <p><span>{pic.length}</span> posts</p>
+              <p><span>{user.followers?.length || 0}</span> followers</p>
+              <p><span>{user.following?.length || 0}</span> following</p>
+            </div>
+          </div>
         </div>
         
-        {/* Profile Data */}
-        <div className="profile-data">
-          <div className="profile-data-top">
-            <h1>{user.name}</h1>
-          </div>
-          <div className="profile-info">
-            <p><span>{pic.length}</span> posts</p>
-            <p><span>{user.followers?.length || 0}</span> followers</p>
-            <p><span>{user.following?.length || 0}</span> following</p>
-          </div>
-        </div>
-      </div>
-      
-      {/* Gallery */}
-      <div className="gallery">
-        {pic.length > 0 ? (
-          pic.map((item) => (
+        {/* Gallery */}
+        <div className="gallery">
+          {pic.map((item) => (
             <div className="item" key={item._id} onClick={() => toggleDetails(item)}>
-              <img
-                src={item.photo}
-                alt="User Post"
-              />
-              <div className="post-overlay">
+               {item.mediaType === 'video' ? (
+                <video src={item.photo} muted />
+              ) : (
+                <img src={item.photo} alt="User Post" />
+              )}
+               <div className="post-overlay">
                   <div className="overlay-info">
                       <span className="material-symbols-outlined">favorite</span>
                       {item.likes.length}
@@ -108,13 +108,11 @@ export default function Profile() {
                   </div>
               </div>
             </div>
-          ))
-        ) : (
-          <p>No posts available</p>
-        )}
+          ))}
+        </div>
       </div>
       
-      {/* Modals */}
+      {/* Modals remain outside the container */}
       {show && <PostDetail item={posts} toggleDetails={toggleDetails} />}
       {changePic && (
         <ProfilePic

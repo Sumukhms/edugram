@@ -1,11 +1,11 @@
 .darkBg {
-  background-color: rgba(0, 0, 0, 0.65); /* Darker overlay */
+  background-color: rgba(0, 0, 0, 0.65);
   width: 100vw;
   height: 100vh;
   z-index: 50;
   top: 0;
   left: 0;
-  position: fixed; /* This is the key fix */
+  position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13,92 +13,74 @@
 
 .centered {
   position: relative;
-  background: white;
-  color: white;
-  z-index: 10;
-  border-radius: 16px;
-  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.04);
 }
 
 .modal {
-  width: 250px;
-  background: white;
-  color: #2c3e50; /* Changed for readability */
-}
-
-.modalHeader {
-  height: 50px;
-  background: white;
-  overflow: hidden;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
+  width: 90%;
+  max-width: 320px;
+  padding: 20px;
+  background: var(--container-background);
+  color: var(--primary-text); /* This fixes the invisible text */
+  z-index: 10;
+  border-radius: var(--border-radius);
+  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 .heading {
-  margin: 0;
-  padding: 10px;
-  color: #2c3e50;
-  font-weight: 500;
-  font-size: 18px;
-  text-align: center;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--primary-text);
 }
 
 .modalContent {
-  padding: 10px;
-  font-size: 14px;
-  color: #2c3e50;
-  text-align: center;
-}
-
-.modalActions {
-  position: absolute;
-  bottom: 2px;
-  margin-bottom: 10px;
-  width: 100%;
+  padding: 10px 0;
+  font-size: 16px;
+  color: var(--secondary-text);
+  margin-bottom: 20px;
 }
 
 .actionsContainer {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.closeBtn {
-  cursor: pointer;
-  font-weight: 500;
-  padding: 4px 8px;
-  border-radius: 8px;
-  border: none;
-  font-size: 18px;
-  color: white;
-  background: #2c3e50;
-  transition: all 0.25s ease;
-  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.06);
-  position: absolute;
-  right: 0;
-  top: 0;
-  align-self: flex-end;
-  margin-top: -7px;
-  margin-right: -7px;
+  justify-content: center;
+  gap: 15px; /* Adds space between buttons */
 }
 
 .logOutBtn, .cancelBtn {
-    margin-top: 10px;
-    cursor: pointer;
-    font-weight: 500;
-    padding: 11px 28px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    border: none;
-    transition: all 0.25s ease;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  border: none;
+  transition: opacity 0.25s ease;
+  flex-grow: 1; /* Makes buttons take up equal space */
 }
 
 .logOutBtn {
   color: #fff;
-  background: #ff3e4e;
+  background: var(--error-color); /* Red for destructive action */
 }
 
 .cancelBtn {
-  color: #fcfcfc;
-  background: #2c3e50;
+  color: var(--primary-text);
+  background: #e4e6eb; /* Light grey for secondary action */
+}
+
+.logOutBtn:hover, .cancelBtn:hover {
+  opacity: 0.8;
+}
+
+.closeBtn {
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  padding: 5px;
+  font-size: 28px;
+  color: var(--secondary-text);
+  line-height: 1;
 }

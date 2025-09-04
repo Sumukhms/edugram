@@ -52,7 +52,7 @@ input {
 }
 
 #login-btn {
-  background: var(--primary-gradient);
+   background: var(--accent-color);
   border: none;
   border-radius: 8px;
   color: white;
@@ -66,6 +66,7 @@ input {
 }
 
 #login-btn:hover {
+    background: var(--accent-hover-color); /* Updated */
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2)
 }

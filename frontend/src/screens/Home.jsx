@@ -197,8 +197,12 @@ export default function Home() {
                 <h5>{post?.postedBy?.name || "Unknown User"}</h5>
               </Link>
             </div>
-            <div className="card-image">
-              <img src={post.photo || defaultPostPic} alt="Post" />
+           <div className="card-image">
+              {post.mediaType === 'video' ? (
+                <video src={post.photo} controls autoPlay muted loop />
+              ) : (
+                <img src={post.photo || defaultPostPic} alt="Post" />
+              )}
             </div>
             <div className="card-content">
               {post.likes.includes(user._id) ? (
