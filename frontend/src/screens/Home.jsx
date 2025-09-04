@@ -229,10 +229,10 @@ export default function Home() {
                 Post
               </button>
               {showPicker && currentPostId === post._id && (
-                <div className="emoji-picker">
-                  <Picker onEmojiClick={onEmojiClick} />
-                </div>
-              )}
+                  <div className="emoji-picker">
+                    <Picker onEmojiClick={onEmojiClick} />
+                  </div>
+                )}
             </div>
           </div>
         ))
