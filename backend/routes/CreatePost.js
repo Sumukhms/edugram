@@ -3,19 +3,63 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const requireLogin = require("../middlewares/requireLogin");
 const POST = mongoose.model("POST");
+const rateLimit = require("express-rate-limit");
 
-// Route to get all posts with pagination
+// Validation middleware for post inputs
+const validatePostInput = (req, res, next) => {
+  const { body, pic, mediaType } = req.body;
+
+  if (!body || !pic) {
+    return res.status(422).json({ error: "Please add all required fields" });
+  }
+
+  if (mediaType && !["image", "video"].includes(mediaType)) {
+    return res.status(422).json({ error: "Invalid media type" });
+  }
+
+  next();
+};
+
+// Pagination helper function
+const paginateResults = ({ page = 1, limit = 10 }) => {
+  const validPage = Math.max(1, parseInt(page));
+  const validLimit = Math.max(1, Math.min(100, parseInt(limit)));
+  const skip = (validPage - 1) * validLimit;
+
+  return {
+    skip,
+    limit: validLimit,
+  };
+};
+
+// Rate limiting middleware
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+});
+
+// Apply rate limiting to all requests
+router.use(limiter);
+
+/**
+ * @route   GET /api/posts/allposts
+ * @desc    Get all posts with pagination
+ * @access  Private
+ * @query   {number} page - Page number (default: 1)
+ * @query   {number} limit - Posts per page (default: 10)
+ */
 router.get("/allposts", requireLogin, async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const { skip, limit } = paginateResults({
+      page: req.query.page,
+      limit: req.query.limit,
+    });
 
     const posts = await POST.find()
       .skip(skip)
       .limit(limit)
       .populate({ path: "postedBy", select: "_id name photo" })
-      .populate("comments.postedBy","_id name")
+      .populate("comments.postedBy", "_id name")
       .sort("-createdAt")
       .exec();
 
@@ -25,45 +69,54 @@ router.get("/allposts", requireLogin, async (req, res) => {
 
     res.json(posts);
   } catch (err) {
-    res.status(500).json({ error: "Internal server error", details: err.message });
+    res
+      .status(500)
+      .json({ error: "Internal server error", details: err.message });
   }
 });
 
 // Route to create a post
-router.post("/createPost", requireLogin, async (req, res) => {
-  // Add mediaType to the destructured body
-  const { body, pic, mediaType } = req.body;
+router.post(
+  "/createPost",
+  requireLogin,
+  validatePostInput,
+  async (req, res) => {
+    // Add mediaType to the destructured body
+    const { body, pic, mediaType } = req.body;
 
-  if (!body || !pic) {
-    return res.status(422).json({ error: "Please add all the fields" });
+    if (!body || !pic) {
+      return res.status(422).json({ error: "Please add all the fields" });
+    }
+
+    if (!req.user || !req.user._id) {
+      return res.status(400).json({ error: "User not authenticated" });
+    }
+
+    try {
+      const post = new POST({
+        body,
+        photo: pic,
+        mediaType: mediaType || "image", // Save the mediaType, default to 'image'
+        postedBy: req.user._id,
+      });
+
+      const result = await post.save();
+      res.json({ post: result });
+    } catch (err) {
+      res
+        .status(500)
+        .json({ error: "Failed to create post", details: err.message });
+    }
   }
-
-  if (!req.user || !req.user._id) {
-    return res.status(400).json({ error: "User not authenticated" });
-  }
-
-  try {
-    const post = new POST({
-      body,
-      photo: pic,
-      mediaType: mediaType || 'image', // Save the mediaType, default to 'image'
-      postedBy: req.user._id,
-    });
-
-    const result = await post.save();
-    res.json({ post: result });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to create post", details: err.message });
-  }
-});
+);
 
 // Route to get posts created by the logged-in user with pagination
 router.get("/myposts", requireLogin, async (req, res) => {
   try {
-    // Parse page and limit from query params with validation for positive integers
-    const page = Math.max(1, parseInt(req.query.page) || 1);  // Ensure page is at least 1
-    const limit = Math.max(1, parseInt(req.query.limit) || 10); // Ensure limit is at least 1
-    const skip = (page - 1) * limit;
+    const { skip, limit } = paginateResults({
+      page: req.query.page,
+      limit: req.query.limit,
+    });
 
     // Check if user is authenticated
     if (!req.user || !req.user._id) {
@@ -76,8 +129,8 @@ router.get("/myposts", requireLogin, async (req, res) => {
       .limit(limit)
       .populate({ path: "postedBy", select: "_id name" })
       .populate({ path: "comments.postedBy", select: "_id name" })
-      .sort("-createdAt")
-      
+      .sort("-createdAt");
+
     // Handle case where no posts are found
     if (!myposts || myposts.length === 0) {
       return res.status(404).json({ error: "No posts found for this user" });
@@ -87,51 +140,37 @@ router.get("/myposts", requireLogin, async (req, res) => {
     res.json(myposts);
   } catch (err) {
     // Error handling with more detailed information
-    res.status(500).json({ error: "Internal server error", details: err.message });
+    res
+      .status(500)
+      .json({ error: "Internal server error", details: err.message });
   }
 });
 
+// Like post route - converted to async/await
+router.put("/like", requireLogin, async (req, res) => {
+  try {
+    const { postId } = req.body;
 
-// Route to like a post
-router.put("/like", requireLogin, (req, res) => {
-  const { postId } = req.body;
+    if (!postId || !mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({ error: "Invalid Post ID" });
+    }
 
-  if (!postId) {
-    return res.status(400).json({ error: "Post ID is required" });
+    const post = await POST.findById(postId);
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    if (post.likes.includes(req.user._id)) {
+      return res.status(400).json({ error: "Post already liked" });
+    }
+
+    post.likes.push(req.user._id);
+    const updatedPost = await post.save();
+    res.json(updatedPost);
+  } catch (err) {
+    res.status(500).json({ error: "Server error", details: err.message });
   }
-
-  // Validate ObjectId
-  if (!mongoose.Types.ObjectId.isValid(postId)) {
-    return res.status(400).json({ error: "Invalid Post ID" });
-  }
-
-  if (!req.user || !req.user._id) {
-    return res.status(400).json({ error: "User not authenticated" });
-  }
-
-  POST.findById(postId)
-    .then((post) => {
-      if (!post) {
-        return res.status(404).json({ error: "Post not found" });
-      }
-
-      // Check if the user already liked the post
-      if (post.likes.includes(req.user._id)) {
-        return res.status(400).json({ error: "You have already liked this post" });
-      }
-
-      // Add the user to the likes array
-      post.likes.push(req.user._id);
-
-      post.save()
-        .then((updatedPost) => {
-          res.json(updatedPost);
-        })
-        .catch((err) => res.status(500).json({ error: "Failed to like the post", details: err.message }));
-    })
-    .catch((err) => res.status(500).json({ error: "Internal server error", details: err.message }));
 });
-
 
 // Route to unlike a post
 router.put("/unlike", requireLogin, (req, res) => {
@@ -168,34 +207,55 @@ router.put("/unlike", requireLogin, (req, res) => {
     });
 });
 
-router.put("/comment",requireLogin,(req,res)=>{
-  const comment={
-    comment:req.body.text,
-    postedBy:req.user._id
-  }
-  POST.findByIdAndUpdate(req.body.postId,{
-    $push:{comments:comment}
-  },{
-    new:true
-  })
-  // .populate("postedBy", "_id name")
-  .populate("comments.postedBy","_id name ")
-  .populate("postedBy","_id name photo")
-  .then((result) => {
+router.put("/comment", requireLogin, async (req, res) => {
+  try {
+    const { text, postId } = req.body;
+
+    if (!text || !postId) {
+      return res
+        .status(422)
+        .json({ error: "Please provide both text and postId" });
+    }
+
+    const comment = {
+      comment: text,
+      postedBy: req.user._id,
+    };
+
+    const result = await POST.findByIdAndUpdate(
+      postId,
+      { $push: { comments: comment } },
+      {
+        new: true,
+        runValidators: true,
+      }
+    )
+      .populate("comments.postedBy", "_id name")
+      .populate("postedBy", "_id name photo");
+
     if (!result) {
       return res.status(404).json({ error: "Post not found" });
     }
+
     res.json(result);
-  })
-  .catch((err) => {
-    res.status(422).json({ error: err.message });
-  });
-})
+  } catch (err) {
+    res.status(500).json({ error: "Server error", details: err.message });
+  }
+});
+
+// Add this helper function at the top
+const validateObjectId = (id) => {
+  return mongoose.Types.ObjectId.isValid(id);
+};
 
 // Delete Post Route
 router.delete("/deletePost/:postId", requireLogin, async (req, res) => {
   try {
-    const postId = req.params.postId;
+    const { postId } = req.params;
+
+    if (!validateObjectId(postId)) {
+      return res.status(400).json({ error: "Invalid post ID format" });
+    }
 
     const deletedPost = await POST.findByIdAndDelete(postId);
 
@@ -205,7 +265,10 @@ router.delete("/deletePost/:postId", requireLogin, async (req, res) => {
 
     res.json({ message: "Post deleted successfully", deletedPost });
   } catch (err) {
-    res.status(500).json({ error: "An error occurred while deleting the post", details: err.message });
+    res.status(500).json({
+      error: "An error occurred while deleting the post",
+      details: err.message,
+    });
   }
 });
 
@@ -216,15 +279,30 @@ router.get("/myfollowingpost", requireLogin, async (req, res) => {
       .populate("postedBy", "_id name photo")
       .populate("comments.postedBy", "_id name")
       .sort("-createdAt");
-      
-    // This now sends an empty array [] if no posts are found,
-    // which fixes the frontend error.
-    res.json(posts); 
-    
+
+    res.json(posts || []); // Return empty array if no posts
   } catch (err) {
-    res.status(500).json({ error: "Internal server error", details: err.message });
+    res.status(500).json({
+      error: "Internal server error",
+      message:
+        process.env.NODE_ENV === "development"
+          ? err.message
+          : "Something went wrong",
+    });
   }
 });
 
+// Add error handler before module.exports
+router.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    error: "Internal Server Error",
+    message:
+      process.env.NODE_ENV === "development"
+        ? err.message
+        : "Something went wrong",
+  });
+});
 
+// Single module.exports at the end
 module.exports = router;

@@ -2,61 +2,92 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const USER = mongoose.model("USER");
-const bcrypt = require('bcrypt');
-const jwt = require("jsonwebtoken")
-const requireLogin = require("../middlewares/requireLogin");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
+// Add input validation
+const validateEmail = (email) => {
+  return String(email)
+    .toLowerCase()
+    .match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+};
 
-router.post("/signup",(req,res)=>{
-    const {name , userName , email , password } = req.body;
+router.post("/signup", async (req, res) => {
+  try {
+    const { name, userName, email, password } = req.body;
 
-    if(!name || !email || !userName || !password ){
-        return res.status(422).json({error:"Please add all the fields"})
+    // Validate inputs
+    if (!name || !email || !userName || !password) {
+      return res.status(422).json({ error: "Please add all the fields" });
     }
 
-    USER.findOne({$or:[{email:email},{userName:userName}]}).then((savedUser) => {
-        if(savedUser){
-            return res.status(422).json({error: "User already exit with the email or username"})
-        }
-
-        bcrypt.hash(password,12).then((hashedPassword)=>{
-            const user = new USER({
-                name,
-                email,
-                userName,
-                password:hashedPassword
-            })
-
-            user.save()
-            .then(user => {res.json({message:"Registered succesfully"})})
-            .catch(err => {console.log(err)})
-        })
-
-    })
-
-})
-
-router.post("/signin", (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-        return res.status(422).json({ error: "Please add email and password" });
+    if (!validateEmail(email)) {
+      return res.status(422).json({ error: "Please enter a valid email" });
     }
-    USER.findOne({ email: email }).then((savedUser) => {
-        if (!savedUser) {
-            return res.status(422).json({ error: "Invalid email" });
-        }
-        bcrypt.compare(password, savedUser.password).then((match) => {
-            if (match) {
-                // return res.status(200).json({ message: "Signed in Successfully" })
-                const token = jwt.sign({ _id: savedUser.id }, process.env.Jwt_secret);
-                const { _id, name, email, photo } = savedUser;
-                res.json({ token, user: { _id, name, email, photo } });
-                console.log({ token, user: { _id, name, email, photo } });
-            } else {
-                return res.status(422).json({ error: "Invalid password" });
-            }
-        }).catch(err => console.log(err));
+
+    if (password.length < 6) {
+      return res
+        .status(422)
+        .json({ error: "Password must be at least 6 characters" });
+    }
+
+    const userExists = await USER.findOne({
+      $or: [{ email: email }, { userName: userName }],
     });
+
+    if (userExists) {
+      return res.status(422).json({
+        error: "User already exists with the email or username",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const user = new USER({
+      name,
+      email,
+      userName,
+      password: hashedPassword,
+    });
+
+    await user.save();
+    res.status(201).json({ message: "Registered successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.post("/signin", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(422).json({ error: "Please add email and password" });
+    }
+
+    const savedUser = await USER.findOne({ email: email });
+    if (!savedUser) {
+      return res.status(422).json({ error: "Invalid email" });
+    }
+
+    const match = await bcrypt.compare(password, savedUser.password);
+    if (!match) {
+      return res.status(422).json({ error: "Invalid password" });
+    }
+
+    const token = jwt.sign({ _id: savedUser.id }, process.env.JWT_SECRET, {
+      expiresIn: "7d", // Token expires in 7 days
+    });
+
+    const { _id, name, photo } = savedUser;
+    res.json({
+      token,
+      user: { _id, name, email, photo },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 module.exports = router;
