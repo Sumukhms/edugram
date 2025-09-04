@@ -9,8 +9,7 @@ const API_BASE = process.env.REACT_APP_API_URL;
 
 const defaultProfilePic =
   "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
-const defaultPostPic =
-  "https://cdn-icons-png.flaticon.com/128/564/564619.png";
+const defaultPostPic = "https://cdn-icons-png.flaticon.com/128/564/564619.png";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -50,11 +49,25 @@ export default function Home() {
         return res.json();
       })
       .then((result) => {
-        // Ensure result exists before processing
-        if (!result) return;
-        if (result.posts.length < limit) setHasMore(false);
+        // Handle case when result is null or undefined
+        if (!result) {
+          setLoading(false);
+          setError("No data received from server");
+          return;
+        }
+
+        // Check if posts exists in result
+        if (!result.posts) {
+          setLoading(false);
+          setError("Invalid response format");
+          return;
+        }
+
+        // Update state only if valid data
+        setHasMore(result.posts.length >= limit);
         setData((prev) => [...prev, ...result.posts]);
         setLoading(false);
+        setError(null); // Clear any previous errors
       })
       .catch((err) => {
         console.error("Error fetching posts:", err);
@@ -218,9 +231,7 @@ export default function Home() {
                 type="text"
                 placeholder="Add a comment"
                 value={comments[post._id] || ""}
-                onChange={(e) =>
-                  handleCommentChange(post._id, e.target.value)
-                }
+                onChange={(e) => handleCommentChange(post._id, e.target.value)}
               />
               <button
                 className="comment"
@@ -229,10 +240,10 @@ export default function Home() {
                 Post
               </button>
               {showPicker && currentPostId === post._id && (
-                  <div className="emoji-picker">
-                    <Picker onEmojiClick={onEmojiClick} />
-                  </div>
-                )}
+                <div className="emoji-picker">
+                  <Picker onEmojiClick={onEmojiClick} />
+                </div>
+              )}
             </div>
           </div>
         ))
