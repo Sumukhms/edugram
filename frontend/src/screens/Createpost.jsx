@@ -43,7 +43,7 @@ export default function Createpost() {
             if (!response.ok) throw new Error("Upload to Cloudinary failed.");
             
             const result = await response.json();
-            setUrl(result.url);
+            setUrl(result.secure_url); // <-- CHANGED HERE
         } catch (err) {
             console.error("Error uploading file:", err);
             notifyA("Failed to upload file. Please try again.");

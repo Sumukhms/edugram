@@ -11,6 +11,21 @@
   padding: 40px;
 }
 
+/* Add this new CSS rule to your existing profile.css file */
+.changePic {
+  position: relative;
+  background-color: var(--container-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 40px;
+  width: 90%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .profile-frame {
   display: flex;
   flex-direction: row; 

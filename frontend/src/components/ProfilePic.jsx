@@ -44,7 +44,7 @@ export default function ProfilePic({ changeProfile, updateProfilePic }) {
       );
       if (!cloudResponse.ok) throw new Error("Image upload failed.");
       const cloudResult = await cloudResponse.json();
-      const finalUrl = cloudResult.secure_url; // <-- CHANGED
+      const finalUrl = cloudResult.secure_url; // <-- CHANGED HERE
       
       await updateProfilePicInDB(finalUrl);
 
