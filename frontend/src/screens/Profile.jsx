@@ -3,6 +3,8 @@ import "../css/profile.css";
 import PostDetail from "../components/PostDetail";
 import ProfilePic from "../components/ProfilePic";
 
+const API_BASE = process.env.REACT_APP_API_URL;
+
 export default function Profile() {
   const [pic, setPic] = useState([]);
   const [user, setUser] = useState(null);
@@ -12,7 +14,8 @@ export default function Profile() {
   const [posts, setPosts] = useState([]);
   const [changePic, setChangePic] = useState(false);
 
-  const defaultProfilePic = "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
+  const defaultProfilePic =
+    "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
 
   const toggleDetails = (post) => {
     setShow(!show);
@@ -38,7 +41,7 @@ export default function Profile() {
       return;
     }
 
-    fetch(`/user/${userData._id}`, {
+    fetch(`${API_BASE}/user/${userData._id}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
       },
@@ -60,11 +63,25 @@ export default function Profile() {
   }, []);
 
   if (loading) {
-    return <div className="loading" style={{textAlign: "center", marginTop: "50px"}}><h1>Loading profile...</h1></div>;
+    return (
+      <div
+        className="loading"
+        style={{ textAlign: "center", marginTop: "50px" }}
+      >
+        <h1>Loading profile...</h1>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="error" style={{textAlign: "center", marginTop: "50px"}}><h1>{error}</h1></div>;
+    return (
+      <div
+        className="error"
+        style={{ textAlign: "center", marginTop: "50px" }}
+      >
+        <h1>{error}</h1>
+      </div>
+    );
   }
 
   return (
@@ -75,43 +92,53 @@ export default function Profile() {
           <div className="profile-pic" onClick={changeProfile}>
             <img src={user.photo || defaultProfilePic} alt="profile" />
           </div>
-          
+
           <div className="profile-data">
             <div className="profile-data-top">
               <h1>{user.name}</h1>
             </div>
             <div className="profile-info">
-              <p><span>{pic.length}</span> posts</p>
-              <p><span>{user.followers?.length || 0}</span> followers</p>
-              <p><span>{user.following?.length || 0}</span> following</p>
+              <p>
+                <span>{pic.length}</span> posts
+              </p>
+              <p>
+                <span>{user.followers?.length || 0}</span> followers
+              </p>
+              <p>
+                <span>{user.following?.length || 0}</span> following
+              </p>
             </div>
           </div>
         </div>
-        
+
         {/* Gallery */}
         <div className="gallery">
           {pic.map((item) => (
-            <div className="item" key={item._id} onClick={() => toggleDetails(item)}>
-               {item.mediaType === 'video' ? (
+            <div
+              className="item"
+              key={item._id}
+              onClick={() => toggleDetails(item)}
+            >
+              {item.mediaType === "video" ? (
                 <video src={item.photo} muted />
               ) : (
                 <img src={item.photo} alt="User Post" />
               )}
-               <div className="post-overlay">
-                  <div className="overlay-info">
-                      <span className="material-symbols-outlined">favorite</span>
-                      {item.likes.length}
-                  </div>
-                  <div className="overlay-info">
-                      <span className="material-symbols-outlined">chat_bubble</span>
-                      {item.comments.length}
-                  </div>
+              <div className="post-overlay">
+                <div className="overlay-info">
+                  <span className="material-symbols-outlined">favorite</span>
+                  {item.likes.length}
+                </div>
+                <div className="overlay-info">
+                  <span className="material-symbols-outlined">chat_bubble</span>
+                  {item.comments.length}
+                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
-      
+
       {/* Modals remain outside the container */}
       {show && <PostDetail item={posts} toggleDetails={toggleDetails} />}
       {changePic && (

@@ -1,183 +1,141 @@
-import React, { useEffect, useState } from "react";
-import "../css/Home.css";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import React, { useEffect, useState, useContext } from "react";
+import { UserContext } from "../App";
+import { ToastContainer, toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import Picker from 'emoji-picker-react';
+import Picker from "emoji-picker-react";
+import "react-toastify/dist/ReactToastify.css";
+
+// 👇 Base URL from .env
+const API_BASE = process.env.REACT_APP_API_URL;
+
+const defaultProfilePic =
+  "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
+const defaultPostPic =
+  "https://cdn-icons-png.flaticon.com/128/564/564619.png";
 
 export default function Home() {
-  const navigate = useNavigate();
   const [data, setData] = useState([]);
-  const [error, setError] = useState(null);
-  const [user, setUser] = useState(null);
-  const [comments, setComments] = useState({});
-  const [show, setShow] = useState(false);
-  const [item, setItem] = useState({});
+  const { state: user } = useContext(UserContext); // ✅ Fixed user
   const [skip, setSkip] = useState(0);
   const [loading, setLoading] = useState(false);
-
-  // New state for emoji picker
+  const [hasMore, setHasMore] = useState(true);
+  const [error, setError] = useState(null);
+  const [show, setShow] = useState(false);
+  const [item, setItem] = useState(null);
+  const [comments, setComments] = useState({});
   const [showPicker, setShowPicker] = useState(false);
   const [currentPostId, setCurrentPostId] = useState(null);
+  const limit = 5;
 
-  const limit = 10;
-  const token = localStorage.getItem("jwt");
-  const defaultProfilePic = "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
-  const defaultPostPic = "https://via.placeholder.com/150";
-
-  const notifyA = (msg) => toast.error(msg);
-  const notifyB = (msg) => toast.success(msg);
-
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (!token || !storedUser) {
-      navigate("./signup");
-      return;
-    }
-    fetchPosts();
-    setUser(storedUser);
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
+  // 🔹 Fetch posts
   const fetchPosts = () => {
     setLoading(true);
-    fetch(`/allposts?limit=${limit}&skip=${skip}`, {
+    fetch(`${API_BASE}/allposts?limit=${limit}&skip=${skip}`, {
       headers: {
-        Authorization: "Bearer " + token,
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
       },
     })
       .then((res) => res.json())
       .then((result) => {
+        if (result.posts.length < limit) setHasMore(false);
+        setData((prev) => [...prev, ...result.posts]);
         setLoading(false);
-        if (Array.isArray(result)) {
-          // New logic to prevent duplicates
-          setData((prevData) => {
-            const existingIds = new Set(prevData.map(p => p._id));
-            const newPosts = result.filter(p => !existingIds.has(p._id));
-            return [...prevData, ...newPosts];
-          });
-        } else {
-          setError("Unexpected response format");
-        }
       })
       .catch((err) => {
+        console.error("Error fetching posts:", err);
+        toast.error("Failed to load posts");
         setLoading(false);
-        setError("Failed to fetch posts. Please try again later.");
-        console.log(err);
       });
   };
 
-  const handleScroll = () => {
-    if (
-      document.documentElement.clientHeight + window.pageYOffset >=
-      document.documentElement.scrollHeight
-    ) {
-      setSkip((prevSkip) => prevSkip + 10);
-    }
-  };
-
   useEffect(() => {
-    if (skip > 0) {
-      fetchPosts();
-    }
+    fetchPosts();
+    // eslint-disable-next-line
   }, [skip]);
 
-  const toggleComment = (posts) => {
+  // 🔹 Like a post
+  const likePost = (id) => {
+    fetch(`${API_BASE}/like`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({ postId: id }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        const newData = data.map((item) =>
+          item._id === result._id ? result : item
+        );
+        setData(newData);
+      })
+      .catch(() => toast.error("Error liking post"));
+  };
+
+  // 🔹 Unlike a post
+  const unlikePost = (id) => {
+    fetch(`${API_BASE}/unlike`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({ postId: id }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        const newData = data.map((item) =>
+          item._id === result._id ? result : item
+        );
+        setData(newData);
+      })
+      .catch(() => toast.error("Error unliking post"));
+  };
+
+  // 🔹 Comment on a post
+  const makeComment = (text, postId) => {
+    fetch(`${API_BASE}/comment`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({ postId, text }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        const newData = data.map((item) =>
+          item._id === result._id ? result : item
+        );
+        setData(newData);
+      })
+      .catch(() => toast.error("Error posting comment"));
+  };
+
+  // 🔹 Toggle comment modal
+  const toggleComment = (post = null) => {
     setShow(!show);
-    if (!show) {
-      setItem(posts);
+    setItem(post);
+  };
+
+  // 🔹 Handle comment input
+  const handleCommentChange = (postId, value) => {
+    setComments((prev) => ({ ...prev, [postId]: value }));
+  };
+
+  // 🔹 Emoji picker
+  const onEmojiClick = (emojiObject) => {
+    if (currentPostId) {
+      setComments((prev) => ({
+        ...prev,
+        [currentPostId]: (prev[currentPostId] || "") + emojiObject.emoji,
+      }));
     }
   };
 
-   const onEmojiClick = (emojiObject) => {
-    const currentComment = comments[currentPostId] || "";
-    handleCommentChange(currentPostId, currentComment + emojiObject.emoji);
-    setShowPicker(false);
-  };
-
-  const likePost = (id) => {
-    fetch("/like", {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify({ postId: id }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        const updatedPosts = data.map((post) =>
-          post._id === result._id ? { ...post, likes: result.likes } : post
-        );
-        setData(updatedPosts);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const unlikePost = (id) => {
-    fetch("/unlike", {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify({ postId: id }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        const updatedPosts = data.map((post) =>
-          post._id === result._id ? { ...post, likes: result.likes } : post
-        );
-        setData(updatedPosts);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const handleCommentChange = (postId, text) => {
-    setComments((prevComments) => ({
-      ...prevComments,
-      [postId]: text,
-    }));
-  };
-
-  const makeComment = (text, id) => {
-    fetch("/comment", {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify({
-        text,
-        postId: id,
-      }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        const updatedPosts = data.map((post) =>
-          post._id === result._id ? result : post
-        );
-        setData(updatedPosts);
-        setComments((prevComments) => ({
-          ...prevComments,
-          [id]: "",
-        }));
-        notifyB("Comment posted");
-      })
-      .catch((err) => console.log(err));
-  };
-
-  if (error) {
-    return <div className="error">Error: {error}</div>;
-  }
-
-  if (!user) {
-    return <div>Loading...</div>;
-  }
+  if (error) return <div className="error">Error: {error}</div>;
+  if (!user) return <div>Loading...</div>;
 
   return (
     <div className="home">
@@ -186,6 +144,7 @@ export default function Home() {
       ) : (
         data.map((post) => (
           <div className="card" key={post._id}>
+            {/* 🔹 Post Header */}
             <div className="card-header">
               <div className="card-pic">
                 <img
@@ -197,13 +156,17 @@ export default function Home() {
                 <h5>{post?.postedBy?.name || "Unknown User"}</h5>
               </Link>
             </div>
-           <div className="card-image">
-              {post.mediaType === 'video' ? (
-                <video src={post.photo} controls autoPlay muted loop />
+
+            {/* 🔹 Post Content */}
+            <div className="card-image">
+              {post.mediaType === "video" ? (
+                <video src={post.photo} controls muted loop />
               ) : (
                 <img src={post.photo || defaultPostPic} alt="Post" />
               )}
             </div>
+
+            {/* 🔹 Like / Comment */}
             <div className="card-content">
               {post.likes.includes(user._id) ? (
                 <span
@@ -229,16 +192,25 @@ export default function Home() {
                 View all comments
               </p>
             </div>
+
+            {/* 🔹 Add Comment */}
             <div className="add-comment">
-              <span className="material-symbols-outlined" onClick={() => {
-              setCurrentPostId(post._id);
-              setShowPicker(!showPicker);
-            }}>mood</span>
+              <span
+                className="material-symbols-outlined"
+                onClick={() => {
+                  setCurrentPostId(post._id);
+                  setShowPicker((prev) => !prev);
+                }}
+              >
+                mood
+              </span>
               <input
                 type="text"
                 placeholder="Add a comment"
                 value={comments[post._id] || ""}
-                onChange={(e) => handleCommentChange(post._id, e.target.value)}
+                onChange={(e) =>
+                  handleCommentChange(post._id, e.target.value)
+                }
               />
               <button
                 className="comment"
@@ -258,7 +230,8 @@ export default function Home() {
 
       {loading && <div>Loading...</div>}
 
-      {show && (
+      {/* 🔹 Comment Modal */}
+      {show && item && (
         <div className="showComment">
           <div className="container">
             <div className="postPic">
@@ -277,6 +250,7 @@ export default function Home() {
                 </div>
                 <h5>{item?.postedBy?.name || "Unknown User"}</h5>
               </div>
+
               <div
                 className="comment-section"
                 style={{ borderBottom: "1px solid #00000029" }}
@@ -294,12 +268,22 @@ export default function Home() {
                   </p>
                 ))}
               </div>
+
               <div className="card-content">
                 <p>{item.likes.length} Likes</p>
                 <p>{item.body || "No description available"}</p>
               </div>
+
               <div className="add-comment">
-                <span className="material-symbols-outlined">mood</span>
+                <span
+                  className="material-symbols-outlined"
+                  onClick={() => {
+                    setCurrentPostId(item._id);
+                    setShowPicker((prev) => !prev);
+                  }}
+                >
+                  mood
+                </span>
                 <input
                   type="text"
                   placeholder="Add a comment"
@@ -317,6 +301,11 @@ export default function Home() {
                 >
                   Post
                 </button>
+                {showPicker && currentPostId === item._id && (
+                  <div className="emoji-picker">
+                    <Picker onEmojiClick={onEmojiClick} />
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -330,6 +319,8 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      <ToastContainer />
     </div>
   );
 }

@@ -7,6 +7,8 @@ export default function ProfilePic({ changeProfile, updateProfilePic }) {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const API_BASE = process.env.REACT_APP_API_URL;
+
 
   const notifyA = (msg) => toast.error(msg);
   const notifyB = (msg) => toast.success(msg);
@@ -31,8 +33,9 @@ export default function ProfilePic({ changeProfile, updateProfilePic }) {
 
     const data = new FormData();
     data.append("file", image);
-    data.append("upload_preset", "edugram");
-    data.append("cloud_name", "educloud1");
+    data.append("upload_preset", process.env.REACT_APP_CLOUD_PRESET);
+    data.append("cloud_name", process.env.REACT_APP_CLOUD_NAME);
+
 
     try {
       const cloudResponse = await fetch(
@@ -57,7 +60,7 @@ export default function ProfilePic({ changeProfile, updateProfilePic }) {
   };
 
   const updateProfilePicInDB = async (newPic) => {
-    const response = await fetch(`/uploadProfilePic`, {
+    const response = await fetch(`${API_BASE}/uploadProfilePic`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../css/profile.css'; // We'll reuse the same CSS
+import '../css/profile.css';
 import { useParams } from "react-router-dom";
 
 export default function UserProfile() {
@@ -9,45 +9,42 @@ export default function UserProfile() {
   const [isFollow, setIsFollow] = useState(false);
 
   const defaultProfilePic = "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
-  
+
+  // ✅ API base URL from environment variable
+  const API_BASE = process.env.REACT_APP_API_URL;
+
   // to follow user
   const followUser = (userId) => {
-    fetch("/follow", {
+    fetch(`${API_BASE}/follow`, {
       method: "put",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + localStorage.getItem("jwt"),
       },
-      body: JSON.stringify({
-        followId: userId
-      })
+      body: JSON.stringify({ followId: userId })
     })
       .then((res) => res.json())
-      .then((data) => {
-        setIsFollow(true);
-      });
+      .then(() => setIsFollow(true))
+      .catch((err) => console.error("Error following:", err));
   };
 
   // to unfollow user
   const unfollowUser = (userId) => {
-    fetch("/unfollow", {
+    fetch(`${API_BASE}/unfollow`, {
       method: "put",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + localStorage.getItem("jwt"),
       },
-      body: JSON.stringify({
-        followId: userId
-      })
+      body: JSON.stringify({ followId: userId })
     })
       .then((res) => res.json())
-      .then((data) => {
-        setIsFollow(false);
-      });
+      .then(() => setIsFollow(false))
+      .catch((err) => console.error("Error unfollowing:", err));
   };
 
   useEffect(() => {
-    fetch(`http://localhost:5000/user/${userid}`, {
+    fetch(`${API_BASE}/user/${userid}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
       },
@@ -65,36 +62,28 @@ export default function UserProfile() {
       .catch((err) => {
         console.error("Error fetching user data:", err);
       });
-  }, [isFollow, userid]);
+  }, [isFollow, userid, API_BASE]);
 
   if (!user) {
-    return <div style={{textAlign: "center", marginTop: "50px"}}><h1>Loading...</h1></div>;
+    return <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h1>Loading...</h1>
+    </div>;
   }
 
   return (
     <div className="profile">
       <div className="profile-container">
-        {/* Profile Frame */}
         <div className="profile-frame">
           <div className="profile-pic">
-            <img
-            src={user.photo || defaultProfilePic}
-              alt="profile"
-            />
+            <img src={user.photo || defaultProfilePic} alt="profile" />
           </div>
-          
+
           <div className="profile-data">
             <div className="profile-data-top">
               <h1>{user.name}</h1>
               <button
                 className={isFollow ? "unfollowBtn" : "followBtn"}
-                onClick={() => {
-                  if (isFollow) {
-                    unfollowUser(user._id);
-                  } else {
-                    followUser(user._id);
-                  }
-                }}
+                onClick={() => isFollow ? unfollowUser(user._id) : followUser(user._id)}
               >
                 {isFollow ? "Unfollow" : "Follow"}
               </button>
@@ -107,15 +96,12 @@ export default function UserProfile() {
           </div>
         </div>
 
-        {/* Gallery */}
         <div className="gallery">
           {pic.map((item) => (
             <div className="item" key={item._id}>
-              {item.mediaType === 'video' ? (
-                <video src={item.photo} muted />
-              ) : (
-                <img src={item.photo} alt="User Post" />
-              )}
+              {item.mediaType === 'video'
+                ? <video src={item.photo} muted />
+                : <img src={item.photo} alt="User Post" />}
             </div>
           ))}
         </div>

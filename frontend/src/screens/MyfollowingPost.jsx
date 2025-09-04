@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "../css/Home.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
-import Picker from 'emoji-picker-react';
+import Picker from "emoji-picker-react";
+
+const API_BASE = process.env.REACT_APP_API_URL;
 
 export default function MyFollowingPost() {
   const navigate = useNavigate();
@@ -16,7 +17,8 @@ export default function MyFollowingPost() {
   const [showPicker, setShowPicker] = useState(false);
   const [currentPostId, setCurrentPostId] = useState(null);
 
-  const defaultProfilePic = "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
+  const defaultProfilePic =
+    "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
   const notifyA = (msg) => toast.error(msg);
   const notifyB = (msg) => toast.success(msg);
 
@@ -31,7 +33,7 @@ export default function MyFollowingPost() {
 
     setUser(storedUser);
 
-    fetch("/myfollowingpost", {
+    fetch(`${API_BASE}/myfollowingpost`, {
       headers: {
         Authorization: "Bearer " + token,
       },
@@ -46,7 +48,7 @@ export default function MyFollowingPost() {
         setLoading(false);
       });
   }, [navigate]);
-  
+
   const onEmojiClick = (emojiObject) => {
     const currentComment = comments[currentPostId] || "";
     handleCommentChange(currentPostId, currentComment + emojiObject.emoji);
@@ -62,9 +64,9 @@ export default function MyFollowingPost() {
     setComments((prev) => ({ ...prev, [postId]: text }));
   };
 
-  const handleFetch = async (url, method, body, callback) => {
+  const handleFetch = async (endpoint, method, body, callback) => {
     try {
-      const res = await fetch(url, {
+      const res = await fetch(`${API_BASE}${endpoint}`, {
         method,
         headers: {
           "Content-Type": "application/json",
@@ -113,13 +115,17 @@ export default function MyFollowingPost() {
   };
 
   if (loading || !user) {
-    return <div style={{ textAlign: 'center', marginTop: '50px' }}><h1>Loading...</h1></div>;
+    return (
+      <div style={{ textAlign: "center", marginTop: "50px" }}>
+        <h1>Loading...</h1>
+      </div>
+    );
   }
 
   return (
     <div className="home">
       {data.length === 0 ? (
-        <div style={{ textAlign: 'center', marginTop: '50px' }}>
+        <div style={{ textAlign: "center", marginTop: "50px" }}>
           <h1>No posts to display</h1>
           <p>Follow other users to see their posts here.</p>
         </div>
@@ -128,7 +134,10 @@ export default function MyFollowingPost() {
           <div className="card" key={post._id}>
             <div className="card-header">
               <div className="card-pic">
-                <img src={post?.postedBy?.photo || defaultProfilePic} alt="profile" />
+                <img
+                  src={post?.postedBy?.photo || defaultProfilePic}
+                  alt="profile"
+                />
               </div>
               <h5>
                 <Link to={`/profile/${post.postedBy._id}`}>
@@ -136,37 +145,66 @@ export default function MyFollowingPost() {
                 </Link>
               </h5>
             </div>
-            {/* THIS IS THE CHANGE */}
+
             <div className="card-image">
-              {post.mediaType === 'video' ? (
+              {post.mediaType === "video" ? (
                 <video src={post.photo} controls autoPlay muted loop />
               ) : (
                 <img src={post.photo} alt="Post" />
               )}
             </div>
+
             <div className="card-content">
               {post.likes.includes(user._id) ? (
-                <span className="material-symbols-outlined material-symbols-outlined-red" onClick={() => unlikePost(post._id)}>favorite</span>
+                <span
+                  className="material-symbols-outlined material-symbols-outlined-red"
+                  onClick={() => unlikePost(post._id)}
+                >
+                  favorite
+                </span>
               ) : (
-                <span className="material-symbols-outlined" onClick={() => likePost(post._id)}>favorite</span>
+                <span
+                  className="material-symbols-outlined"
+                  onClick={() => likePost(post._id)}
+                >
+                  favorite
+                </span>
               )}
               <p>{post.likes.length} Likes</p>
               <p>{post.body || "No description available"}</p>
-              <p style={{ fontWeight: "bold", cursor: "pointer" }} onClick={() => toggleComment(post)}>View all comments</p>
+              <p
+                style={{ fontWeight: "bold", cursor: "pointer" }}
+                onClick={() => toggleComment(post)}
+              >
+                View all comments
+              </p>
             </div>
+
             <div className="add-comment">
-                <span className="material-symbols-outlined" onClick={() => {
+              <span
+                className="material-symbols-outlined"
+                onClick={() => {
                   setCurrentPostId(post._id);
                   setShowPicker(!showPicker);
-                }}>mood</span>
+                }}
+              >
+                mood
+              </span>
               <input
                 type="text"
                 placeholder="Add a comment"
                 value={comments[post._id] || ""}
-                onChange={(e) => handleCommentChange(post._id, e.target.value)}
+                onChange={(e) =>
+                  handleCommentChange(post._id, e.target.value)
+                }
               />
-              <button className="comment" onClick={() => makeComment(comments[post._id], post._id)}>Post</button>
-               {showPicker && currentPostId === post._id && (
+              <button
+                className="comment"
+                onClick={() => makeComment(comments[post._id], post._id)}
+              >
+                Post
+              </button>
+              {showPicker && currentPostId === post._id && (
                 <div className="picker-container">
                   <Picker onEmojiClick={onEmojiClick} />
                 </div>
@@ -175,7 +213,6 @@ export default function MyFollowingPost() {
           </div>
         ))
       )}
-      {/* ...Modal JSX... */}
     </div>
   );
 }
