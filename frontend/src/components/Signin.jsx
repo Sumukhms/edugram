@@ -10,6 +10,8 @@ export default function Signin() {
   const {setUserLogin}=useContext(LoginContext)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const API_BASE = process.env.REACT_APP_API_URL;
+
 
     // Toast functions
     const notifyA = (msg) => toast.error(msg);
@@ -24,7 +26,7 @@ export default function Signin() {
         return
       }
     //  sending data to server
-    fetch("/signin",{
+    fetch(`${API_BASE}/signin`,{
       method:"post",
       headers:{
         "Content-Type":"application/json",

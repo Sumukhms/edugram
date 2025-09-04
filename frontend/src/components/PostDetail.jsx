@@ -4,11 +4,12 @@ import { useNavigate } from "react-router-dom";
 
 export default function PostDetail({ item, toggleDetails }) {
   const navigate = useNavigate();
+  const API_BASE = process.env.REACT_APP_API_URL;
 
   const removePost = async (postId) => {
     if (window.confirm("Do you really want to delete the post?")) {
       try {
-        const response = await fetch(`/deletePost/${postId}`, {
+        const response = await fetch(`${API_BASE}/deletePost/${postId}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",

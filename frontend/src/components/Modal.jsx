@@ -23,7 +23,7 @@ export default function Modal({ setModalOpen }) {
                         setModalOpen(false);
                         localStorage.clear();
                         setUserLogin(false); // THIS IS THE FIX
-                        navigate("./signin");
+                        navigate("/signin");
                     }}>
                         Log Out
                     </button>

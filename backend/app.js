@@ -6,7 +6,11 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
 
-app.use(cors());
+
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  credentials: true
+}));
 
 // Require models
 require('./models/model');

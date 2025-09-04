@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Createpost() {
     const [body, setBody] = useState("");
-    const [media, setMedia] = useState(""); // Renamed from image
+    const [media, setMedia] = useState("");
     const [url, setUrl] = useState("");
     const [user, setUser] = useState(null);
     const [mediaPreview, setMediaPreview] = useState("");
@@ -15,6 +15,8 @@ export default function Createpost() {
     const defaultProfilePic = "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
     const notifyA = (msg) => toast.error(msg);
     const notifyB = (msg) => toast.success(msg);
+
+    const API_BASE = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         const loggedInUser = JSON.parse(localStorage.getItem("user"));
@@ -29,10 +31,10 @@ export default function Createpost() {
         
         const data = new FormData();
         data.append("file", media);
-        data.append("upload_preset", "edugram");
-        data.append("cloud_name", "educloud1");
+        data.append("upload_preset", process.env.REACT_APP_CLOUD_PRESET);
+        data.append("cloud_name", process.env.REACT_APP_CLOUD_NAME);
 
-        // Determine the resource type for Cloudinary
+
         const resourceType = mediaType;
         const cloudinaryUrl = `https://api.cloudinary.com/v1_1/educloud1/${resourceType}/upload`;
 
@@ -50,7 +52,7 @@ export default function Createpost() {
 
     useEffect(() => {
         if (url) {
-            fetch("/createPost", {
+            fetch(`${API_BASE}/createPost`, {
                 method: "post",
                 headers: {
                     "Content-Type": "application/json",
@@ -72,7 +74,7 @@ export default function Createpost() {
             })
             .catch(err => console.log(err));
         }
-    }, [url, body, mediaType, navigate]);
+    }, [url, body, mediaType, navigate, API_BASE]);
 
     const loadfile = (event) => {
         const file = event.target.files[0];
@@ -117,7 +119,11 @@ export default function Createpost() {
                         </div>
                         <h5>{user?.name || "Unknown User"}</h5>
                     </div>
-                    <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Write a caption..."></textarea>
+                    <textarea 
+                        value={body} 
+                        onChange={(e) => setBody(e.target.value)} 
+                        placeholder="Write a caption..."
+                    ></textarea>
                 </div>
             </div>
         </div>
