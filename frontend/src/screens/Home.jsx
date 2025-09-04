@@ -34,12 +34,10 @@ export default function Home() {
       },
     })
       .then((res) => {
-        // Handle unauthorized access by navigating to signin
         if (res.status === 401) {
           navigate("/signin");
           return;
         }
-        // Handle no posts found gracefully
         if (res.status === 404) {
           setData([]);
           setHasMore(false);
@@ -49,29 +47,31 @@ export default function Home() {
         return res.json();
       })
       .then((result) => {
-        // Handle case when result is null or undefined
-        if (!result) {
-          setLoading(false);
-          setError("No data received from server");
-          return;
-        }
+        try {
+          // Check if result exists and has expected structure
+          if (!result || typeof result !== "object") {
+            throw new Error("No data received from server");
+          }
 
-        // Check if posts exists in result
-        if (!result.posts) {
-          setLoading(false);
-          setError("Invalid response format");
-          return;
-        }
+          // Verify posts array exists
+          if (!Array.isArray(result.posts)) {
+            throw new Error("Invalid response format - posts array missing");
+          }
 
-        // Update state only if valid data
-        setHasMore(result.posts.length >= limit);
-        setData((prev) => [...prev, ...result.posts]);
-        setLoading(false);
-        setError(null); // Clear any previous errors
+          // Update state with valid data
+          setHasMore(result.posts.length >= limit);
+          setData((prev) => [...prev, ...result.posts]);
+          setError(null);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
       })
       .catch((err) => {
         console.error("Error fetching posts:", err);
         toast.error("Failed to load posts");
+        setError("Network error while fetching posts");
         setLoading(false);
       });
   };
