@@ -24,7 +24,7 @@ export default function Home() {
   const [data, setData] = useState([]);
   const [user, setUser] = useState(null);
   const [skip, setSkip] = useState(0);
-  const [loading, setLoading] = useState(true); // Start with loading true
+  const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState(null);
   const [show, setShow] = useState(false);
@@ -55,14 +55,16 @@ export default function Home() {
       })
       .then((result) => {
         if (!result) return;
-        
+
         try {
           if (!Array.isArray(result.posts)) {
             throw new Error("Invalid response format - posts array missing");
           }
-          
+
           setHasMore(result.posts.length === limit);
-          setData((prev) => isNewFetch ? result.posts : [...prev, ...result.posts]);
+          setData((prev) =>
+            isNewFetch ? result.posts : [...prev, ...result.posts]
+          );
           setError(null);
         } catch (err) {
           setError(err.message);
@@ -77,19 +79,17 @@ export default function Home() {
         setLoading(false);
       });
   };
-  
-  // Initial fetch
+
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
       setUser(storedUser);
-      fetchPosts(true); // Initial fetch, reset data
+      fetchPosts(true);
     } else {
       navigate("/signin");
     }
   }, [navigate]);
 
-  // Fetch more posts when skip changes
   useEffect(() => {
     if (skip > 0) {
       fetchPosts();
@@ -97,9 +97,8 @@ export default function Home() {
   }, [skip]);
 
   const handleLoadMore = () => {
-    setSkip(prevSkip => prevSkip + limit);
+    setSkip((prevSkip) => prevSkip + limit);
   };
-
 
   const onEmojiClick = (emojiObject) => {
     if (currentPostId) {
@@ -111,6 +110,16 @@ export default function Home() {
   };
 
   const likePost = (id) => {
+    // Add the animation class
+    const heartIcon = document.querySelector(`.like-btn-${id}`);
+    if (heartIcon) {
+      heartIcon.classList.add("like-animation");
+      // Remove the class after the animation finishes
+      setTimeout(() => {
+        heartIcon.classList.remove("like-animation");
+      }, 300);
+    }
+
     fetch(`${API_BASE}/like`, {
       method: "PUT",
       headers: {
@@ -177,17 +186,28 @@ export default function Home() {
   const handleCommentChange = (postId, value) => {
     setComments((prev) => ({ ...prev, [postId]: value }));
   };
-  
+
   if (loading && data.length === 0) {
-      return <div className="loading-spinner"><h1>Loading posts...</h1></div>;
+    return (
+      <div className="loading-spinner">
+        <h1>Loading posts...</h1>
+      </div>
+    );
   }
-  if (error) return <div className="error-container"><h1>Error: {error}</h1></div>;
+  if (error)
+    return (
+      <div className="error-container">
+        <h1>Error: {error}</h1>
+      </div>
+    );
   if (!user) return null;
 
   return (
     <div className="home">
       {data.length === 0 ? (
-        <div className="loading-spinner"><h1>No posts to show.</h1></div>
+        <div className="loading-spinner">
+          <h1>No posts to show.</h1>
+        </div>
       ) : (
         data.map((post) => (
           <div className="card" key={post._id}>
@@ -217,14 +237,14 @@ export default function Home() {
             <div className="card-content">
               {post.likes.includes(user._id) ? (
                 <span
-                  className="material-symbols-outlined material-symbols-outlined-red"
+                  className={`material-symbols-outlined material-symbols-outlined-red like-btn-${post._id}`}
                   onClick={() => unlikePost(post._id)}
                 >
                   favorite
                 </span>
               ) : (
                 <span
-                  className="material-symbols-outlined"
+                  className={`material-symbols-outlined like-btn-${post._id}`}
                   onClick={() => likePost(post._id)}
                 >
                   favorite
@@ -254,7 +274,9 @@ export default function Home() {
                 type="text"
                 placeholder="Add a comment"
                 value={comments[post._id] || ""}
-                onChange={(e) => handleCommentChange(post._id, e.target.value)}
+                onChange={(e) =>
+                  handleCommentChange(post._id, e.target.value)
+                }
               />
               <button
                 className="comment"
@@ -271,7 +293,7 @@ export default function Home() {
           </div>
         ))
       )}
-      
+
       {loading && <div className="loading-spinner">Loading...</div>}
 
       {!loading && hasMore && (
@@ -280,7 +302,9 @@ export default function Home() {
         </button>
       )}
 
-      {show && item && <PostDetail item={item} toggleDetails={toggleComment} />}
+      {show && item && (
+        <PostDetail item={item} toggleDetails={toggleComment} />
+      )}
     </div>
   );
 }

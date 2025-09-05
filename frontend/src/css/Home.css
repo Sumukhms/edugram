@@ -141,3 +141,29 @@
 .load-more-btn:hover {
   background: var(--accent-hover-color);
 }
+/* === NEW STYLES FOR MICRO-INTERACTIONS === */
+
+/* Keyframe animation for the heart icon */
+@keyframes like-animation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Class to trigger the animation */
+.like-animation {
+  animation-name: like-animation;
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in-out;
+}
+
+/* Make the icon slightly larger on hover for better feedback */
+.material-symbols-outlined:hover {
+  transform: scale(1.1);
+}

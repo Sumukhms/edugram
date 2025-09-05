@@ -1,14 +1,21 @@
 :root {
-  --accent-color: #1DB954; 
-  --accent-hover-color: #189947;
-  --background-color: #F9F9F9;
-  --container-background: #FFFFFF;
-  --primary-text: #1A1A1A;
-  --secondary-text: #6C757D;
-  --border-color: #EAEAEA;
+  /* New Color Palette */
+  --primary-color: #007bff; /* A modern, friendly blue */
+  --primary-hover-color: #0056b3;
+  --background-color: #f4f6f8; /* A very light grey for the page background */
+  --container-background: #ffffff; /* White for cards and modals */
+  --primary-text: #212529; /* Dark grey for primary text */
+  --secondary-text: #6c757d; /* Lighter grey for secondary text */
+  --border-color: #dee2e6; /* A subtle border color */
   --error-color: #e63946;
-  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  /* New Shadow */
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* A softer, more modern shadow */
+  
+  /* Kept from original for consistency, but you can update these too */
   --border-radius: 12px;
+  --accent-color: var(--primary-color); /* Mapping old variable to new */
+  --accent-hover-color: var(--primary-hover-color); /* Mapping old variable to new */
 }
 
 @keyframes fadeIn {
@@ -16,7 +23,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Keyframes for the gradient animation (now used by App.css) */
 @keyframes gradientAnimation {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -29,7 +35,7 @@ body {
   color: var(--primary-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--background-color); /* Simple fallback */
+  background-color: var(--background-color);
 }
 
 a {
