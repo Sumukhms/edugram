@@ -1,0 +1,89 @@
+.skeleton-card {
+  max-width: 100%;
+  margin: 0 auto 30px auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background-color: var(--container-background);
+  padding: 12px 16px;
+  box-sizing: border-box;
+}
+
+.skeleton-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.skeleton {
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.skeleton.text {
+  height: 12px;
+  width: 120px;
+  margin-left: 12px;
+}
+
+.skeleton.image {
+  width: 100%;
+  height: 400px;
+  border-radius: 8px;
+}
+
+/* Shimmer Animation */
+.skeleton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
+/* === Styles for Profile Skeleton === */
+.skeleton-profile-container {
+  max-width: 935px;
+  margin: 40px auto;
+  padding: 0;
+  background-color: var(--container-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.skeleton-banner {
+  height: 200px;
+  background-color: #e0e0e0;
+}
+
+.skeleton-profile-frame {
+  padding: 0 40px 30px 40px;
+}
+
+.skeleton-profile-pic {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin-top: -75px;
+  border: 4px solid var(--container-background);
+}

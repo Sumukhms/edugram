@@ -29,3 +29,34 @@
     padding-right: 15px;
   }
 }
+
+/* === NEW STYLES FOR PAGE TRANSITIONS === */
+
+/* This is the base style for the content that is transitioning */
+.page {
+  position: absolute;
+  left: 15px;
+  right: 15px;
+}
+
+/* Style for the new page entering the screen */
+.fade-enter {
+  opacity: 0;
+  transform: scale(1.05);
+}
+.fade-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Style for the old page leaving the screen */
+.fade-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+.fade-exit-active {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 300ms, transform 300ms;
+}

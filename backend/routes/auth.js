@@ -4,19 +4,29 @@ const mongoose = require("mongoose");
 const USER = mongoose.model("USER");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const rateLimit = require('express-rate-limit'); // Import the package
 
-// Add input validation
+// --- Stricter Rate Limiter for Authentication ---
+const authLimiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 10, // Limit each IP to 10 authentication attempts per window
+	standardHeaders: true,
+	legacyHeaders: false,
+    message: { error: "Too many login attempts from this IP, please try again after 15 minutes" }
+});
+
+
 const validateEmail = (email) => {
   return String(email)
     .toLowerCase()
     .match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
 };
 
-router.post("/signup", async (req, res) => {
+// Apply the stricter limiter to both signup and signin routes
+router.post("/signup", authLimiter, async (req, res) => {
   try {
     const { name, userName, email, password } = req.body;
 
-    // Validate inputs
     if (!name || !email || !userName || !password) {
       return res.status(422).json({ error: "Please add all the fields" });
     }
@@ -57,7 +67,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-router.post("/signin", async (req, res) => {
+router.post("/signin", authLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -76,7 +86,7 @@ router.post("/signin", async (req, res) => {
     }
 
     const token = jwt.sign({ _id: savedUser.id }, process.env.Jwt_secret, {
-      expiresIn: "7d", // Token expires in 7 days
+      expiresIn: "7d",
     });
 
     const { _id, name, photo } = savedUser;

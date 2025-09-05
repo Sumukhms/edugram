@@ -1,8 +1,9 @@
-import React,{createContext,useState} from 'react';
+import React, { createContext, useState } from 'react';
 import './App.css';
 import Home from './screens/Home';
 import Navbar from './components/Navbar';
-import { BrowserRouter,Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Signup from './components/Signup';
 import Signin from './components/Signin';
 import Profile from './screens/Profile';
@@ -13,32 +14,41 @@ import Modal from './components/Modal';
 import UserProfile from './components/UserProfile';
 import MyFollowingPost from './screens/MyfollowingPost';
 
-
+// We create a separate component for routes to use the `useLocation` hook
+const AnimatedRoutes = () => {
+  const location = useLocation();
+  return (
+    <TransitionGroup>
+      <CSSTransition key={location.key} classNames="fade" timeout={300}>
+        <Routes location={location}>
+          <Route path='/' element={<Home />} />
+          <Route path='/signup' element={<Signup />} />
+          <Route path='/signin' element={<Signin />} />
+          <Route exact path='/profile' element={<Profile />} />
+          <Route path='/createPost' element={<Createpost />} />
+          <Route path='/profile/:userid' element={<UserProfile />} />
+          <Route path="/followingpost" element={<MyFollowingPost />} />
+        </Routes>
+      </CSSTransition>
+    </TransitionGroup>
+  );
+};
 
 function App() {
-const  [userLogin, setUserLogin] = useState(false)
-const [modalOpen, setModalOpen] = useState(false)
+  const [userLogin, setUserLogin] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  
   return (
     <BrowserRouter>
-    <div className="App">
-      <LoginContext.Provider value={{setUserLogin,setModalOpen}}>
-      <Navbar login={userLogin} />
-      <Routes>
-        <Route path='/' element={<Home/>}></Route>
-        <Route path='/signup' element={<Signup/>}></Route>
-        <Route path='/signin' element={<Signin/>}></Route>
-        <Route exact path='/profile' element={<Profile/>}></Route>
-        <Route path='/createPost' element={<Createpost/>}></Route>
-        <Route path='/profile/:userid' element={<UserProfile/>}></Route>
-        <Route path="/followingpost" element={< MyFollowingPost />} />
-      </Routes>
-      <ToastContainer  theme='dark'/>
-
-      {modalOpen && <Modal setModalOpen={setModalOpen}></Modal>}
-      </LoginContext.Provider>
-    </div>
+      <div className="App">
+        <LoginContext.Provider value={{ setUserLogin, setModalOpen }}>
+          <Navbar login={userLogin} />
+          <AnimatedRoutes /> {/* Use the new animated routes component */}
+          <ToastContainer theme='dark' />
+          {modalOpen && <Modal setModalOpen={setModalOpen}></Modal>}
+        </LoginContext.Provider>
+      </div>
     </BrowserRouter>
-
   );
 }
 

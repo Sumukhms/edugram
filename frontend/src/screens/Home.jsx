@@ -4,20 +4,21 @@ import { Link, useNavigate } from "react-router-dom";
 import Picker from "emoji-picker-react";
 import "../css/Home.css";
 import PostDetail from "../components/PostDetail";
-import Suggestions from "../components/Suggestions"; // Import the new component
+import Suggestions from "../components/Suggestions";
+import PostSkeleton from "../components/PostSkeleton"; // Import the new component
 
 const API_BASE = process.env.REACT_APP_API_URL;
 
-const defaultProfilePic =
-  "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
-const defaultPostPic = "https://cdn-icons-png.flaticon.com/128/564/564619.png";
-
+// ... (keep sanitizeUrl, defaultProfilePic, defaultPostPic functions here)
 const sanitizeUrl = (url) => {
   if (url && url.startsWith("http://")) {
     return url.replace("http://", "https://");
   }
   return url;
 };
+const defaultProfilePic = "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
+const defaultPostPic = "https://cdn-icons-png.flaticon.com/128/564/564619.png";
+
 
 export default function Home() {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ export default function Home() {
   const [skip, setSkip] = useState(0);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
+  // ... (keep the rest of the state declarations)
   const [error, setError] = useState(null);
   const [show, setShow] = useState(false);
   const [item, setItem] = useState(null);
@@ -34,6 +36,8 @@ export default function Home() {
   const [currentPostId, setCurrentPostId] = useState(null);
   const limit = 5;
 
+
+  // ... (keep all the functions: fetchPosts, useEffects, handleLoadMore, onEmojiClick, likePost, etc.)
   const fetchPosts = (isNewFetch = false) => {
     setLoading(true);
     fetch(`${API_BASE}/allposts?limit=${limit}&skip=${isNewFetch ? 0 : skip}`, {
@@ -183,16 +187,20 @@ export default function Home() {
     setComments((prev) => ({ ...prev, [postId]: value }));
   };
   
-  if (loading && data.length === 0) {
-      return <div className="loading-spinner"><h1>Loading posts...</h1></div>;
-  }
+
   if (error) return <div className="error-container"><h1>Error: {error}</h1></div>;
-  if (!user) return null;
+  if (!user) return null; // Or a general loading spinner
 
   return (
     <div className="home-layout">
       <div className="home-feed">
-        {data.length === 0 ? (
+        {loading && data.length === 0 ? (
+          <>
+            <PostSkeleton />
+            <PostSkeleton />
+            <PostSkeleton />
+          </>
+        ) : data.length === 0 ? (
           <div className="loading-spinner"><h1>No posts to show.</h1></div>
         ) : (
           data.map((post) => (
@@ -281,7 +289,7 @@ export default function Home() {
           ))
         )}
         
-        {loading && <div className="loading-spinner">Loading...</div>}
+        {loading && data.length > 0 && <PostSkeleton />}
 
         {!loading && hasMore && (
           <button className="load-more-btn" onClick={handleLoadMore}>

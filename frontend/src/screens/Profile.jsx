@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "../css/profile.css";
-import "../css/EmptyState.css"; // Import the empty state CSS
+import "../css/EmptyState.css";
 import PostDetail from "../components/PostDetail";
 import ProfilePic from "../components/ProfilePic";
 import FollowListModal from "../components/FollowListModal";
 import BannerPic from "../components/BannerPic";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
+import ProfileSkeleton from "../components/ProfileSkeleton"; // Import the new component
 
+// ... (keep sanitizeUrl, API_BASE, etc.)
 const API_BASE = process.env.REACT_APP_API_URL;
 
 const sanitizeUrl = (url) => {
@@ -16,21 +18,22 @@ const sanitizeUrl = (url) => {
   return url;
 };
 
+
 export default function Profile() {
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
+  // ... (keep all the state declarations)
   const [pic, setPic] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [posts, setPosts] = useState([]);
-  
-  // Modals state
   const [show, setShow] = useState(false);
   const [changePic, setChangePic] = useState(false);
   const [changeBanner, setChangeBanner] = useState(false);
   const [showFollowModal, setShowFollowModal] = useState(false);
   const [modalData, setModalData] = useState({ title: "", users: [] });
-
+  
+  // ... (keep all constant declarations and functions)
   const defaultProfilePic =
     "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
   const defaultBannerPic = "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
@@ -92,15 +95,18 @@ export default function Profile() {
       });
   }, []);
 
+  // UPDATED LOADING CHECK
   if (loading || !user) {
-    return <div className="loading" style={{ textAlign: "center", marginTop: "50px" }}><h1>Loading profile...</h1></div>;
+    return <ProfileSkeleton />;
   }
+
   if (error) {
     return <div className="error" style={{ textAlign: "center", marginTop: "50px" }}><h1>{error}</h1></div>;
   }
 
   return (
     <div className="profile">
+        {/* ... (rest of the return statement is unchanged) ... */}
       <div className="profile-container">
         <div 
           className="profile-banner"
