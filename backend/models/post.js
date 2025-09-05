@@ -98,7 +98,7 @@ postSchema.methods.toJSON = function () {
 };
 
 postSchema.pre(/^find/, function (next) {
-  this.populate("postedBy", "_id name Photo").populate(
+  this.populate("postedBy", "_id name photo").populate(
     "comments.postedBy",
     "_id name"
   );

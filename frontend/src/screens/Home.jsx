@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import Picker from "emoji-picker-react";
 import "../css/Home.css";
+import PostDetail from "../components/PostDetail"; // Import PostDetail
 
 const API_BASE = process.env.REACT_APP_API_URL;
 
@@ -12,8 +13,8 @@ const defaultProfilePic =
 const defaultPostPic = "https://cdn-icons-png.flaticon.com/128/564/564619.png";
 
 const sanitizeUrl = (url) => {
-  if (url && url.startsWith('http://')) {
-    return url.replace('http://', 'https://');
+  if (url && url.startsWith("http://")) {
+    return url.replace("http://", "https://");
   }
   return url;
 };
@@ -58,7 +59,7 @@ export default function Home() {
           if (!result || !Array.isArray(result.posts)) {
             throw new Error("Invalid response format - posts array missing");
           }
-          
+
           setHasMore(result.posts.length >= limit);
           setData((prev) => [...prev, ...result.posts]);
           setError(null);
@@ -189,7 +190,10 @@ export default function Home() {
               {post.mediaType === "video" ? (
                 <video src={sanitizeUrl(post.photo)} controls muted loop />
               ) : (
-                <img src={sanitizeUrl(post.photo) || defaultPostPic} alt="Post" />
+                <img
+                  src={sanitizeUrl(post.photo) || defaultPostPic}
+                  alt="Post"
+                />
               )}
             </div>
 
@@ -253,94 +257,7 @@ export default function Home() {
 
       {loading && <div>Loading...</div>}
 
-      {show && item && (
-        <div className="showComment">
-          <div className="container">
-            <div className="postPic">
-              <img src={sanitizeUrl(item.photo) || defaultPostPic} alt="Post" />
-            </div>
-            <div className="details">
-              <div
-                className="card-header"
-                style={{ borderBottom: "1px solid #00000029" }}
-              >
-                <div className="card-pic">
-                  <img
-                    src={sanitizeUrl(item?.postedBy?.photo) || defaultProfilePic}
-                    alt="profile"
-                  />
-                </div>
-                <h5>{item?.postedBy?.name || "Unknown User"}</h5>
-              </div>
-
-              <div
-                className="comment-section"
-                style={{ borderBottom: "1px solid #00000029" }}
-              >
-                {item.comments.map((comment) => (
-                  <p className="comm" key={comment._id}>
-                    <span
-                      className="commenter"
-                      style={{ fontWeight: "bolder" }}
-                    >
-                      {comment.postedBy.name}
-                    </span>
-                    <span style={{ margin: "0 5px" }}>:</span>
-                    <span className="commentText">{comment.comment}</span>
-                  </p>
-                ))}
-              </div>
-
-              <div className="card-content">
-                <p>{item.likes.length} Likes</p>
-                <p>{item.body || "No description available"}</p>
-              </div>
-
-              <div className="add-comment">
-                <span
-                  className="material-symbols-outlined"
-                  onClick={() => {
-                    setCurrentPostId(item._id);
-                    setShowPicker((prev) => !prev);
-                  }}
-                >
-                  mood
-                </span>
-                <input
-                  type="text"
-                  placeholder="Add a comment"
-                  value={comments[item._id] || ""}
-                  onChange={(e) =>
-                    handleCommentChange(item._id, e.target.value)
-                  }
-                />
-                <button
-                  className="comment"
-                  onClick={() => {
-                    makeComment(comments[item._id], item._id);
-                    toggleComment();
-                  }}
-                >
-                  Post
-                </button>
-                {showPicker && currentPostId === item._id && (
-                  <div className="emoji-picker">
-                    <Picker onEmojiClick={onEmojiClick} />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="close-comment">
-            <span
-              className="material-symbols-outlined material-symbols-outlined-comment"
-              onClick={() => toggleComment()}
-            >
-              close
-            </span>
-          </div>
-        </div>
-      )}
+      {show && item && <PostDetail item={item} toggleDetails={toggleComment} />}
     </div>
   );
 }
