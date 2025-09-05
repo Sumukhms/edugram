@@ -19,7 +19,6 @@ const sanitizeUrl = (url) => {
   return url;
 };
 
-
 export default function MyFollowingPost() {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
@@ -132,7 +131,7 @@ export default function MyFollowingPost() {
   }
 
   return (
-    <div className="home-feed"> {/* Use home-feed for consistent centering */}
+    <div className="home">
       {data.length === 0 ? (
         <div className="empty-state-container">
             <h1>Nothing to see here yet</h1>
