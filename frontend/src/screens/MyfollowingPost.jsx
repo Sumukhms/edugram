@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import "../css/Home.css"; // Keep for post styles
-import "../css/EmptyState.css"; // Import the new CSS
+import "../css/Home.css"; 
+import "../css/EmptyState.css";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import Picker from "emoji-picker-react";
@@ -18,6 +18,7 @@ const sanitizeUrl = (url) => {
   }
   return url;
 };
+
 
 export default function MyFollowingPost() {
   const navigate = useNavigate();
@@ -131,7 +132,7 @@ export default function MyFollowingPost() {
   }
 
   return (
-    <div className="home">
+    <div className="home-feed"> {/* Use home-feed for consistent centering */}
       {data.length === 0 ? (
         <div className="empty-state-container">
             <h1>Nothing to see here yet</h1>
