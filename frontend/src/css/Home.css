@@ -1,6 +1,6 @@
 /* General container for single-column feeds like "My Following" */
 .home {
-  max-width: 550px;
+  max-width: 615px; /* Increased from 550px */
   margin: 30px auto;
 }
 
@@ -9,28 +9,31 @@
   display: flex;
   justify-content: center;
   margin: 30px auto;
-  max-width: 935px;
+  max-width: 1000px; /* Increased from 935px to accommodate */
   padding: 0 20px;
   box-sizing: border-box;
 }
 
 .home-feed {
-  max-width: 600px;
+  max-width: 615px; /* Increased from 600px */
   width: 100%;
 }
 
 .home-sidebar {
-  display: block;
+  display: block; /* Show sidebar on desktop */
 }
 
 @media (max-width: 950px) {
   .home-sidebar {
-    display: none;
+    display: none; /* Hide sidebar on smaller screens */
+  }
+  .home-feed {
+    max-width: 615px; /* Match the single-column view width */
   }
 }
 
 .card {
-  max-width: 100%;
+  max-width: 100%; /* Make card responsive to its container */
   margin-bottom: 30px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
