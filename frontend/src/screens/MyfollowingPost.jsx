@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import "../css/Home.css"; 
+import "../css/Home.css";
 import "../css/EmptyState.css";
+import "../css/Skeleton.css"; // Import the skeleton styles
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import Picker from "emoji-picker-react";
+import PostSkeleton from "../components/PostSkeleton"; // Import the skeleton component
 
 const API_BASE = process.env.REACT_APP_API_URL;
 
@@ -18,6 +20,7 @@ const sanitizeUrl = (url) => {
   }
   return url;
 };
+
 
 export default function MyFollowingPost() {
   const navigate = useNavigate();
@@ -122,16 +125,19 @@ export default function MyFollowingPost() {
     });
   };
 
+  // UPDATED LOADING STATE
   if (loading || !user) {
     return (
-      <div style={{ textAlign: "center", marginTop: "50px" }}>
-        <h1>Loading...</h1>
-      </div>
-    );
+        <div className="home-feed">
+            <PostSkeleton />
+            <PostSkeleton />
+            <PostSkeleton />
+        </div>
+    )
   }
 
   return (
-    <div className="home">
+    <div className="home-feed">
       {data.length === 0 ? (
         <div className="empty-state-container">
             <h1>Nothing to see here yet</h1>
