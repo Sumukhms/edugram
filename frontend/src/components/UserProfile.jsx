@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../css/profile.css";
 import { useParams } from "react-router-dom";
-import FollowListModal from "./FollowListModal"; // Import the new modal
+import FollowListModal from "./FollowListModal"; 
+import PostDetail from "./PostDetail";
 
 const API_BASE = process.env.REACT_APP_API_URL;
 
@@ -17,14 +18,22 @@ export default function UserProfile() {
   const [user, setUser] = useState(null);
   const [pic, setPic] = useState([]);
   const [isFollow, setIsFollow] = useState(false);
-
-  // New state for the follow/following modal
+  
+  // State for modals
+  const [show, setShow] = useState(false);
+  const [posts, setPosts] = useState([]);
   const [showFollowModal, setShowFollowModal] = useState(false);
   const [modalData, setModalData] = useState({ title: "", users: [] });
 
   const defaultProfilePic =
     "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
+  const defaultBannerPic = "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
+  const toggleDetails = (post) => {
+    setShow(!show);
+    if (!show) setPosts(post);
+  };
+  
   const followUser = (userId) => {
     fetch(`${API_BASE}/follow`, {
       method: "put",
@@ -35,7 +44,11 @@ export default function UserProfile() {
       body: JSON.stringify({ followId: userId }),
     })
       .then((res) => res.json())
-      .then(() => setIsFollow(true))
+      .then(() => {
+          setIsFollow(true);
+          // Optimistically update follower count
+          setUser(prevUser => ({...prevUser, followers: [...prevUser.followers, {}]}));
+      })
       .catch((err) => console.error("Error following:", err));
   };
 
@@ -49,11 +62,14 @@ export default function UserProfile() {
       body: JSON.stringify({ followId: userId }),
     })
       .then((res) => res.json())
-      .then(() => setIsFollow(false))
+      .then(() => {
+          setIsFollow(false);
+          // Optimistically update follower count
+          setUser(prevUser => ({...prevUser, followers: prevUser.followers.slice(0, -1)}));
+      })
       .catch((err) => console.error("Error unfollowing:", err));
   };
 
-  // Function to show followers or following
   const showFollows = async (type) => {
     try {
       const response = await fetch(`${API_BASE}/user/${userid}/${type}`, {
@@ -95,7 +111,7 @@ export default function UserProfile() {
       .catch((err) => {
         console.error("Error fetching user data:", err);
       });
-  }, [isFollow, userid]);
+  }, [userid]); // Rerun when the userid in the URL changes
 
   if (!user) {
     return (
@@ -108,6 +124,13 @@ export default function UserProfile() {
   return (
     <div className="profile">
       <div className="profile-container">
+        <div 
+          className="profile-banner"
+          style={{ backgroundImage: `url(${sanitizeUrl(user.bannerPhoto) || defaultBannerPic})` }}
+        >
+          {/* No edit button here since it's not our profile */}
+        </div>
+
         <div className="profile-frame">
           <div className="profile-pic">
             <img
@@ -144,7 +167,7 @@ export default function UserProfile() {
 
         <div className="gallery">
           {pic.map((item) => (
-            <div className="item" key={item._id}>
+            <div className="item" key={item._id} onClick={() => toggleDetails(item)}>
               {item.mediaType === "video" ? (
                 <video src={sanitizeUrl(item.photo)} muted />
               ) : (
@@ -154,6 +177,8 @@ export default function UserProfile() {
           ))}
         </div>
       </div>
+      
+      {show && <PostDetail item={posts} toggleDetails={toggleDetails} />}
       {showFollowModal && (
         <FollowListModal
           title={modalData.title}
