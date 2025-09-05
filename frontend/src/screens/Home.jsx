@@ -24,67 +24,66 @@ export default function Home() {
   const [comments, setComments] = useState({});
   const [showPicker, setShowPicker] = useState(false);
   const [currentPostId, setCurrentPostId] = useState(null);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState({});
   const limit = 5;
 
-  const fetchPosts = () => {
+  const fetchPosts = async () => {
     setLoading(true);
-    fetch(`${API_BASE}/allposts?limit=${limit}&skip=${skip}`, {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-    })
-      .then((res) => {
+    try {
+      const res = await fetch(`${API_BASE}/allposts?skip=${skip}&limit=${limit}`, {
+        // Add query parameters for pagination
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("jwt"),
+        },
+      });
+
+      if (!res.ok) {
         if (res.status === 401) {
           navigate("/signin");
           return;
         }
-        if (res.status === 404) {
-          setData([]);
-          setHasMore(false);
-          setLoading(false);
-          return;
-        }
-        return res.json();
-      })
-      .then((result) => {
-        try {
-          // Check if result exists and has expected structure
-          if (!result || typeof result !== "object") {
-            throw new Error("No data received from server");
-          }
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
 
-          // Verify posts array exists
-          if (!Array.isArray(result.posts)) {
-            throw new Error("Invalid response format - posts array missing");
-          }
+      const result = await res.json();
 
-          // Update state with valid data
-          setHasMore(result.posts.length >= limit);
-          setData((prev) => [...prev, ...result.posts]);
-          setError(null);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        console.error("Error fetching posts:", err);
-        toast.error("Failed to load posts");
-        setError("Network error while fetching posts");
-        setLoading(false);
-      });
+      if (!result || !Array.isArray(result.posts)) {
+        throw new Error("Invalid response format - posts array missing");
+      }
+
+      setData((prevData) => [...prevData, ...result.posts]);
+      setHasMore(result.posts.length >= limit);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching posts:", err);
+      setError(err.message);
+      toast.error("Failed to load posts");
+    } finally {
+      setLoading(false);
+      setIsInitialLoading(false);
+    }
   };
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) {
-      setUser(storedUser);
-      fetchPosts();
-    } else {
-      navigate("/signin");
-    }
-  }, [skip, navigate]);
+    let isSubscribed = true;
+    
+    const initializeHome = async () => {
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      if (storedUser && isSubscribed) {
+        setUser(storedUser);
+        await fetchPosts();
+      } else {
+        navigate("/signin");
+      }
+    };
+
+    initializeHome();
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [skip, navigate, limit]); // Add missing dependency 'limit'
 
   const onEmojiClick = (emojiObject) => {
     if (currentPostId) {
@@ -95,23 +94,27 @@ export default function Home() {
     }
   };
 
-  const likePost = (id) => {
-    fetch(`${API_BASE}/like`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-      body: JSON.stringify({ postId: id }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        const newData = data.map((item) =>
-          item._id === result._id ? result : item
-        );
-        setData(newData);
-      })
-      .catch(() => toast.error("Error liking post"));
+  const likePost = async (id) => {
+    setActionLoading(prev => ({ ...prev, [id]: true }));
+    try {
+      const response = await fetch(`${API_BASE}/like`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("jwt"),
+        },
+        body: JSON.stringify({ postId: id }),
+      });
+      if (!response.ok) throw new Error('Failed to like post');
+      const result = await response.json();
+      setData(prevData => prevData.map(item => 
+        item._id === result._id ? result : item
+      ));
+    } catch (error) {
+      toast.error("Error liking post");
+    } finally {
+      setActionLoading(prev => ({ ...prev, [id]: false }));
+    }
   };
 
   const unlikePost = (id) => {
@@ -134,6 +137,10 @@ export default function Home() {
   };
 
   const makeComment = (text, postId) => {
+    if (!text?.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
     fetch(`${API_BASE}/comment`, {
       method: "PUT",
       headers: {
@@ -161,8 +168,35 @@ export default function Home() {
     setComments((prev) => ({ ...prev, [postId]: value }));
   };
 
-  if (error) return <div className="error">Error: {error}</div>;
-  if (!user) return <div>Loading...</div>;
+  const loadMore = () => {
+    if (!loading && hasMore) {
+      setSkip((prevSkip) => prevSkip + limit);
+    }
+  };
+
+  const handleEmojiPickerClick = (postId) => {
+    if (currentPostId === postId) {
+      setShowPicker(prev => !prev);
+    } else {
+      setShowPicker(true);
+    }
+    setCurrentPostId(postId);
+  };
+
+  useEffect(() => {
+    const handleEscKey = (event) => {
+      if (event.key === 'Escape' && show) {
+        toggleComment();
+      }
+    };
+    
+    document.addEventListener('keydown', handleEscKey);
+    return () => document.removeEventListener('keydown', handleEscKey);
+  }, [show]);
+
+  if (isInitialLoading) return <div className="loading-spinner">Loading...</div>;
+  if (error) return <div className="error-container">Error: {error}</div>;
+  if (!user) return <div className="auth-redirect">Please sign in to continue</div>;
 
   return (
     <div className="home">
@@ -338,6 +372,12 @@ export default function Home() {
             </span>
           </div>
         </div>
+      )}
+
+      {hasMore && !loading && (
+        <button className="load-more-btn" onClick={loadMore}>
+          Load More
+        </button>
       )}
     </div>
   );

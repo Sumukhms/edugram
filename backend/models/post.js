@@ -64,6 +64,8 @@ const postSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true }, // Add this to include virtuals when converting to JSON
+    toObject: { virtuals: true },
   }
 );
 
@@ -80,4 +82,29 @@ postSchema.virtual("likeCount").get(function () {
   return this.likes.length;
 });
 
-mongoose.model("POST", postSchema);
+// Add after schema definition, before model creation
+postSchema.statics.formatResponse = function (posts) {
+  if (!posts) return { posts: [] };
+  if (!Array.isArray(posts)) posts = [posts];
+  return { posts: posts };
+};
+
+postSchema.methods.toJSON = function () {
+  const post = this.toObject();
+  post.id = post._id; // Add id field for consistency
+  post.commentCount = this.commentCount;
+  post.likeCount = this.likeCount;
+  return post;
+};
+
+postSchema.pre(/^find/, function (next) {
+  this.populate("postedBy", "_id name Photo").populate(
+    "comments.postedBy",
+    "_id name"
+  );
+  next();
+});
+
+// Export the model
+const Post = mongoose.model("POST", postSchema);
+module.exports = Post;
