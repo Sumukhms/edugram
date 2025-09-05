@@ -127,7 +127,7 @@ export default function MyFollowingPost() {
   // UPDATED LOADING STATE
   if (loading || !user) {
     return (
-        <div className="home-feed">
+        <div className="home">
             <PostSkeleton />
             <PostSkeleton />
             <PostSkeleton />
@@ -136,7 +136,7 @@ export default function MyFollowingPost() {
   }
 
   return (
-    <div className="home-feed">
+    <div className="home">
       {data.length === 0 ? (
         <div className="empty-state-container">
             <h1>Nothing to see here yet</h1>
