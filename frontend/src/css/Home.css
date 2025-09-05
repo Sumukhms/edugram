@@ -1,6 +1,6 @@
 /* General container for single-column feeds like "My Following" */
 .home {
-  max-width: 615px; /* Increased from 550px */
+  max-width: 680px; /* Increased width */
   margin: 30px auto;
 }
 
@@ -9,31 +9,28 @@
   display: flex;
   justify-content: center;
   margin: 30px auto;
-  max-width: 1000px; /* Increased from 935px to accommodate */
+  max-width: 1020px; /* Increased width to accommodate */
   padding: 0 20px;
   box-sizing: border-box;
 }
 
 .home-feed {
-  max-width: 615px; /* Increased from 600px */
+  max-width: 680px; /* Increased width */
   width: 100%;
 }
 
 .home-sidebar {
-  display: block; /* Show sidebar on desktop */
+  display: block;
 }
 
 @media (max-width: 950px) {
   .home-sidebar {
-    display: none; /* Hide sidebar on smaller screens */
-  }
-  .home-feed {
-    max-width: 615px; /* Match the single-column view width */
+    display: none;
   }
 }
 
 .card {
-  max-width: 100%; /* Make card responsive to its container */
+  max-width: 100%;
   margin-bottom: 30px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
@@ -66,12 +63,25 @@
   object-fit: cover;
 }
 
+/* === MODIFIED STYLES FOR IMAGE HEIGHT === */
+.card-image {
+  width: 100%;
+  max-height: 600px; /* Set a maximum height for the media container */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #f0f2f5; /* A light background for any empty space */
+}
+
 .card-image img,
 .card-image video {
   width: 100%;
-  height: auto;
-  display: block;
+  height: auto; /* Let height adjust automatically */
+  object-fit: cover; /* Ensures the image covers the container */
+  max-height: 600px; /* Also apply max-height here */
 }
+/* ========================================= */
 
 .card-content {
   text-align: left;
