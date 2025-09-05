@@ -17,20 +17,27 @@ import MyFollowingPost from './screens/MyfollowingPost';
 // We create a separate component for routes to use the `useLocation` hook
 const AnimatedRoutes = () => {
   const location = useLocation();
+  
+  // This determines the wrapper class based on the route
+  const isHomePage = location.pathname === '/';
+  const layoutClass = isHomePage ? 'home-layout' : 'main-content';
+
   return (
-    <TransitionGroup>
-      <CSSTransition key={location.key} classNames="fade" timeout={300}>
-        <Routes location={location}>
-          <Route path='/' element={<Home />} />
-          <Route path='/signup' element={<Signup />} />
-          <Route path='/signin' element={<Signin />} />
-          <Route exact path='/profile' element={<Profile />} />
-          <Route path='/createPost' element={<Createpost />} />
-          <Route path='/profile/:userid' element={<UserProfile />} />
-          <Route path="/followingpost" element={<MyFollowingPost />} />
-        </Routes>
-      </CSSTransition>
-    </TransitionGroup>
+    <div className={layoutClass}>
+      <TransitionGroup>
+        <CSSTransition key={location.key} classNames="fade" timeout={300}>
+          <Routes location={location}>
+            <Route path='/' element={<Home />} />
+            <Route path='/signup' element={<Signup />} />
+            <Route path='/signin' element={<Signin />} />
+            <Route exact path='/profile' element={<Profile />} />
+            <Route path='/createPost' element={<Createpost />} />
+            <Route path='/profile/:userid' element={<UserProfile />} />
+            <Route path="/followingpost" element={<MyFollowingPost />} />
+          </Routes>
+        </CSSTransition>
+      </TransitionGroup>
+    </div>
   );
 };
 
