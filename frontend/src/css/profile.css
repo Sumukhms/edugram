@@ -9,8 +9,8 @@
   border-radius: var(--border-radius);
   box-shadow: var(--card-shadow);
   padding: 40px;
-  position: relative; /* Add this */
-  z-index: 1;        /* Add this */
+  position: relative;
+  z-index: 1;
 }
 
 .changePic {
@@ -187,7 +187,8 @@
     margin-bottom: 15px;
   }
 
-  .followBtn, .unfollowBtn {
+  .followBtn,
+  .unfollowBtn {
     margin-left: 0;
     width: 100%;
   }
@@ -200,4 +201,21 @@
   .gallery {
     gap: 10px;
   }
+}
+
+/* === NEW STYLES FOR PROFILE PIC PREVIEW === */
+.image-preview-container {
+  margin-bottom: 20px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
