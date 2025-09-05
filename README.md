@@ -1,7 +1,7 @@
 # Edugram — MERN Social Learning Platform
 
 Edugram is a social learning network for students and teachers. Think “LinkedIn, but campus-first”: profiles, posts, reactions, discussions, and resource sharing — built on the **MERN** stack (MongoDB, Express, React, Node.js).
-
+**Live Demo:** [edugram-five.vercel.app]
 > This README covers local development **and** production deployment (Render + Vercel), plus a one-service alternative where Express serves the React build.
 
 ---
