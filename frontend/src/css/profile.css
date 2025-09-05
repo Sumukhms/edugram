@@ -8,9 +8,39 @@
   background-color: var(--container-background);
   border-radius: var(--border-radius);
   box-shadow: var(--card-shadow);
-  padding: 40px;
   position: relative;
   z-index: 1;
+  padding: 0; /* Remove padding to allow banner to touch edges */
+  overflow: hidden; /* Keep children within rounded corners */
+}
+
+.profile-banner {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.edit-banner-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.profile-banner:hover .edit-banner-btn {
+  opacity: 1;
 }
 
 .changePic {
@@ -30,16 +60,17 @@
 .profile-frame {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-end; /* Align items to the bottom */
   justify-content: flex-start;
-  padding-bottom: 30px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 0 40px 30px 40px; /* Adjust padding */
 }
 
 .profile-pic {
-  margin-right: 80px;
-  margin-bottom: 0;
+  margin-right: 40px;
+  margin-top: -75px; /* Pull the profile picture up */
   flex-shrink: 0;
+  position: relative; /* Needed for z-index */
+  z-index: 2;
 }
 
 .profile-pic img {
@@ -49,10 +80,12 @@
   object-fit: cover;
   cursor: pointer;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  border: 4px solid var(--container-background); /* Add a border to separate from banner */
 }
 
 .profile-data {
   text-align: left;
+  padding-bottom: 10px; /* Add some padding to align with pic */
 }
 
 .profile-data-top {
@@ -132,7 +165,8 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 28px;
-  margin-top: 40px;
+  padding: 40px;
+  border-top: 1px solid var(--border-color);
 }
 
 .item {
@@ -155,19 +189,19 @@
 
 /* === MOBILE STYLES FOR PROFILE === */
 @media screen and (max-width: 768px) {
-  .profile-container {
-    padding: 20px;
+  .profile-banner {
+    height: 120px;
   }
-
   .profile-frame {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    padding: 0 20px 20px 20px;
   }
 
   .profile-pic {
     margin-right: 0;
-    margin-bottom: 20px;
+    margin-top: -60px; /* Adjust overlap for mobile */
   }
 
   .profile-pic img {
@@ -177,6 +211,8 @@
 
   .profile-data {
     text-align: center;
+    padding-bottom: 0;
+    margin-top: 10px;
   }
 
   .profile-data-top {
@@ -200,10 +236,11 @@
 
   .gallery {
     gap: 10px;
+    padding: 20px;
   }
 }
 
-/* === NEW STYLES FOR PROFILE PIC PREVIEW === */
+/* === STYLES FOR PROFILE PIC PREVIEW === */
 .image-preview-container {
   margin-bottom: 20px;
   width: 200px;
@@ -218,4 +255,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Styles for Banner Preview in Modal */
+.banner-preview.image-preview-container {
+    width: 100%;
+    height: 150px;
+    border-radius: 8px;
 }

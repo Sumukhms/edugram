@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useContext } from "react";
-import { LoginContext } from "../context/LoginContext";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import Picker from "emoji-picker-react";
 import "../css/Home.css";
 import PostDetail from "../components/PostDetail";
+import Suggestions from "../components/Suggestions"; // Import the new component
 
 const API_BASE = process.env.REACT_APP_API_URL;
 
@@ -55,16 +55,14 @@ export default function Home() {
       })
       .then((result) => {
         if (!result) return;
-
+        
         try {
           if (!Array.isArray(result.posts)) {
             throw new Error("Invalid response format - posts array missing");
           }
-
+          
           setHasMore(result.posts.length === limit);
-          setData((prev) =>
-            isNewFetch ? result.posts : [...prev, ...result.posts]
-          );
+          setData((prev) => isNewFetch ? result.posts : [...prev, ...result.posts]);
           setError(null);
         } catch (err) {
           setError(err.message);
@@ -79,7 +77,7 @@ export default function Home() {
         setLoading(false);
       });
   };
-
+  
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
@@ -97,7 +95,7 @@ export default function Home() {
   }, [skip]);
 
   const handleLoadMore = () => {
-    setSkip((prevSkip) => prevSkip + limit);
+    setSkip(prevSkip => prevSkip + limit);
   };
 
   const onEmojiClick = (emojiObject) => {
@@ -110,11 +108,9 @@ export default function Home() {
   };
 
   const likePost = (id) => {
-    // Add the animation class
     const heartIcon = document.querySelector(`.like-btn-${id}`);
     if (heartIcon) {
       heartIcon.classList.add("like-animation");
-      // Remove the class after the animation finishes
       setTimeout(() => {
         heartIcon.classList.remove("like-animation");
       }, 300);
@@ -186,121 +182,117 @@ export default function Home() {
   const handleCommentChange = (postId, value) => {
     setComments((prev) => ({ ...prev, [postId]: value }));
   };
-
+  
   if (loading && data.length === 0) {
-    return (
-      <div className="loading-spinner">
-        <h1>Loading posts...</h1>
-      </div>
-    );
+      return <div className="loading-spinner"><h1>Loading posts...</h1></div>;
   }
-  if (error)
-    return (
-      <div className="error-container">
-        <h1>Error: {error}</h1>
-      </div>
-    );
+  if (error) return <div className="error-container"><h1>Error: {error}</h1></div>;
   if (!user) return null;
 
   return (
-    <div className="home">
-      {data.length === 0 ? (
-        <div className="loading-spinner">
-          <h1>No posts to show.</h1>
-        </div>
-      ) : (
-        data.map((post) => (
-          <div className="card" key={post._id}>
-            <div className="card-header">
-              <div className="card-pic">
-                <img
-                  src={sanitizeUrl(post?.postedBy?.photo) || defaultProfilePic}
-                  alt="profile"
-                />
-              </div>
-              <Link to={`/profile/${post.postedBy._id}`}>
-                <h5>{post?.postedBy?.name || "Unknown User"}</h5>
-              </Link>
-            </div>
-
-            <div className="card-image">
-              {post.mediaType === "video" ? (
-                <video src={sanitizeUrl(post.photo)} controls muted loop />
-              ) : (
-                <img
-                  src={sanitizeUrl(post.photo) || defaultPostPic}
-                  alt="Post"
-                />
-              )}
-            </div>
-
-            <div className="card-content">
-              {post.likes.includes(user._id) ? (
-                <span
-                  className={`material-symbols-outlined material-symbols-outlined-red like-btn-${post._id}`}
-                  onClick={() => unlikePost(post._id)}
-                >
-                  favorite
-                </span>
-              ) : (
-                <span
-                  className={`material-symbols-outlined like-btn-${post._id}`}
-                  onClick={() => likePost(post._id)}
-                >
-                  favorite
-                </span>
-              )}
-              <p>{post.likes.length} Likes</p>
-              <p>{post.body || "No description available"}</p>
-              <p
-                style={{ fontWeight: "bold", cursor: "pointer" }}
-                onClick={() => toggleComment(post)}
-              >
-                View all comments
-              </p>
-            </div>
-
-            <div className="add-comment">
-              <span
-                className="material-symbols-outlined"
-                onClick={() => {
-                  setCurrentPostId(post._id);
-                  setShowPicker((prev) => !prev);
-                }}
-              >
-                mood
-              </span>
-              <input
-                type="text"
-                placeholder="Add a comment"
-                value={comments[post._id] || ""}
-                onChange={(e) =>
-                  handleCommentChange(post._id, e.target.value)
-                }
-              />
-              <button
-                className="comment"
-                onClick={() => makeComment(comments[post._id], post._id)}
-              >
-                Post
-              </button>
-              {showPicker && currentPostId === post._id && (
-                <div className="emoji-picker">
-                  <Picker onEmojiClick={onEmojiClick} />
+    <div className="home-layout">
+      <div className="home-feed">
+        {data.length === 0 ? (
+          <div className="loading-spinner"><h1>No posts to show.</h1></div>
+        ) : (
+          data.map((post) => (
+            <div className="card" key={post._id}>
+              {/* Card content remains the same */}
+              <div className="card-header">
+                <div className="card-pic">
+                  <img
+                    src={sanitizeUrl(post?.postedBy?.photo) || defaultProfilePic}
+                    alt="profile"
+                  />
                 </div>
-              )}
+                <Link to={`/profile/${post.postedBy._id}`}>
+                  <h5>{post?.postedBy?.name || "Unknown User"}</h5>
+                </Link>
+              </div>
+
+              <div className="card-image">
+                {post.mediaType === "video" ? (
+                  <video src={sanitizeUrl(post.photo)} controls muted loop />
+                ) : (
+                  <img
+                    src={sanitizeUrl(post.photo) || defaultPostPic}
+                    alt="Post"
+                  />
+                )}
+              </div>
+
+              <div className="card-content">
+                {post.likes.includes(user._id) ? (
+                  <span
+                    className={`material-symbols-outlined material-symbols-outlined-red like-btn-${post._id}`}
+                    onClick={() => unlikePost(post._id)}
+                  >
+                    favorite
+                  </span>
+                ) : (
+                  <span
+                    className={`material-symbols-outlined like-btn-${post._id}`}
+                    onClick={() => likePost(post._id)}
+                  >
+                    favorite
+                  </span>
+                )}
+                <p>{post.likes.length} Likes</p>
+                <p>{post.body || "No description available"}</p>
+                <p
+                  style={{ fontWeight: "bold", cursor: "pointer" }}
+                  onClick={() => toggleComment(post)}
+                >
+                  View all comments
+                </p>
+              </div>
+
+              <div className="add-comment">
+                <span
+                  className="material-symbols-outlined"
+                  onClick={() => {
+                    setCurrentPostId(post._id);
+                    setShowPicker((prev) => !prev);
+                  }}
+                >
+                  mood
+                </span>
+                <input
+                  type="text"
+                  placeholder="Add a comment"
+                  value={comments[post._id] || ""}
+                  onChange={(e) =>
+                    handleCommentChange(post._id, e.target.value)
+                  }
+                />
+                <button
+                  className="comment"
+                  onClick={() => makeComment(comments[post._id], post._id)}
+                >
+                  Post
+                </button>
+                {showPicker && currentPostId === post._id && (
+                  <div className="emoji-picker">
+                    <Picker onEmojiClick={onEmojiClick} />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))
-      )}
+          ))
+        )}
+        
+        {loading && <div className="loading-spinner">Loading...</div>}
 
-      {loading && <div className="loading-spinner">Loading...</div>}
+        {!loading && hasMore && (
+          <button className="load-more-btn" onClick={handleLoadMore}>
+            Load More
+          </button>
+        )}
+      </div>
 
-      {!loading && hasMore && (
-        <button className="load-more-btn" onClick={handleLoadMore}>
-          Load More
-        </button>
-      )}
+      <div className="home-sidebar">
+        <Suggestions />
+      </div>
 
       {show && item && (
         <PostDetail item={item} toggleDetails={toggleComment} />

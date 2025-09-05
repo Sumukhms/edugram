@@ -10,16 +10,43 @@
   }
 }
 
-.card {
-  max-width: 550px;
+/* New Layout Styles */
+.home-layout {
+  display: flex;
+  justify-content: center;
   margin: 30px auto;
+  max-width: 935px; /* Wider layout */
+  padding: 0 20px; /* Add some horizontal padding for smaller desktop views */
+  box-sizing: border-box;
+}
+
+.home-feed {
+  max-width: 600px;
+  width: 100%;
+}
+
+.home-sidebar {
+  display: block; /* Show sidebar on desktop */
+}
+
+@media (max-width: 950px) {
+  .home-sidebar {
+    display: none; /* Hide sidebar on smaller screens */
+  }
+  .home-feed {
+    max-width: 550px; /* Revert to original max-width on smaller screens */
+  }
+}
+
+.card {
+  max-width: 100%; /* Make card responsive to its container */
+  margin: 0 auto 30px auto; /* Center card in the feed column and add bottom margin */
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   background-color: var(--container-background);
   box-shadow: var(--card-shadow);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
   animation: cardEnter 0.6s ease-out;
-  cursor: pointer; /* This is the new line */
 }
 
 .card:hover {
@@ -87,7 +114,6 @@
   font-size: 14px;
 }
 
-/* --- Emoji Picker Styles --- */
 .picker-container {
   position: absolute;
   bottom: 60px;
@@ -106,10 +132,9 @@
 }
 
 .material-symbols-outlined:active {
-  transform: scale(0.9); /* Add feedback on click */
+  transform: scale(0.9);
 }
 
-/* Add these styles to the end of frontend/src/css/Home.css */
 .loading-spinner {
   text-align: center;
   padding: 20px;
@@ -141,9 +166,9 @@
 .load-more-btn:hover {
   background: var(--accent-hover-color);
 }
-/* === NEW STYLES FOR MICRO-INTERACTIONS === */
 
-/* Keyframe animation for the heart icon */
+
+/* === STYLES FOR MICRO-INTERACTIONS === */
 @keyframes like-animation {
   0% {
     transform: scale(1);
@@ -156,14 +181,12 @@
   }
 }
 
-/* Class to trigger the animation */
 .like-animation {
   animation-name: like-animation;
   animation-duration: 0.3s;
   animation-timing-function: ease-in-out;
 }
 
-/* Make the icon slightly larger on hover for better feedback */
 .material-symbols-outlined:hover {
   transform: scale(1.1);
 }

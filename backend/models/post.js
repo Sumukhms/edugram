@@ -21,6 +21,10 @@ const postSchema = new mongoose.Schema(
         message: (props) => `${props.value} is not a valid URL!`,
       },
     },
+        bannerPhoto: {
+        type: String
+    },
+
     mediaType: {
       type: String,
       enum: {

@@ -14,8 +14,6 @@ router.get("/user/:id", async (req, res) => {
     }
 
     try {
-        console.log('Request for user ID:', userId);
-
         const user = await USER.findById(userId).select("-password");
 
         if (!user) {
@@ -25,8 +23,6 @@ router.get("/user/:id", async (req, res) => {
         const posts = await POST.find({ postedBy: userId })
             .populate("postedBy", "_id name photo")
             .populate("comments.postedBy", "_id name");
-
-        console.log('User and posts:', { user, posts });
 
         res.status(200).json({ user, posts });
     } catch (err) {
@@ -38,15 +34,11 @@ router.get("/user/:id", async (req, res) => {
 // to follow user
 router.put("/follow", requireLogin, async (req, res) => {
     try {
-        const userToFollow = await USER.findByIdAndUpdate(
+        await USER.findByIdAndUpdate(
             req.body.followId,
             { $push: { followers: req.user._id } },
             { new: true }
         );
-
-        if (!userToFollow) {
-            return res.status(404).json({ error: "User to follow not found" });
-        }
 
         const loggedInUser = await USER.findByIdAndUpdate(
             req.user._id,
@@ -64,15 +56,11 @@ router.put("/follow", requireLogin, async (req, res) => {
 // to unfollow user
 router.put("/unfollow", requireLogin, async (req, res) => {
     try {
-        const userToUnfollow = await USER.findByIdAndUpdate(
+        await USER.findByIdAndUpdate(
             req.body.followId,
             { $pull: { followers: req.user._id } },
             { new: true }
         );
-
-        if (!userToUnfollow) {
-            return res.status(404).json({ error: "User to unfollow not found" });
-        }
 
         const loggedInUser = await USER.findByIdAndUpdate(
             req.user._id,
@@ -101,8 +89,21 @@ router.put("/uploadProfilePic", requireLogin, async (req, res) => {
     }
 });
 
+// NEW: to upload banner pic
+router.put("/uploadBannerPic", requireLogin, async (req, res) => {
+    try {
+        const result = await USER.findByIdAndUpdate(req.user._id, {
+            $set: { bannerPhoto: req.body.pic }
+        }, {
+            new: true
+        });
+        res.json(result);
+    } catch (err) {
+        res.status(422).json({ error: err.message });
+    }
+});
 
-// NEW: Get followers list
+// Get followers list
 router.get("/user/:id/followers", requireLogin, async (req, res) => {
     try {
         const user = await USER.findById(req.params.id)
@@ -118,7 +119,7 @@ router.get("/user/:id/followers", requireLogin, async (req, res) => {
     }
 });
 
-// NEW: Get following list
+// Get following list
 router.get("/user/:id/following", requireLogin, async (req, res) => {
     try {
         const user = await USER.findById(req.params.id)
@@ -134,7 +135,6 @@ router.get("/user/:id/following", requireLogin, async (req, res) => {
     }
 });
 
-
 // to search for users
 router.post("/search-users", requireLogin, (req, res) => {
   const { query } = req.body;
@@ -143,12 +143,11 @@ router.post("/search-users", requireLogin, (req, res) => {
     return res.status(422).json({ error: "Search query is empty" });
   }
 
-  // Using regex for a case-insensitive search
   let userPattern = new RegExp("^" + query, "i");
 
   USER.find({
     $or: [{ name: { $regex: userPattern } }, { userName: { $regex: userPattern } }],
-    _id: { $ne: req.user._id } // Exclude the current user from results
+    _id: { $ne: req.user._id }
   })
     .select("_id name photo")
     .then((users) => {
@@ -158,6 +157,22 @@ router.post("/search-users", requireLogin, (req, res) => {
       console.log(err);
       res.status(500).json({ error: "Error searching for users" });
     });
+});
+
+// to get user suggestions for "who to follow"
+router.get("/user-suggestions", requireLogin, async (req, res) => {
+    try {
+        const users = await USER.find({
+            _id: { $nin: [...req.user.following, req.user._id] }
+        })
+        .select("_id name photo")
+        .limit(5);
+
+        res.json({ users });
+    } catch (err) {
+        console.error('Error fetching user suggestions:', err);
+        res.status(500).json({ error: "Something went wrong" });
+    }
 });
 
 module.exports = router;
