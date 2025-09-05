@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "build": "cd ../frontend && npm install && npm run build"
+    "build": "echo 'No build required'"
   },
   "author": "",
   "license": "ISC",
@@ -13,10 +13,10 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.1",
-    "express": "^4.21.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.9.1",
+    "mongoose": "^8.0.3",
     "nodemon": "^3.1.9",
     "react-toastify": "^11.0.1"
   }

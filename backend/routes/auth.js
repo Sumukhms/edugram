@@ -75,7 +75,7 @@ router.post("/signin", async (req, res) => {
       return res.status(422).json({ error: "Invalid password" });
     }
 
-    const token = jwt.sign({ _id: savedUser.id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ _id: savedUser.id }, process.env.Jwt_secret, {
       expiresIn: "7d", // Token expires in 7 days
     });
 
