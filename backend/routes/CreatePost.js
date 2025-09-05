@@ -3,14 +3,6 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const requireLogin = require("../middlewares/requireLogin");
 const POST = mongoose.model("POST");
-const rateLimit = require("express-rate-limit");
-
-// Configure rate limiting
-const createPostLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 create requests per windowMs
-  message: "Too many posts created, please try again after 15 minutes",
-});
 
 // Validation middleware for post inputs
 const validatePostInput = (req, res, next) => {
@@ -73,10 +65,9 @@ router.get("/allposts", requireLogin, async (req, res) => {
   }
 });
 
-// Apply rate limiting only to post creation
+// Route to create a post - without rate limiting
 router.post(
   "/createPost",
-  createPostLimiter,
   requireLogin,
   validatePostInput,
   async (req, res) => {
@@ -85,10 +76,6 @@ router.post(
 
       if (!body || !pic) {
         return res.status(422).json({ error: "Please add all the fields" });
-      }
-
-      if (!req.user || !req.user._id) {
-        return res.status(400).json({ error: "User not authenticated" });
       }
 
       const post = new POST({
