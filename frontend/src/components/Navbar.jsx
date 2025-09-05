@@ -132,54 +132,51 @@ export default function Navbar({ login }) {
 
   return (
     <div className="navbar">
-      <div className="navbar-top">
-        <img
-          id="edu-logo"
-          src={logo}
-          alt="Logo"
-          onClick={() => {
-            if (window.location.pathname !== "/") navigate("/");
-          }}
-        />
-        <ul className="nav-menu">{loginStatus()}</ul>
-        <ul className="nav-mobile">{loginStatusMobile()}</ul>
-      </div>
-
+      <img
+        id="edu-logo"
+        src={logo}
+        alt="Logo"
+        onClick={() => {
+          if (window.location.pathname !== "/") navigate("/");
+        }}
+      />
+      
       {isLoggedIn && (
-        <div className="navbar-bottom">
-          <div className="search-container">
-            <input
-              type="text"
-              placeholder="Search users..."
-              value={search}
-              onChange={(e) => fetchUsers(e.target.value)}
-            />
-            {search && (
-              <ul className="search-results">
-                {searchResults.map((item) => (
-                  <li
-                    key={item._id}
-                    onClick={() => {
-                      setSearch("");
-                      setSearchResults([]);
-                    }}
-                  >
-                    <Link to={`/profile/${item._id}`}>
-                      <div className="search-result-item">
-                        <img
-                          src={item.photo || "https://cdn-icons-png.flaticon.com/128/17231/17231410.png"}
-                          alt="user"
-                        />
-                        <span>{item.name}</span>
-                      </div>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search users..."
+            value={search}
+            onChange={(e) => fetchUsers(e.target.value)}
+          />
+          {search && (
+            <ul className="search-results">
+              {searchResults.map((item) => (
+                <li
+                  key={item._id}
+                  onClick={() => {
+                    setSearch("");
+                    setSearchResults([]);
+                  }}
+                >
+                  <Link to={`/profile/${item._id}`}>
+                    <div className="search-result-item">
+                      <img
+                        src={item.photo || "https://cdn-icons-png.flaticon.com/128/17231/17231410.png"}
+                        alt="user"
+                      />
+                      <span>{item.name}</span>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
+
+      <ul className="nav-menu">{loginStatus()}</ul>
+      <ul className="nav-mobile">{loginStatusMobile()}</ul>
     </div>
   );
 }
