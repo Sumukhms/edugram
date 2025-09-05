@@ -21,7 +21,6 @@ const sanitizeUrl = (url) => {
   return url;
 };
 
-
 export default function MyFollowingPost() {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
