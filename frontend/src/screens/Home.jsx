@@ -148,6 +148,8 @@ export default function Home() {
           item._id === result._id ? result : item
         );
         setData(newData);
+        setComments((prev) => ({ ...prev, [postId]: "" })); // Clear the input field
+        toast.success("Comment posted successfully!");
       })
       .catch(() => toast.error("Error posting comment"));
   };
