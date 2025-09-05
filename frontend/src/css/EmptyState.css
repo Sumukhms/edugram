@@ -1,0 +1,44 @@
+.empty-state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 50px 20px;
+    margin-top: 40px;
+    background-color: var(--container-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    max-width: 550px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.empty-state-container h1 {
+    margin: 0 0 10px 0;
+    font-weight: 600;
+}
+
+.empty-state-container p {
+    color: var(--secondary-text);
+    margin: 0 0 20px 0;
+    max-width: 350px;
+}
+
+.empty-state-button {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 12px 25px;
+    font-size: 1rem;
+    border: none;
+    color: white;
+    background: var(--primary-color);
+    border-radius: 8px;
+    transition: all 0.25s ease;
+}
+
+.empty-state-button:hover {
+    background: var(--primary-hover-color);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px -10px var(--primary-color);
+}

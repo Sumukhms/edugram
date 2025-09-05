@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import "../css/Home.css";
+import "../css/Home.css"; // Keep for post styles
+import "../css/EmptyState.css"; // Import the new CSS
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import Picker from "emoji-picker-react";
@@ -17,7 +18,6 @@ const sanitizeUrl = (url) => {
   }
   return url;
 };
-
 
 export default function MyFollowingPost() {
   const navigate = useNavigate();
@@ -133,9 +133,12 @@ export default function MyFollowingPost() {
   return (
     <div className="home">
       {data.length === 0 ? (
-        <div style={{ textAlign: "center", marginTop: "50px" }}>
-          <h1>No posts to display</h1>
-          <p>Follow other users to see their posts here.</p>
+        <div className="empty-state-container">
+            <h1>Nothing to see here yet</h1>
+            <p>Posts from people you follow will show up here. Find some interesting people to follow!</p>
+            <button className="empty-state-button" onClick={() => navigate('/')}>
+                Find People to Follow
+            </button>
         </div>
       ) : (
         data.map((post) => (

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../css/profile.css";
+import "../css/EmptyState.css"; // Import the empty state CSS
 import { useParams } from "react-router-dom";
 import FollowListModal from "./FollowListModal"; 
 import PostDetail from "./PostDetail";
@@ -46,7 +47,6 @@ export default function UserProfile() {
       .then((res) => res.json())
       .then(() => {
           setIsFollow(true);
-          // Optimistically update follower count
           setUser(prevUser => ({...prevUser, followers: [...prevUser.followers, {}]}));
       })
       .catch((err) => console.error("Error following:", err));
@@ -64,7 +64,6 @@ export default function UserProfile() {
       .then((res) => res.json())
       .then(() => {
           setIsFollow(false);
-          // Optimistically update follower count
           setUser(prevUser => ({...prevUser, followers: prevUser.followers.slice(0, -1)}));
       })
       .catch((err) => console.error("Error unfollowing:", err));
@@ -89,6 +88,10 @@ export default function UserProfile() {
   };
 
   useEffect(() => {
+    // Reset state when userid changes
+    setUser(null);
+    setPic([]);
+    
     fetch(`${API_BASE}/user/${userid}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
@@ -105,13 +108,15 @@ export default function UserProfile() {
             )
           ) {
             setIsFollow(true);
+          } else {
+            setIsFollow(false);
           }
         }
       })
       .catch((err) => {
         console.error("Error fetching user data:", err);
       });
-  }, [userid]); // Rerun when the userid in the URL changes
+  }, [userid]);
 
   if (!user) {
     return (
@@ -128,7 +133,6 @@ export default function UserProfile() {
           className="profile-banner"
           style={{ backgroundImage: `url(${sanitizeUrl(user.bannerPhoto) || defaultBannerPic})` }}
         >
-          {/* No edit button here since it's not our profile */}
         </div>
 
         <div className="profile-frame">
@@ -165,16 +169,25 @@ export default function UserProfile() {
           </div>
         </div>
 
-        <div className="gallery">
-          {pic.map((item) => (
-            <div className="item" key={item._id} onClick={() => toggleDetails(item)}>
-              {item.mediaType === "video" ? (
-                <video src={sanitizeUrl(item.photo)} muted />
-              ) : (
-                <img src={sanitizeUrl(item.photo)} alt="User Post" />
-              )}
+        <div className="gallery-section">
+          {pic.length > 0 ? (
+            <div className="gallery">
+              {pic.map((item) => (
+                <div className="item" key={item._id} onClick={() => toggleDetails(item)}>
+                  {item.mediaType === "video" ? (
+                    <video src={sanitizeUrl(item.photo)} muted />
+                  ) : (
+                    <img src={sanitizeUrl(item.photo)} alt="User Post" />
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            <div className="empty-state-container profile-empty-state">
+                <h1>No Posts Yet</h1>
+                <p>{user.name} hasn't shared any content.</p>
+            </div>
+          )}
         </div>
       </div>
       

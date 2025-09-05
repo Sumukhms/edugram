@@ -234,12 +234,36 @@
     gap: 20px;
   }
 
-  .gallery {
-    gap: 10px;
-    padding: 20px;
-  }
+  /* Replace the .gallery rule with this: */
+.gallery-section {
+  padding: 40px;
+  border-top: 1px solid var(--border-color);
 }
 
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+/* Add this new rule */
+.profile-empty-state {
+    margin-top: 0;
+    box-shadow: none;
+    padding: 20px;
+}
+
+
+
+@media screen and (max-width: 768px) {
+  
+  .gallery-section {
+    padding: 20px;
+  }
+  .gallery {
+    gap: 10px;
+  }
+}
 /* === STYLES FOR PROFILE PIC PREVIEW === */
 .image-preview-container {
   margin-bottom: 20px;
@@ -262,4 +286,5 @@
     width: 100%;
     height: 150px;
     border-radius: 8px;
+}
 }

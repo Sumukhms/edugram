@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "../css/profile.css";
+import "../css/EmptyState.css"; // Import the empty state CSS
 import PostDetail from "../components/PostDetail";
 import ProfilePic from "../components/ProfilePic";
 import FollowListModal from "../components/FollowListModal";
-import BannerPic from "../components/BannerPic"; // Import the new banner component
+import BannerPic from "../components/BannerPic";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const API_BASE = process.env.REACT_APP_API_URL;
 
@@ -15,6 +17,7 @@ const sanitizeUrl = (url) => {
 };
 
 export default function Profile() {
+  const navigate = useNavigate(); // Initialize navigate
   const [pic, setPic] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -132,20 +135,32 @@ export default function Profile() {
           </div>
         </div>
 
-        <div className="gallery">
-          {pic.map((item) => (
-            <div
-              className="item"
-              key={item._id}
-              onClick={() => toggleDetails(item)}
-            >
-              {item.mediaType === "video" ? (
-                <video src={sanitizeUrl(item.photo)} muted />
-              ) : (
-                <img src={sanitizeUrl(item.photo)} alt="User Post" />
-              )}
+        <div className="gallery-section">
+          {pic.length > 0 ? (
+            <div className="gallery">
+              {pic.map((item) => (
+                <div
+                  className="item"
+                  key={item._id}
+                  onClick={() => toggleDetails(item)}
+                >
+                  {item.mediaType === "video" ? (
+                    <video src={sanitizeUrl(item.photo)} muted />
+                  ) : (
+                    <img src={sanitizeUrl(item.photo)} alt="User Post" />
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            <div className="empty-state-container profile-empty-state">
+                <h1>Share Your Knowledge</h1>
+                <p>You haven't posted anything yet. Click the button below to create your first post!</p>
+                <button className="empty-state-button" onClick={() => navigate('/createPost')}>
+                    Create Your First Post
+                </button>
+            </div>
+          )}
         </div>
       </div>
 
