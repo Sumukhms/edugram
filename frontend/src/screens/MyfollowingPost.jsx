@@ -6,6 +6,19 @@ import Picker from "emoji-picker-react";
 
 const API_BASE = process.env.REACT_APP_API_URL;
 
+const defaultProfilePic =
+  "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
+const notifyA = (msg) => toast.error(msg);
+const notifyB = (msg) => toast.success(msg);
+
+const sanitizeUrl = (url) => {
+  if (url && url.startsWith('http://')) {
+    return url.replace('http://', 'https://');
+  }
+  return url;
+};
+
+
 export default function MyFollowingPost() {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
@@ -16,11 +29,6 @@ export default function MyFollowingPost() {
   const [item, setItem] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
   const [currentPostId, setCurrentPostId] = useState(null);
-
-  const defaultProfilePic =
-    "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
-  const notifyA = (msg) => toast.error(msg);
-  const notifyB = (msg) => toast.success(msg);
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
@@ -135,7 +143,7 @@ export default function MyFollowingPost() {
             <div className="card-header">
               <div className="card-pic">
                 <img
-                  src={post?.postedBy?.photo || defaultProfilePic}
+                  src={sanitizeUrl(post?.postedBy?.photo) || defaultProfilePic}
                   alt="profile"
                 />
               </div>
@@ -148,9 +156,9 @@ export default function MyFollowingPost() {
 
             <div className="card-image">
               {post.mediaType === "video" ? (
-                <video src={post.photo} controls autoPlay muted loop />
+                <video src={sanitizeUrl(post.photo)} controls autoPlay muted loop />
               ) : (
-                <img src={post.photo} alt="Post" />
+                <img src={sanitizeUrl(post.photo)} alt="Post" />
               )}
             </div>
 

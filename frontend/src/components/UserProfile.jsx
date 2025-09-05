@@ -2,6 +2,15 @@ import React, { useEffect, useState } from 'react';
 import '../css/profile.css';
 import { useParams } from "react-router-dom";
 
+const API_BASE = process.env.REACT_APP_API_URL;
+
+const sanitizeUrl = (url) => {
+  if (url && url.startsWith('http://')) {
+    return url.replace('http://', 'https://');
+  }
+  return url;
+};
+
 export default function UserProfile() {
   const { userid } = useParams();
   const [user, setUser] = useState(null);
@@ -10,10 +19,6 @@ export default function UserProfile() {
 
   const defaultProfilePic = "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
 
-  // ✅ API base URL from environment variable
-  const API_BASE = process.env.REACT_APP_API_URL;
-
-  // to follow user
   const followUser = (userId) => {
     fetch(`${API_BASE}/follow`, {
       method: "put",
@@ -28,7 +33,6 @@ export default function UserProfile() {
       .catch((err) => console.error("Error following:", err));
   };
 
-  // to unfollow user
   const unfollowUser = (userId) => {
     fetch(`${API_BASE}/unfollow`, {
       method: "put",
@@ -75,7 +79,7 @@ export default function UserProfile() {
       <div className="profile-container">
         <div className="profile-frame">
           <div className="profile-pic">
-            <img src={user.photo || defaultProfilePic} alt="profile" />
+            <img src={sanitizeUrl(user.photo) || defaultProfilePic} alt="profile" />
           </div>
 
           <div className="profile-data">
@@ -100,8 +104,8 @@ export default function UserProfile() {
           {pic.map((item) => (
             <div className="item" key={item._id}>
               {item.mediaType === 'video'
-                ? <video src={item.photo} muted />
-                : <img src={item.photo} alt="User Post" />}
+                ? <video src={sanitizeUrl(item.photo)} muted />
+                : <img src={sanitizeUrl(item.photo)} alt="User Post" />}
             </div>
           ))}
         </div>

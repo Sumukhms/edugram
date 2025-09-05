@@ -8,37 +8,12 @@ const POST = mongoose.model("POST");
 const validatePostInput = (req, res, next) => {
   const { body, pic, mediaType } = req.body;
 
-  // Check required fields
-  if (!body?.trim()) {
-    return res.status(422).json({
-      error: "Post body is required",
-      posts: [],
-    });
+  if (!body || !pic) {
+    return res.status(422).json({ error: "Please add all required fields" });
   }
 
-  if (!pic?.trim()) {
-    return res.status(422).json({
-      error: "Media URL is required",
-      posts: [],
-    });
-  }
-
-  // Validate URL
-  try {
-    new URL(pic);
-  } catch (err) {
-    return res.status(422).json({
-      error: "Invalid media URL",
-      posts: [],
-    });
-  }
-
-  // Validate mediaType
   if (mediaType && !["image", "video"].includes(mediaType)) {
-    return res.status(422).json({
-      error: "Invalid media type. Must be 'image' or 'video'",
-      posts: [],
-    });
+    return res.status(422).json({ error: "Invalid media type" });
   }
 
   next();
@@ -71,24 +46,23 @@ router.get("/allposts", requireLogin, async (req, res) => {
     });
 
     const posts = await POST.find()
-      .sort("-createdAt")
       .skip(skip)
       .limit(limit)
-      .populate("postedBy", "_id name Photo")
-      .populate("comments.postedBy", "_id name");
+      .populate({ path: "postedBy", select: "_id name photo" })
+      .populate("comments.postedBy", "_id name")
+      .sort("-createdAt")
+      .exec();
 
-    // Always return an object with a posts array
-    res.json({
-      posts: posts || [],
-      page: parseInt(req.query.page) || 1,
-      totalCount: await POST.countDocuments(),
-    });
+    if (!posts || posts.length === 0) {
+      return res.status(404).json({ error: "No posts found" });
+    }
+
+    // FIX: Wrap the posts array in a JSON object as the frontend expects
+    res.json({ posts });
   } catch (err) {
-    console.error("Error fetching posts:", err);
-    res.status(500).json({
-      error: "Internal server error",
-      posts: [],
-    });
+    res
+      .status(500)
+      .json({ error: "Internal server error", details: err.message });
   }
 });
 
@@ -101,6 +75,10 @@ router.post(
     try {
       const { body, pic, mediaType } = req.body;
 
+      if (!body || !pic) {
+        return res.status(422).json({ error: "Please add all the fields" });
+      }
+
       const post = new POST({
         body,
         photo: pic,
@@ -108,23 +86,12 @@ router.post(
         postedBy: req.user._id,
       });
 
-      const savedPost = await post.save();
-      const populatedPost = await POST.findById(savedPost._id)
-        .populate("postedBy", "_id name Photo")
-        .populate("comments.postedBy", "_id name");
-
-      res.json({
-        message: "Post created successfully",
-        post: populatedPost,
-        posts: [populatedPost], // Include posts array for consistency
-      });
+      const result = await post.save();
+      res.json({ post: result });
     } catch (err) {
-      console.error("Create post error:", err);
-      res.status(500).json({
-        error: "Failed to create post",
-        details: err.message,
-        posts: [],
-      });
+      res
+        .status(500)
+        .json({ error: "Failed to create post", details: err.message });
     }
   }
 );
@@ -156,7 +123,7 @@ router.get("/myposts", requireLogin, async (req, res) => {
     }
 
     // Return the posts
-    res.json(myposts);
+    res.json({ posts: myposts });
   } catch (err) {
     // Error handling with more detailed information
     res
@@ -311,15 +278,17 @@ router.get("/myfollowingpost", requireLogin, async (req, res) => {
   }
 });
 
-// Global error handler - place this before module.exports
+// Add error handler before module.exports
 router.use((err, req, res, next) => {
-  console.error("Route error:", err);
+  console.error(err.stack);
   res.status(500).json({
-    error:
-      process.env.NODE_ENV === "development" ? err.message : "Server error",
-    posts: [],
-    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+    error: "Internal Server Error",
+    message:
+      process.env.NODE_ENV === "development"
+        ? err.message
+        : "Something went wrong",
   });
 });
 
+// Single module.exports at the end
 module.exports = router;

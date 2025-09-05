@@ -5,6 +5,13 @@ import { useNavigate } from "react-router-dom";
 export default function PostDetail({ item, toggleDetails }) {
   const navigate = useNavigate();
   const API_BASE = process.env.REACT_APP_API_URL;
+  
+  const sanitizeUrl = (url) => {
+    if (url && url.startsWith('http://')) {
+      return url.replace('http://', 'https://');
+    }
+    return url;
+  };
 
   const removePost = async (postId) => {
     if (window.confirm("Do you really want to delete the post?")) {
@@ -33,15 +40,15 @@ export default function PostDetail({ item, toggleDetails }) {
         {/* THIS IS THE CHANGE */}
         <div className="postPic">
           {item.mediaType === 'video' ? (
-            <video src={item.photo} controls autoPlay muted loop />
+            <video src={sanitizeUrl(item.photo)} controls autoPlay muted loop />
           ) : (
-            <img src={item.photo || "https://via.placeholder.com/500"} alt="Post" />
+            <img src={sanitizeUrl(item.photo) || "https://via.placeholder.com/500"} alt="Post" />
           )}
         </div>
         <div className="details">
           <div className="card-header" style={{ borderBottom: "1px solid #00000029" }}>
             <div className="card-pic">
-              <img src={item?.postedBy?.photo || "https://via.placeholder.com/150"} alt="profile" />
+              <img src={sanitizeUrl(item?.postedBy?.photo) || "https://via.placeholder.com/150"} alt="profile" />
             </div>
             <h5>{item?.postedBy?.name || "Unknown User"}</h5>
             <div className="deletePost">

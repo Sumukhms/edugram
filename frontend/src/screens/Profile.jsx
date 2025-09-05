@@ -5,6 +5,13 @@ import ProfilePic from "../components/ProfilePic";
 
 const API_BASE = process.env.REACT_APP_API_URL;
 
+const sanitizeUrl = (url) => {
+  if (url && url.startsWith('http://')) {
+    return url.replace('http://', 'https://');
+  }
+  return url;
+};
+
 export default function Profile() {
   const [pic, setPic] = useState([]);
   const [user, setUser] = useState(null);
@@ -90,7 +97,7 @@ export default function Profile() {
         {/* Profile Frame */}
         <div className="profile-frame">
           <div className="profile-pic" onClick={changeProfile}>
-            <img src={user.photo || defaultProfilePic} alt="profile" />
+            <img src={sanitizeUrl(user.photo) || defaultProfilePic} alt="profile" />
           </div>
 
           <div className="profile-data">
@@ -120,9 +127,9 @@ export default function Profile() {
               onClick={() => toggleDetails(item)}
             >
               {item.mediaType === "video" ? (
-                <video src={item.photo} muted />
+                <video src={sanitizeUrl(item.photo)} muted />
               ) : (
-                <img src={item.photo} alt="User Post" />
+                <img src={sanitizeUrl(item.photo)} alt="User Post" />
               )}
               <div className="post-overlay">
                 <div className="overlay-info">
