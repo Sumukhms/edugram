@@ -24,7 +24,7 @@ router.get("/user/:id", async (req, res) => {
 
         const posts = await POST.find({ postedBy: userId })
             .populate("postedBy", "_id name photo")
-            .populate("comments.postedBy", "_id name"); // THIS LINE IS THE FIX
+            .populate("comments.postedBy", "_id name");
 
         console.log('User and posts:', { user, posts });
 
@@ -99,6 +99,65 @@ router.put("/uploadProfilePic", requireLogin, async (req, res) => {
     } catch (err) {
         res.status(422).json({ error: err.message });
     }
+});
+
+
+// NEW: Get followers list
+router.get("/user/:id/followers", requireLogin, async (req, res) => {
+    try {
+        const user = await USER.findById(req.params.id)
+            .populate("followers", "_id name photo")
+            .select("followers");
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        res.json(user.followers);
+    } catch (err) {
+        console.error('Error fetching followers:', err);
+        res.status(500).json({ error: "Something went wrong" });
+    }
+});
+
+// NEW: Get following list
+router.get("/user/:id/following", requireLogin, async (req, res) => {
+    try {
+        const user = await USER.findById(req.params.id)
+            .populate("following", "_id name photo")
+            .select("following");
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        res.json(user.following);
+    } catch (err) {
+        console.error('Error fetching following:', err);
+        res.status(500).json({ error: "Something went wrong" });
+    }
+});
+
+
+// to search for users
+router.post("/search-users", requireLogin, (req, res) => {
+  const { query } = req.body;
+
+  if (!query) {
+    return res.status(422).json({ error: "Search query is empty" });
+  }
+
+  // Using regex for a case-insensitive search
+  let userPattern = new RegExp("^" + query, "i");
+
+  USER.find({
+    $or: [{ name: { $regex: userPattern } }, { userName: { $regex: userPattern } }],
+    _id: { $ne: req.user._id } // Exclude the current user from results
+  })
+    .select("_id name photo")
+    .then((users) => {
+      res.json({ users });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: "Error searching for users" });
+    });
 });
 
 module.exports = router;

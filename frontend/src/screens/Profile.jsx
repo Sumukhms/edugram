@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import "../css/profile.css";
 import PostDetail from "../components/PostDetail";
 import ProfilePic from "../components/ProfilePic";
+import FollowListModal from "../components/FollowListModal"; // Import the new modal
 
 const API_BASE = process.env.REACT_APP_API_URL;
 
 const sanitizeUrl = (url) => {
-  if (url && url.startsWith('http://')) {
-    return url.replace('http://', 'https://');
+  if (url && url.startsWith("http://")) {
+    return url.replace("http://", "https://");
   }
   return url;
 };
@@ -20,6 +21,10 @@ export default function Profile() {
   const [show, setShow] = useState(false);
   const [posts, setPosts] = useState([]);
   const [changePic, setChangePic] = useState(false);
+
+  // New state for the follow/following modal
+  const [showFollowModal, setShowFollowModal] = useState(false);
+  const [modalData, setModalData] = useState({ title: "", users: [] });
 
   const defaultProfilePic =
     "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
@@ -38,6 +43,25 @@ export default function Profile() {
       ...prev,
       photo: newPic,
     }));
+  };
+
+  // Function to show followers or following
+  const showFollows = async (type) => {
+    try {
+      const response = await fetch(`${API_BASE}/user/${user._id}/${type}`, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("jwt"),
+        },
+      });
+      const data = await response.json();
+      setModalData({
+        title: type.charAt(0).toUpperCase() + type.slice(1),
+        users: data,
+      });
+      setShowFollowModal(true);
+    } catch (err) {
+      console.error(`Error fetching ${type}:`, err);
+    }
   };
 
   useEffect(() => {
@@ -97,7 +121,10 @@ export default function Profile() {
         {/* Profile Frame */}
         <div className="profile-frame">
           <div className="profile-pic" onClick={changeProfile}>
-            <img src={sanitizeUrl(user.photo) || defaultProfilePic} alt="profile" />
+            <img
+              src={sanitizeUrl(user.photo) || defaultProfilePic}
+              alt="profile"
+            />
           </div>
 
           <div className="profile-data">
@@ -108,10 +135,10 @@ export default function Profile() {
               <p>
                 <span>{pic.length}</span> posts
               </p>
-              <p>
+              <p style={{ cursor: "pointer" }} onClick={() => showFollows("followers")}>
                 <span>{user.followers?.length || 0}</span> followers
               </p>
-              <p>
+              <p style={{ cursor: "pointer" }} onClick={() => showFollows("following")}>
                 <span>{user.following?.length || 0}</span> following
               </p>
             </div>
@@ -152,6 +179,13 @@ export default function Profile() {
         <ProfilePic
           changeProfile={changeProfile}
           updateProfilePic={updateProfilePic}
+        />
+      )}
+      {showFollowModal && (
+        <FollowListModal
+          title={modalData.title}
+          users={modalData.users}
+          onClose={() => setShowFollowModal(false)}
         />
       )}
     </div>

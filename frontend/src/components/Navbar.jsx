@@ -1,13 +1,17 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import logo from "../img/logo.PNG";
 import "../css/Navbar.css";
 import { Link } from "react-router-dom";
 import { LoginContext } from "../context/LoginContext";
 import { useNavigate } from "react-router-dom";
 
+const API_BASE = process.env.REACT_APP_API_URL;
+
 export default function Navbar({ login }) {
   const navigate = useNavigate();
   const { setModalOpen } = useContext(LoginContext) || {};
+  const [search, setSearch] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
   const getToken = () => {
     if (typeof window !== "undefined") {
@@ -16,13 +20,33 @@ export default function Navbar({ login }) {
     return null;
   };
 
+  const fetchUsers = (query) => {
+    setSearch(query);
+    if (!query) {
+      setSearchResults([]);
+      return;
+    }
+
+    fetch(`${API_BASE}/search-users`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getToken(),
+      },
+      body: JSON.stringify({ query }),
+    })
+      .then((res) => res.json())
+      .then((results) => {
+        setSearchResults(results.users);
+      });
+  };
+
   const loginStatus = () => {
     const token = getToken();
 
     if (login || token) {
       return (
         <>
-          {/* HOME LINK ADDED FOR DESKTOP */}
           <Link to="/">
             <li>Home</li>
           </Link>
@@ -115,6 +139,37 @@ export default function Navbar({ login }) {
           if (window.location.pathname !== "/") navigate("/");
         }}
       />
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search users..."
+          value={search}
+          onChange={(e) => fetchUsers(e.target.value)}
+        />
+        {search && (
+          <ul className="search-results">
+            {searchResults.map((item) => (
+              <li
+                key={item._id}
+                onClick={() => {
+                  setSearch("");
+                  setSearchResults([]);
+                }}
+              >
+                <Link to={`/profile/${item._id}`}>
+                  <div className="search-result-item">
+                    <img
+                      src={item.photo || "https://cdn-icons-png.flaticon.com/128/17231/17231410.png"}
+                      alt="user"
+                    />
+                    <span>{item.name}</span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
       <ul className="nav-menu">{loginStatus()}</ul>
       <ul className="nav-mobile">{loginStatusMobile()}</ul>
     </div>
