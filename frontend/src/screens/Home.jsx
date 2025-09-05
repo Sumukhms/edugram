@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import Picker from "emoji-picker-react";
 import "../css/Home.css";
-import PostDetail from "../components/PostDetail"; // Import PostDetail
+import PostDetail from "../components/PostDetail";
 
 const API_BASE = process.env.REACT_APP_API_URL;
 
@@ -24,7 +24,7 @@ export default function Home() {
   const [data, setData] = useState([]);
   const [user, setUser] = useState(null);
   const [skip, setSkip] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Start with loading true
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState(null);
   const [show, setShow] = useState(false);
@@ -34,9 +34,9 @@ export default function Home() {
   const [currentPostId, setCurrentPostId] = useState(null);
   const limit = 5;
 
-  const fetchPosts = () => {
+  const fetchPosts = (isNewFetch = false) => {
     setLoading(true);
-    fetch(`${API_BASE}/allposts?limit=${limit}&skip=${skip}`, {
+    fetch(`${API_BASE}/allposts?limit=${limit}&skip=${isNewFetch ? 0 : skip}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
       },
@@ -44,24 +44,25 @@ export default function Home() {
       .then((res) => {
         if (res.status === 401) {
           navigate("/signin");
-          return;
+          return null;
         }
         if (res.status === 404) {
           setData([]);
           setHasMore(false);
-          setLoading(false);
-          return;
+          return null;
         }
         return res.json();
       })
       .then((result) => {
+        if (!result) return;
+        
         try {
-          if (!result || !Array.isArray(result.posts)) {
+          if (!Array.isArray(result.posts)) {
             throw new Error("Invalid response format - posts array missing");
           }
-
-          setHasMore(result.posts.length >= limit);
-          setData((prev) => [...prev, ...result.posts]);
+          
+          setHasMore(result.posts.length === limit);
+          setData((prev) => isNewFetch ? result.posts : [...prev, ...result.posts]);
           setError(null);
         } catch (err) {
           setError(err.message);
@@ -76,16 +77,29 @@ export default function Home() {
         setLoading(false);
       });
   };
-
+  
+  // Initial fetch
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
       setUser(storedUser);
-      fetchPosts();
+      fetchPosts(true); // Initial fetch, reset data
     } else {
       navigate("/signin");
     }
-  }, [skip, navigate]);
+  }, [navigate]);
+
+  // Fetch more posts when skip changes
+  useEffect(() => {
+    if (skip > 0) {
+      fetchPosts();
+    }
+  }, [skip]);
+
+  const handleLoadMore = () => {
+    setSkip(prevSkip => prevSkip + limit);
+  };
+
 
   const onEmojiClick = (emojiObject) => {
     if (currentPostId) {
@@ -149,7 +163,7 @@ export default function Home() {
           item._id === result._id ? result : item
         );
         setData(newData);
-        setComments((prev) => ({ ...prev, [postId]: "" })); // Clear the input field
+        setComments((prev) => ({ ...prev, [postId]: "" }));
         toast.success("Comment posted successfully!");
       })
       .catch(() => toast.error("Error posting comment"));
@@ -163,14 +177,17 @@ export default function Home() {
   const handleCommentChange = (postId, value) => {
     setComments((prev) => ({ ...prev, [postId]: value }));
   };
-
-  if (error) return <div className="error">Error: {error}</div>;
-  if (!user) return <div>Loading...</div>;
+  
+  if (loading && data.length === 0) {
+      return <div className="loading-spinner"><h1>Loading posts...</h1></div>;
+  }
+  if (error) return <div className="error-container"><h1>Error: {error}</h1></div>;
+  if (!user) return null;
 
   return (
     <div className="home">
       {data.length === 0 ? (
-        <div>No posts available</div>
+        <div className="loading-spinner"><h1>No posts to show.</h1></div>
       ) : (
         data.map((post) => (
           <div className="card" key={post._id}>
@@ -254,8 +271,14 @@ export default function Home() {
           </div>
         ))
       )}
+      
+      {loading && <div className="loading-spinner">Loading...</div>}
 
-      {loading && <div>Loading...</div>}
+      {!loading && hasMore && (
+        <button className="load-more-btn" onClick={handleLoadMore}>
+          Load More
+        </button>
+      )}
 
       {show && item && <PostDetail item={item} toggleDetails={toggleComment} />}
     </div>

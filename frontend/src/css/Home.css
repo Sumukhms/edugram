@@ -108,7 +108,8 @@
 .material-symbols-outlined:active {
   transform: scale(0.9); /* Add feedback on click */
 }
-\sumuk\OneDrive\Desktop\Capstone Projects\edugram\frontend\src\css\Home.css
+
+/* Add these styles to the end of frontend/src/css/Home.css */
 .loading-spinner {
   text-align: center;
   padding: 20px;
@@ -128,13 +129,15 @@
   display: block;
   margin: 20px auto;
   padding: 10px 20px;
-  background: #3897f0;
+  background: var(--accent-color);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 .load-more-btn:hover {
-  background: #2684f0;
+  background: var(--accent-hover-color);
 }

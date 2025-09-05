@@ -20,3 +20,12 @@
   box-sizing: border-box;
   padding-bottom: 80px; /* Space for mobile nav */
 }
+
+/* === GLOBAL MOBILE STYLES === */
+@media screen and (max-width: 768px) {
+  .main-content {
+    padding-top: 60px; /* Match mobile navbar height */
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}

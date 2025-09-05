@@ -129,6 +129,9 @@ export default function Navbar({ login }) {
     }
   };
 
+  // This check determines if the user is logged in
+  const isLoggedIn = login || getToken();
+
   return (
     <div className="navbar">
       <img
@@ -139,37 +142,40 @@ export default function Navbar({ login }) {
           if (window.location.pathname !== "/") navigate("/");
         }}
       />
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="Search users..."
-          value={search}
-          onChange={(e) => fetchUsers(e.target.value)}
-        />
-        {search && (
-          <ul className="search-results">
-            {searchResults.map((item) => (
-              <li
-                key={item._id}
-                onClick={() => {
-                  setSearch("");
-                  setSearchResults([]);
-                }}
-              >
-                <Link to={`/profile/${item._id}`}>
-                  <div className="search-result-item">
-                    <img
-                      src={item.photo || "https://cdn-icons-png.flaticon.com/128/17231/17231410.png"}
-                      alt="user"
-                    />
-                    <span>{item.name}</span>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      {/* Conditionally render the search container */}
+      {isLoggedIn && (
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search users..."
+            value={search}
+            onChange={(e) => fetchUsers(e.target.value)}
+          />
+          {search && (
+            <ul className="search-results">
+              {searchResults.map((item) => (
+                <li
+                  key={item._id}
+                  onClick={() => {
+                    setSearch("");
+                    setSearchResults([]);
+                  }}
+                >
+                  <Link to={`/profile/${item._id}`}>
+                    <div className="search-result-item">
+                      <img
+                        src={item.photo || "https://cdn-icons-png.flaticon.com/128/17231/17231410.png"}
+                        alt="user"
+                      />
+                      <span>{item.name}</span>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
       <ul className="nav-menu">{loginStatus()}</ul>
       <ul className="nav-mobile">{loginStatusMobile()}</ul>
     </div>

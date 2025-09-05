@@ -9,9 +9,10 @@
   border-radius: var(--border-radius);
   box-shadow: var(--card-shadow);
   padding: 40px;
+  position: relative; /* Add this */
+  z-index: 1;        /* Add this */
 }
 
-/* Add this new CSS rule to your existing profile.css file */
 .changePic {
   position: relative;
   background-color: var(--container-background);
@@ -28,16 +29,16 @@
 
 .profile-frame {
   display: flex;
-  flex-direction: row; 
-  align-items: center;    
+  flex-direction: row;
+  align-items: center;
   justify-content: flex-start;
   padding-bottom: 30px;
   border-bottom: 1px solid var(--border-color);
 }
 
 .profile-pic {
-  margin-right: 80px;      
-  margin-bottom: 0;        
+  margin-right: 80px;
+  margin-bottom: 0;
   flex-shrink: 0;
 }
 
@@ -51,13 +52,13 @@
 }
 
 .profile-data {
-  text-align: left; 
+  text-align: left;
 }
 
 .profile-data-top {
   display: flex;
   align-items: center;
-  justify-content: flex-start; 
+  justify-content: flex-start;
   margin-bottom: 20px;
 }
 
@@ -70,7 +71,7 @@
 .profile-info {
   display: flex;
   gap: 40px;
-  justify-content: flex-start; 
+  justify-content: flex-start;
 }
 
 .profile-info p {
@@ -82,7 +83,8 @@
   font-weight: 600;
 }
 
-.followBtn, .unfollowBtn {
+.followBtn,
+.unfollowBtn {
   cursor: pointer;
   font-weight: 600;
   padding: 10px 28px;
@@ -122,8 +124,8 @@
 }
 
 .unfollowBtn:active {
-    transform: scale(0.98);
-    background-color: #e9ecef;
+  transform: scale(0.98);
+  background-color: #e9ecef;
 }
 
 .gallery {
@@ -137,7 +139,7 @@
   position: relative;
   width: 100%;
   padding-bottom: 100%;
-  cursor: pointer; /* This is the new line */
+  cursor: pointer;
 }
 
 .item img,
@@ -149,4 +151,53 @@
   height: 100%;
   object-fit: cover;
   border-radius: 4px;
+}
+
+/* === MOBILE STYLES FOR PROFILE === */
+@media screen and (max-width: 768px) {
+  .profile-container {
+    padding: 20px;
+  }
+
+  .profile-frame {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-pic {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+
+  .profile-pic img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .profile-data {
+    text-align: center;
+  }
+
+  .profile-data-top {
+    flex-direction: column;
+  }
+
+  .profile-data-top h1 {
+    margin-bottom: 15px;
+  }
+
+  .followBtn, .unfollowBtn {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .profile-info {
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .gallery {
+    gap: 10px;
+  }
 }

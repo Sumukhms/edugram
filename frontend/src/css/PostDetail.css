@@ -119,3 +119,23 @@
 .deletePost:hover {
     color: var(--error-color);
 }
+
+/* Add this to the end of frontend/src/css/PostDetail.css */
+
+@media screen and (max-width: 768px) {
+  .showComment .container {
+    flex-direction: column;
+    height: 90vh; /* Adjust height for vertical layout */
+    width: 95vw;
+  }
+
+  .postPic {
+    flex: 1; /* Allow it to shrink */
+    max-height: 45%; /* Limit image/video height */
+  }
+
+  .details {
+    flex: 1;
+    height: auto;
+  }
+}
