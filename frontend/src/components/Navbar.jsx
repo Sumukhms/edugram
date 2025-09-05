@@ -107,11 +107,10 @@ export default function Navbar({ login }) {
               <span className="material-symbols-outlined">explore</span>
             </li>
           </Link>
-          <li
-            className="logout-mobile-btn"
-            onClick={() => setModalOpen && setModalOpen(true)}
-          >
-            <span className="material-symbols-outlined">logout</span>
+          <li>
+            <button className="logout-mobile-btn" onClick={() => setModalOpen && setModalOpen(true)}>
+              <span className="material-symbols-outlined">logout</span>
+            </button>
           </li>
         </>
       );
@@ -129,55 +128,58 @@ export default function Navbar({ login }) {
     }
   };
 
-  // This check determines if the user is logged in
   const isLoggedIn = login || getToken();
 
   return (
     <div className="navbar">
-      <img
-        id="edu-logo"
-        src={logo}
-        alt="Logo"
-        onClick={() => {
-          if (window.location.pathname !== "/") navigate("/");
-        }}
-      />
-      {/* Conditionally render the search container */}
+      <div className="navbar-top">
+        <img
+          id="edu-logo"
+          src={logo}
+          alt="Logo"
+          onClick={() => {
+            if (window.location.pathname !== "/") navigate("/");
+          }}
+        />
+        <ul className="nav-menu">{loginStatus()}</ul>
+        <ul className="nav-mobile">{loginStatusMobile()}</ul>
+      </div>
+
       {isLoggedIn && (
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Search users..."
-            value={search}
-            onChange={(e) => fetchUsers(e.target.value)}
-          />
-          {search && (
-            <ul className="search-results">
-              {searchResults.map((item) => (
-                <li
-                  key={item._id}
-                  onClick={() => {
-                    setSearch("");
-                    setSearchResults([]);
-                  }}
-                >
-                  <Link to={`/profile/${item._id}`}>
-                    <div className="search-result-item">
-                      <img
-                        src={item.photo || "https://cdn-icons-png.flaticon.com/128/17231/17231410.png"}
-                        alt="user"
-                      />
-                      <span>{item.name}</span>
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+        <div className="navbar-bottom">
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Search users..."
+              value={search}
+              onChange={(e) => fetchUsers(e.target.value)}
+            />
+            {search && (
+              <ul className="search-results">
+                {searchResults.map((item) => (
+                  <li
+                    key={item._id}
+                    onClick={() => {
+                      setSearch("");
+                      setSearchResults([]);
+                    }}
+                  >
+                    <Link to={`/profile/${item._id}`}>
+                      <div className="search-result-item">
+                        <img
+                          src={item.photo || "https://cdn-icons-png.flaticon.com/128/17231/17231410.png"}
+                          alt="user"
+                        />
+                        <span>{item.name}</span>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       )}
-      <ul className="nav-menu">{loginStatus()}</ul>
-      <ul className="nav-mobile">{loginStatusMobile()}</ul>
     </div>
   );
 }
