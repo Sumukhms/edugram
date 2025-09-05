@@ -1,34 +1,13 @@
+
 .App {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
   overflow-x: hidden; /* Prevents horizontal scrollbar */
-
-  /* Apply animated background here */
-  background: linear-gradient(-45deg, #e0eafc, #cfdef3, #e6dada, #f0e2e1);
-  background-size: 400% 400%;
-  animation: gradientAnimation 20s ease infinite;
+  background-color: var(--background-color);
 }
 
-.main-content {
-  flex-grow: 1;
-  padding-top: 75px; /* Adjust for the taller navbar */
-  width: 100%;
-  max-width: 600px; /* A good width for a feed */
-  margin: 0 auto;
-  box-sizing: border-box;
-  padding-bottom: 80px; /* Space for mobile nav */
-}
-
-/* === GLOBAL MOBILE STYLES === */
-@media screen and (max-width: 768px) {
-  .main-content {
-    padding-top: 60px; /* Match mobile navbar height */
-    padding-left: 15px;
-    padding-right: 15px;
-  }
-}
 
 /* === NEW STYLES FOR PAGE TRANSITIONS === */
 
@@ -39,7 +18,19 @@
   right: 15px;
 }
 
-/* Style for the new page entering the screen */
+
+
+
+/* This is now just for padding and structure, NOT for width */
+.main-content {
+  flex-grow: 1;
+  padding-top: 75px;
+  width: 100%;
+  box-sizing: border-box;
+  padding-bottom: 80px;
+}
+
+/* === PAGE TRANSITIONS === */
 .fade-enter {
   opacity: 0;
   transform: scale(1.05);
@@ -49,8 +40,6 @@
   transform: scale(1);
   transition: opacity 300ms, transform 300ms;
 }
-
-/* Style for the old page leaving the screen */
 .fade-exit {
   opacity: 1;
   transform: scale(1);
@@ -59,4 +48,13 @@
   opacity: 0;
   transform: scale(0.95);
   transition: opacity 300ms, transform 300ms;
+}
+
+/* === GLOBAL MOBILE STYLES === */
+@media screen and (max-width: 768px) {
+  .main-content {
+    padding-top: 60px; /* Match mobile navbar height */
+    padding-left: 15px;
+    padding-right: 15px;
+  }
 }
