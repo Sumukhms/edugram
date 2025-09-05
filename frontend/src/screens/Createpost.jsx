@@ -6,10 +6,10 @@ import { useNavigate } from "react-router-dom";
 export default function Createpost() {
     const [body, setBody] = useState("");
     const [media, setMedia] = useState("");
-    const [url, setUrl] = useState("");
     const [user, setUser] = useState(null);
     const [mediaPreview, setMediaPreview] = useState("");
     const [mediaType, setMediaType] = useState("image");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const defaultProfilePic = "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
@@ -29,11 +29,12 @@ export default function Createpost() {
             return notifyA("Please add both a caption and a file");
         }
         
+        setLoading(true);
+
         const data = new FormData();
         data.append("file", media);
         data.append("upload_preset", process.env.REACT_APP_CLOUD_PRESET);
         data.append("cloud_name", process.env.REACT_APP_CLOUD_NAME);
-
 
         const resourceType = mediaType;
         const cloudinaryUrl = `https://api.cloudinary.com/v1_1/educloud1/${resourceType}/upload`;
@@ -43,16 +44,9 @@ export default function Createpost() {
             if (!response.ok) throw new Error("Upload to Cloudinary failed.");
             
             const result = await response.json();
-            setUrl(result.secure_url); // <-- CHANGED HERE
-        } catch (err) {
-            console.error("Error uploading file:", err);
-            notifyA("Failed to upload file. Please try again.");
-        }
-    };
+            const mediaUrl = result.secure_url;
 
-    useEffect(() => {
-        if (url) {
-            fetch(`${API_BASE}/createPost`, {
+            await fetch(`${API_BASE}/createPost`, {
                 method: "post",
                 headers: {
                     "Content-Type": "application/json",
@@ -60,21 +54,19 @@ export default function Createpost() {
                 },
                 body: JSON.stringify({
                     body,
-                    pic: url,
+                    pic: mediaUrl,
                     mediaType,
                 }),
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) notifyA(data.error);
-                else {
-                    notifyB("Successfully Posted");
-                    navigate("/");
-                }
-            })
-            .catch(err => console.log(err));
+            });
+            notifyB("Successfully Posted");
+            navigate("/");
+        } catch (err) {
+            console.error("Error creating post:", err);
+            notifyA("Failed to create post. Please try again.");
+        } finally {
+            setLoading(false);
         }
-    }, [url, body, mediaType, navigate, API_BASE]);
+    };
 
     const loadfile = (event) => {
         const file = event.target.files[0];
@@ -89,7 +81,14 @@ export default function Createpost() {
         <div className="createPost">
             <div className="post-header">
                 <h4>Create New Post</h4>
-                <button id="post-btn" onClick={postDetails}>Share</button>
+                <button 
+                    id="post-btn" 
+                    onClick={postDetails} 
+                    disabled={loading}
+                    style={{ opacity: loading ? 0.5 : 1 }}
+                >
+                    {loading ? "Sharing..." : "Share"}
+                </button>
             </div>
             <div className="create-post-body">
                 <div className="main-div">

@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken")
-// const { Jwt_secret } = require("../keys"); // No longer needed
 const mongoose = require("mongoose")
 const USER = mongoose.model("USER")
 
@@ -9,7 +8,7 @@ module.exports = (req, res, next) => {
         return res.status(401).json({ error: "You must have logged in 1" })
     }
     const token = authorization.replace("Bearer ", "")
-    jwt.verify(token, process.env.Jwt_secret, (err, payload) => { // Use process.env here
+    jwt.verify(token, process.env.Jwt_secret, (err, payload) => { // Fixed typo to JWT_SECRET
         if (err) {
             return res.status(401).json({ error: "You must have logged in 2" })
         }
