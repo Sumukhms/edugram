@@ -1,5 +1,5 @@
 .profile {
-  max-width: 935px;
+  max-width: 1000px; /* Increased from 935px */
   margin: 40px auto;
   padding: 0 20px;
 }
@@ -15,7 +15,7 @@
 }
 
 .profile-banner {
-  height: 200px;
+  height: 250px; /* Increased banner height */
   background-size: cover;
   background-position: center;
   position: relative;
@@ -67,20 +67,20 @@
 
 .profile-pic {
   margin-right: 40px;
-  margin-top: -75px; /* Pull the profile picture up */
+  margin-top: -85px; /* Adjust overlap for bigger pic */
   flex-shrink: 0;
-  position: relative; /* Needed for z-index */
+  position: relative;
   z-index: 2;
 }
 
 .profile-pic img {
-  width: 150px;
-  height: 150px;
+  width: 170px; /* Increased profile picture size */
+  height: 170px; /* Increased profile picture size */
   border-radius: 50%;
   object-fit: cover;
   cursor: pointer;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-  border: 4px solid var(--container-background); /* Add a border to separate from banner */
+  border: 5px solid var(--container-background); /* Thicker border */
 }
 
 .profile-data {
@@ -96,7 +96,7 @@
 }
 
 .profile-data-top h1 {
-  font-size: 28px;
+  font-size: 32px; /* Slightly larger name */
   font-weight: 300;
   margin: 0;
 }
@@ -161,12 +161,21 @@
   background-color: #e9ecef;
 }
 
+.gallery-section {
+  padding: 40px;
+  border-top: 1px solid var(--border-color);
+}
+
 .gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 28px;
-  padding: 40px;
-  border-top: 1px solid var(--border-color);
+}
+
+.profile-empty-state {
+    margin-top: 0;
+    box-shadow: none;
+    padding: 20px;
 }
 
 .item {
@@ -234,36 +243,15 @@
     gap: 20px;
   }
 
-  /* Replace the .gallery rule with this: */
-.gallery-section {
-  padding: 40px;
-  border-top: 1px solid var(--border-color);
-}
-
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
-}
-
-/* Add this new rule */
-.profile-empty-state {
-    margin-top: 0;
-    box-shadow: none;
-    padding: 20px;
-}
-
-
-
-@media screen and (max-width: 768px) {
-  
   .gallery-section {
     padding: 20px;
   }
+
   .gallery {
     gap: 10px;
   }
 }
+
 /* === STYLES FOR PROFILE PIC PREVIEW === */
 .image-preview-container {
   margin-bottom: 20px;
@@ -286,5 +274,4 @@
     width: 100%;
     height: 150px;
     border-radius: 8px;
-}
 }
