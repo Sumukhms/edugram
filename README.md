@@ -235,5 +235,3 @@ PRs are welcome! Please open an issue for feature requests/bugs before raising P
 
 ---
 
-## 📄 License
-Add your license of choice (e.g., MIT) or keep it proprietary.
