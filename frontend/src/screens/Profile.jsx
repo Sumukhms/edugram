@@ -82,8 +82,16 @@ export default function Profile() {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
       },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.status === 401) {
+          localStorage.clear();
+          navigate("/landing");
+          return null;
+        }
+        return res.json();
+      })
       .then((result) => {
+        if (!result) return;
         setPic(result.posts || []);
         setUser(result.user);
         setLoading(false);

@@ -37,7 +37,8 @@ export default function Createpost() {
         data.append("cloud_name", process.env.REACT_APP_CLOUD_NAME);
 
         const resourceType = mediaType;
-        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/educloud1/${resourceType}/upload`;
+        const cloudName = process.env.REACT_APP_CLOUD_NAME;
+        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
 
         try {
             const response = await fetch(cloudinaryUrl, { method: "POST", body: data });

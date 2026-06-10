@@ -38,8 +38,9 @@ export default function ProfilePic({ changeProfile, updateProfilePic }) {
 
 
     try {
+      const cloudName = process.env.REACT_APP_CLOUD_NAME;
       const cloudResponse = await fetch(
-        "https://api.cloudinary.com/v1_1/educloud1/image/upload",
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
         { method: "POST", body: data }
       );
       if (!cloudResponse.ok) throw new Error("Image upload failed.");

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../css/profile.css";
 import "../css/EmptyState.css"; // Import the empty state CSS
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import FollowListModal from "./FollowListModal"; 
 import PostDetail from "./PostDetail";
 
@@ -16,6 +16,7 @@ const sanitizeUrl = (url) => {
 
 export default function UserProfile() {
   const { userid } = useParams();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [pic, setPic] = useState([]);
   const [isFollow, setIsFollow] = useState(false);
@@ -97,8 +98,16 @@ export default function UserProfile() {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
       },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.status === 401) {
+          localStorage.clear();
+          navigate("/landing");
+          return null;
+        }
+        return res.json();
+      })
       .then((result) => {
+        if (!result) return;
         if (result && result.user) {
           setUser(result.user);
           setPic(result.posts || []);

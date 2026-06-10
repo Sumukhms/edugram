@@ -143,7 +143,13 @@ router.post("/search-users", requireLogin, (req, res) => {
     return res.status(422).json({ error: "Search query is empty" });
   }
 
-  let userPattern = new RegExp("^" + query, "i");
+  // Escape special regex characters to prevent ReDoS attacks
+  const escapeRegex = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  };
+
+  const escapedQuery = escapeRegex(query);
+  let userPattern = new RegExp("^" + escapedQuery, "i");
 
   USER.find({
     $or: [{ name: { $regex: userPattern } }, { userName: { $regex: userPattern } }],
