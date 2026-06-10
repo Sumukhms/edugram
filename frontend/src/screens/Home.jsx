@@ -215,9 +215,14 @@ export default function Home() {
                     alt="profile"
                   />
                 </div>
-                <Link to={`/profile/${post.postedBy._id}`}>
-                  <h5>{post?.postedBy?.name || "Unknown User"}</h5>
-                </Link>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <Link to={`/profile/${post.postedBy._id}`}>
+                    <h5>{post?.postedBy?.name || "Unknown User"}</h5>
+                  </Link>
+                  <span style={{ fontSize: '12px', color: 'var(--secondary-text)', marginLeft: '12px', marginTop: '2px' }}>
+                    {post.createdAt ? new Date(post.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : ""}
+                  </span>
+                </div>
               </div>
 
               <div className="card-image">
@@ -282,8 +287,8 @@ export default function Home() {
                   Post
                 </button>
                 {showPicker && currentPostId === post._id && (
-                  <div className="emoji-picker">
-                    <Picker onEmojiClick={onEmojiClick} />
+                  <div className="picker-container">
+                    <Picker onEmojiClick={onEmojiClick} theme="dark" />
                   </div>
                 )}
               </div>

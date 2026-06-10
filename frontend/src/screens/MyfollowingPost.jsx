@@ -153,11 +153,14 @@ export default function MyFollowingPost() {
                   alt="profile"
                 />
               </div>
-              <h5>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <Link to={`/profile/${post.postedBy._id}`}>
-                  {post?.postedBy?.name || "Unknown User"}
+                  <h5>{post?.postedBy?.name || "Unknown User"}</h5>
                 </Link>
-              </h5>
+                <span style={{ fontSize: '12px', color: 'var(--secondary-text)', marginLeft: '12px', marginTop: '2px' }}>
+                  {post.createdAt ? new Date(post.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : ""}
+                </span>
+              </div>
             </div>
 
             <div className="card-image">
@@ -220,7 +223,7 @@ export default function MyFollowingPost() {
               </button>
               {showPicker && currentPostId === post._id && (
                 <div className="picker-container">
-                  <Picker onEmojiClick={onEmojiClick} />
+                  <Picker onEmojiClick={onEmojiClick} theme="dark" />
                 </div>
               )}
             </div>
