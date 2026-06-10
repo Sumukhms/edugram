@@ -125,7 +125,7 @@ export default function UserProfile() {
       .catch((err) => {
         console.error("Error fetching user data:", err);
       });
-  }, [userid]);
+  }, [userid, navigate]);
 
   if (!user) {
     return (

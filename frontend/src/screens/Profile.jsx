@@ -101,7 +101,7 @@ export default function Profile() {
         console.error(err);
         setLoading(false);
       });
-  }, []);
+  }, [navigate]);
 
   // UPDATED LOADING CHECK
   if (loading || !user) {
