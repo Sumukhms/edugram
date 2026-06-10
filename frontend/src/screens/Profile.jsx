@@ -32,6 +32,8 @@ export default function Profile() {
   const [changeBanner, setChangeBanner] = useState(false);
   const [showFollowModal, setShowFollowModal] = useState(false);
   const [modalData, setModalData] = useState({ title: "", users: [] });
+  const [activeTab, setActiveTab] = useState("posts");
+  const [savedPosts, setSavedPosts] = useState([]);
   
   // ... (keep all constant declarations and functions)
   const defaultProfilePic =
@@ -103,6 +105,26 @@ export default function Profile() {
       });
   }, [navigate]);
 
+  useEffect(() => {
+    if (activeTab === "saved") {
+      setLoading(true);
+      fetch(`${API_BASE}/saved-posts`, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("jwt"),
+        },
+      })
+      .then(res => res.json())
+      .then(result => {
+        setSavedPosts(result.posts || []);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+    }
+  }, [activeTab]);
+
   // UPDATED LOADING CHECK
   if (loading || !user) {
     return <ProfileSkeleton />;
@@ -149,31 +171,71 @@ export default function Profile() {
           </div>
         </div>
 
+        <div className="profile-tabs" style={{ display: 'flex', justifyContent: 'center', borderTop: '1px solid var(--border-color)', marginTop: '20px', gap: '50px' }}>
+          <div 
+            onClick={() => setActiveTab("posts")} 
+            style={{ padding: '15px 0', cursor: 'pointer', borderTop: activeTab === 'posts' ? '2px solid var(--primary-text)' : 'none', color: activeTab === 'posts' ? 'var(--primary-text)' : 'var(--secondary-text)', fontWeight: activeTab === 'posts' ? 'bold' : 'normal', display: 'flex', alignItems: 'center', gap: '5px' }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>grid_on</span> POSTS
+          </div>
+          <div 
+            onClick={() => setActiveTab("saved")} 
+            style={{ padding: '15px 0', cursor: 'pointer', borderTop: activeTab === 'saved' ? '2px solid var(--primary-text)' : 'none', color: activeTab === 'saved' ? 'var(--primary-text)' : 'var(--secondary-text)', fontWeight: activeTab === 'saved' ? 'bold' : 'normal', display: 'flex', alignItems: 'center', gap: '5px' }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>bookmark_border</span> SAVED
+          </div>
+        </div>
+
         <div className="gallery-section">
-          {pic.length > 0 ? (
-            <div className="gallery">
-              {pic.map((item) => (
-                <div
-                  className="item"
-                  key={item._id}
-                  onClick={() => toggleDetails(item)}
-                >
-                  {item.mediaType === "video" ? (
-                    <video src={sanitizeUrl(item.photo)} muted />
-                  ) : (
-                    <img src={sanitizeUrl(item.photo)} alt="User Post" />
-                  )}
-                </div>
-              ))}
-            </div>
+          {activeTab === "posts" ? (
+            pic.length > 0 ? (
+              <div className="gallery">
+                {pic.map((item) => (
+                  <div
+                    className="item"
+                    key={item._id}
+                    onClick={() => toggleDetails(item)}
+                  >
+                    {item.mediaType === "video" ? (
+                      <video src={sanitizeUrl(item.photo)} muted />
+                    ) : (
+                      <img src={sanitizeUrl(item.photo)} alt="User Post" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state-container profile-empty-state">
+                  <h1>Share Your Knowledge</h1>
+                  <p>You haven't posted anything yet. Click the button below to create your first post!</p>
+                  <button className="empty-state-button" onClick={() => navigate('/createPost')}>
+                      Create Your First Post
+                  </button>
+              </div>
+            )
           ) : (
-            <div className="empty-state-container profile-empty-state">
-                <h1>Share Your Knowledge</h1>
-                <p>You haven't posted anything yet. Click the button below to create your first post!</p>
-                <button className="empty-state-button" onClick={() => navigate('/createPost')}>
-                    Create Your First Post
-                </button>
-            </div>
+            savedPosts.length > 0 ? (
+              <div className="gallery">
+                {savedPosts.map((item) => (
+                  <div
+                    className="item"
+                    key={item._id}
+                    onClick={() => toggleDetails(item)}
+                  >
+                    {item.mediaType === "video" ? (
+                      <video src={sanitizeUrl(item.photo)} muted />
+                    ) : (
+                      <img src={sanitizeUrl(item.photo)} alt="Saved Post" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state-container profile-empty-state">
+                  <h1>No Saved Posts</h1>
+                  <p>When you save a post, it will appear here. Only you can see what you've saved.</p>
+              </div>
+            )
           )}
         </div>
       </div>

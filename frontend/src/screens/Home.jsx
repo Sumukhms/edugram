@@ -180,6 +180,61 @@ export default function Home() {
       .catch(() => toast.error("Error posting comment"));
   };
 
+  const savePost = (id) => {
+    fetch(`${API_BASE}/save-post`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({ postId: id }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        const updatedUser = { ...user, savedPosts: result.savedPosts };
+        setUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        toast.success("Post saved!");
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const unsavePost = (id) => {
+    fetch(`${API_BASE}/unsave-post`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({ postId: id }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        const updatedUser = { ...user, savedPosts: result.savedPosts };
+        setUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        toast.success("Post removed from saved.");
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const deletePost = (postId) => {
+    if(window.confirm("Are you sure you want to delete this post?")) {
+      fetch(`${API_BASE}/deletePost/${postId}`, {
+        method: "delete",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("jwt"),
+        },
+      })
+      .then((res) => res.json())
+      .then((result) => {
+        const newData = data.filter((item) => item._id !== postId);
+        setData(newData);
+        toast.success("Post deleted successfully");
+      });
+    }
+  };
+
   const toggleComment = (post = null) => {
     setShow(!show);
     setItem(post);
@@ -208,24 +263,31 @@ export default function Home() {
           data.map((post) => (
             <div className="card" key={post._id}>
               {/* Card content remains the same */}
-              <div className="card-header">
-                <div className="card-pic">
-                  <img
-                    src={sanitizeUrl(post?.postedBy?.photo) || defaultProfilePic}
-                    alt="profile"
-                  />
+              <div className="card-header" style={{ justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div className="card-pic">
+                    <img
+                      src={sanitizeUrl(post?.postedBy?.photo) || defaultProfilePic}
+                      alt="profile"
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Link to={`/profile/${post.postedBy._id}`}>
+                      <h5>{post?.postedBy?.name || "Unknown User"}</h5>
+                    </Link>
+                    <span style={{ fontSize: '12px', color: 'var(--secondary-text)', marginLeft: '12px', marginTop: '2px' }}>
+                      {post.createdAt ? new Date(post.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : ""}
+                    </span>
+                  </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <Link to={`/profile/${post.postedBy._id}`}>
-                    <h5>{post?.postedBy?.name || "Unknown User"}</h5>
-                  </Link>
-                  <span style={{ fontSize: '12px', color: 'var(--secondary-text)', marginLeft: '12px', marginTop: '2px' }}>
-                    {post.createdAt ? new Date(post.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : ""}
+                {post.postedBy._id === user._id && (
+                  <span className="material-symbols-outlined" onClick={() => deletePost(post._id)} style={{ color: 'var(--error-color)' }} title="Delete Post">
+                    delete
                   </span>
-                </div>
+                )}
               </div>
 
-              <div className="card-image">
+              <div className="card-image" onDoubleClick={() => likePost(post._id)}>
                 {post.mediaType === "video" ? (
                   <video src={sanitizeUrl(post.photo)} controls muted loop />
                 ) : (
@@ -237,23 +299,41 @@ export default function Home() {
               </div>
 
               <div className="card-content">
-                {post.likes.includes(user._id) ? (
-                  <span
-                    className={`material-symbols-outlined material-symbols-outlined-red like-btn-${post._id}`}
-                    onClick={() => unlikePost(post._id)}
-                  >
-                    favorite
-                  </span>
-                ) : (
-                  <span
-                    className={`material-symbols-outlined like-btn-${post._id}`}
-                    onClick={() => likePost(post._id)}
-                  >
-                    favorite
-                  </span>
-                )}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    {post.likes.includes(user._id) ? (
+                      <span
+                        className={`material-symbols-outlined material-symbols-outlined-red like-btn-${post._id}`}
+                        onClick={() => unlikePost(post._id)}
+                      >
+                        favorite
+                      </span>
+                    ) : (
+                      <span
+                        className={`material-symbols-outlined like-btn-${post._id}`}
+                        onClick={() => likePost(post._id)}
+                      >
+                        favorite
+                      </span>
+                    )}
+                    <span className="material-symbols-outlined" onClick={() => toggleComment(post)} style={{ marginLeft: '15px' }}>
+                      chat_bubble_outline
+                    </span>
+                  </div>
+                  <div>
+                    {user.savedPosts?.includes(post._id) ? (
+                      <span className="material-symbols-outlined" onClick={() => unsavePost(post._id)} style={{ color: 'var(--accent-color)' }}>
+                        bookmark
+                      </span>
+                    ) : (
+                      <span className="material-symbols-outlined" onClick={() => savePost(post._id)}>
+                        bookmark_border
+                      </span>
+                    )}
+                  </div>
+                </div>
                 <p>{post.likes.length} Likes</p>
-                <p>{post.body || "No description available"}</p>
+                <p><strong>{post?.postedBy?.name}</strong> {post.body || ""}</p>
                 <p
                   style={{ fontWeight: "bold", cursor: "pointer" }}
                   onClick={() => toggleComment(post)}

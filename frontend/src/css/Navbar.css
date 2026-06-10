@@ -17,6 +17,7 @@
   width: auto;
   object-fit: contain;
   cursor: pointer;
+  filter: invert(1) hue-rotate(180deg) brightness(2);
 }
 
 .nav-menu {

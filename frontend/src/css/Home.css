@@ -141,7 +141,7 @@
 .loading-spinner {
   text-align: center;
   padding: 20px;
-  color: #666;
+  color: var(--secondary-text);
 }
 
 .error-container {

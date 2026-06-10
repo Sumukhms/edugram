@@ -22,7 +22,8 @@ const userSchema =new mongoose.Schema({
         type:String,
     },
     followers:[{type:ObjectId,ref:"USER"}],
-    following:[{type:ObjectId,ref:"USER"}]
+    following:[{type:ObjectId,ref:"USER"}],
+    savedPosts:[{type:ObjectId,ref:"POST"}]
 })
 
 mongoose.model("USER" , userSchema)

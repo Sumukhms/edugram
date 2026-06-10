@@ -122,6 +122,24 @@ export default function MyFollowingPost() {
     });
   };
 
+  const savePost = (id) => {
+    handleFetch("/save-post", "put", { postId: id }, (result) => {
+      const updatedUser = { ...user, savedPosts: result.savedPosts };
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      notifyB("Post saved!");
+    });
+  };
+
+  const unsavePost = (id) => {
+    handleFetch("/unsave-post", "put", { postId: id }, (result) => {
+      const updatedUser = { ...user, savedPosts: result.savedPosts };
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      notifyB("Post removed from saved.");
+    });
+  };
+
   // UPDATED LOADING STATE
   if (loading || !user) {
     return (
@@ -163,7 +181,7 @@ export default function MyFollowingPost() {
               </div>
             </div>
 
-            <div className="card-image">
+            <div className="card-image" onDoubleClick={() => likePost(post._id)}>
               {post.mediaType === "video" ? (
                 <video src={sanitizeUrl(post.photo)} controls autoPlay muted loop />
               ) : (
@@ -172,23 +190,41 @@ export default function MyFollowingPost() {
             </div>
 
             <div className="card-content">
-              {post.likes.includes(user._id) ? (
-                <span
-                  className="material-symbols-outlined material-symbols-outlined-red"
-                  onClick={() => unlikePost(post._id)}
-                >
-                  favorite
-                </span>
-              ) : (
-                <span
-                  className="material-symbols-outlined"
-                  onClick={() => likePost(post._id)}
-                >
-                  favorite
-                </span>
-              )}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  {post.likes.includes(user._id) ? (
+                    <span
+                      className="material-symbols-outlined material-symbols-outlined-red"
+                      onClick={() => unlikePost(post._id)}
+                    >
+                      favorite
+                    </span>
+                  ) : (
+                    <span
+                      className="material-symbols-outlined"
+                      onClick={() => likePost(post._id)}
+                    >
+                      favorite
+                    </span>
+                  )}
+                  <span className="material-symbols-outlined" onClick={() => { setCurrentPostId(post._id); setShowPicker(!showPicker); }} style={{ marginLeft: '15px' }}>
+                    chat_bubble_outline
+                  </span>
+                </div>
+                <div>
+                  {user.savedPosts?.includes(post._id) ? (
+                    <span className="material-symbols-outlined" onClick={() => unsavePost(post._id)} style={{ color: 'var(--accent-color)' }}>
+                      bookmark
+                    </span>
+                  ) : (
+                    <span className="material-symbols-outlined" onClick={() => savePost(post._id)}>
+                      bookmark_border
+                    </span>
+                  )}
+                </div>
+              </div>
               <p>{post.likes.length} Likes</p>
-              <p>{post.body || "No description available"}</p>
+              <p><strong>{post?.postedBy?.name}</strong> {post.body || ""}</p>
               <p
                 style={{ fontWeight: "bold", cursor: "pointer" }}
                 onClick={() => toggleComment(post)}

@@ -181,4 +181,50 @@ router.get("/user-suggestions", requireLogin, async (req, res) => {
     }
 });
 
+// to save post
+router.put("/save-post", requireLogin, async (req, res) => {
+    try {
+        const result = await USER.findByIdAndUpdate(
+            req.user._id,
+            { $addToSet: { savedPosts: req.body.postId } },
+            { new: true }
+        ).select("-password");
+        res.json(result);
+    } catch (err) {
+        return res.status(422).json({ error: err.message });
+    }
+});
+
+// to unsave post
+router.put("/unsave-post", requireLogin, async (req, res) => {
+    try {
+        const result = await USER.findByIdAndUpdate(
+            req.user._id,
+            { $pull: { savedPosts: req.body.postId } },
+            { new: true }
+        ).select("-password");
+        res.json(result);
+    } catch (err) {
+        return res.status(422).json({ error: err.message });
+    }
+});
+
+// to get saved posts
+router.get("/saved-posts", requireLogin, async (req, res) => {
+    try {
+        const user = await USER.findById(req.user._id).populate({
+            path: 'savedPosts',
+            populate: {
+                path: 'postedBy',
+                select: '_id name photo'
+            }
+        });
+        
+        res.json({ posts: user.savedPosts || [] });
+    } catch (err) {
+        console.error('Error fetching saved posts:', err);
+        res.status(500).json({ error: "Something went wrong" });
+    }
+});
+
 module.exports = router;

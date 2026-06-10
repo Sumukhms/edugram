@@ -58,3 +58,12 @@ a {
 .main-content {
   animation: fadeIn 0.5s ease-out;
 }
+
+input, textarea, button {
+  color: inherit;
+  font-family: inherit;
+}
+
+.material-symbols-outlined {
+  color: var(--primary-text);
+}
