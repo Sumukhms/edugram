@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../css/Createpost.css";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import imageCompression from 'browser-image-compression';
 
 export default function Createpost() {
     const [body, setBody] = useState("");
@@ -69,10 +70,25 @@ export default function Createpost() {
         }
     };
 
-    const loadfile = (event) => {
-        const file = event.target.files[0];
+    const loadfile = async (event) => {
+        let file = event.target.files[0];
         if (file) {
-            setMediaType(file.type.startsWith('video/') ? 'video' : 'image');
+            const isVideo = file.type.startsWith('video/');
+            setMediaType(isVideo ? 'video' : 'image');
+            
+            if (!isVideo) {
+                const options = {
+                  maxSizeMB: 0.5,
+                  maxWidthOrHeight: 1920,
+                  useWebWorker: true
+                };
+                try {
+                  file = await imageCompression(file, options);
+                } catch (error) {
+                  console.error("Compression error:", error);
+                }
+            }
+
             setMedia(file);
             setMediaPreview(URL.createObjectURL(file));
         }

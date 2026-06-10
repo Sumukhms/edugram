@@ -100,9 +100,23 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skip]);
 
-  const handleLoadMore = () => {
-    setSkip(prevSkip => prevSkip + limit);
-  };
+  // Infinite Scroll Implementation
+  useEffect(() => {
+    const handleScroll = () => {
+      // Check if we hit the bottom of the page (with a 150px buffer)
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 150 >= 
+        document.documentElement.scrollHeight &&
+        !loading && 
+        hasMore
+      ) {
+        setSkip(prevSkip => prevSkip + limit);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [loading, hasMore]);
 
   const onEmojiClick = (emojiObject) => {
     if (currentPostId) {
@@ -377,12 +391,6 @@ export default function Home() {
         )}
         
         {loading && data.length > 0 && <PostSkeleton />}
-
-        {!loading && hasMore && (
-          <button className="load-more-btn" onClick={handleLoadMore}>
-            Load More
-          </button>
-        )}
       </div>
 
       <div className="home-sidebar">

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { toast } from 'react-toastify';
 import "../css/profile.css";
+import imageCompression from 'browser-image-compression';
 
 export default function ProfilePic({ changeProfile, updateProfilePic }) {
   const hiddenFileInput = useRef(null);
@@ -19,9 +20,21 @@ export default function ProfilePic({ changeProfile, updateProfilePic }) {
     }
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = async (e) => {
+    let file = e.target.files[0];
     if (file) {
+      if (file.type.startsWith('image/')) {
+          const options = {
+            maxSizeMB: 0.5,
+            maxWidthOrHeight: 1080,
+            useWebWorker: true
+          };
+          try {
+            file = await imageCompression(file, options);
+          } catch (error) {
+            console.error("Compression error:", error);
+          }
+      }
       setImage(file);
       setImagePreview(URL.createObjectURL(file));
     }

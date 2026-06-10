@@ -30,6 +30,51 @@ export default function MyFollowingPost() {
   const [show, setShow] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [currentPostId, setCurrentPostId] = useState(null);
+  
+  const [skip, setSkip] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const limit = 5;
+
+  const fetchPosts = (isNewFetch = false) => {
+    setLoading(true);
+    fetch(`${API_BASE}/myfollowingpost?limit=${limit}&skip=${isNewFetch ? 0 : skip}`, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+    })
+      .then((res) => {
+        if (res.status === 401) {
+          navigate("/landing");
+          return null;
+        }
+        if (res.status === 404) {
+          setData([]);
+          setHasMore(false);
+          return null;
+        }
+        return res.json();
+      })
+      .then((result) => {
+        if (!result) return;
+        
+        try {
+          if (!Array.isArray(result.posts)) {
+            throw new Error("Invalid response format - posts array missing");
+          }
+          
+          setHasMore(result.posts.length === limit);
+          setData((prev) => isNewFetch ? result.posts : [...prev, ...result.posts]);
+        } catch (err) {
+          console.error(err.message);
+        } finally {
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching posts:", err);
+        setLoading(false);
+      });
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
@@ -41,22 +86,33 @@ export default function MyFollowingPost() {
     }
 
     setUser(storedUser);
-
-    fetch(`${API_BASE}/myfollowingpost`, {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setData(result);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
+    fetchPosts(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
+
+  useEffect(() => {
+    if (skip > 0) {
+      fetchPosts();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [skip]);
+
+  // Infinite Scroll Implementation
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 150 >= 
+        document.documentElement.scrollHeight &&
+        !loading && 
+        hasMore
+      ) {
+        setSkip(prevSkip => prevSkip + limit);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [loading, hasMore]);
 
   const onEmojiClick = (emojiObject) => {
     const currentComment = comments[currentPostId] || "";
@@ -266,6 +322,7 @@ export default function MyFollowingPost() {
           </div>
         ))
       )}
+      {loading && data.length > 0 && <PostSkeleton />}
     </div>
   );
 }

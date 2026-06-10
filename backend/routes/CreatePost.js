@@ -308,12 +308,19 @@ router.delete("/deletePost/:postId", requireLogin, async (req, res) => {
 // to show following post
 router.get("/myfollowingpost", requireLogin, async (req, res) => {
   try {
+    const { skip, limit } = paginateResults({
+      page: req.query.page,
+      limit: req.query.limit,
+    });
+
     const posts = await POST.find({ postedBy: { $in: req.user.following } })
+      .skip(skip)
+      .limit(limit)
       .populate("postedBy", "_id name photo")
       .populate("comments.postedBy", "_id name")
       .sort("-createdAt");
 
-    res.json(posts || []); // Return empty array if no posts
+    res.json({ posts: posts || [] }); 
   } catch (err) {
     res.status(500).json({
       error: "Internal server error",
