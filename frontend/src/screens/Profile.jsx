@@ -221,16 +221,16 @@ export default function Profile() {
           </div>
         </div>
 
-        <div className="profile-tabs" style={{ display: 'flex', justifyContent: 'center', borderTop: '1px solid var(--border-color)', marginTop: '20px', gap: '50px' }}>
+        <div className="profile-tabs">
           <div 
+            className={activeTab === "posts" ? "active" : ""}
             onClick={() => setActiveTab("posts")} 
-            style={{ padding: '15px 0', cursor: 'pointer', borderTop: activeTab === 'posts' ? '2px solid var(--primary-text)' : 'none', color: activeTab === 'posts' ? 'var(--primary-text)' : 'var(--secondary-text)', fontWeight: activeTab === 'posts' ? 'bold' : 'normal', display: 'flex', alignItems: 'center', gap: '5px' }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>grid_on</span> POSTS
           </div>
           <div 
+            className={activeTab === "saved" ? "active" : ""}
             onClick={() => setActiveTab("saved")} 
-            style={{ padding: '15px 0', cursor: 'pointer', borderTop: activeTab === 'saved' ? '2px solid var(--primary-text)' : 'none', color: activeTab === 'saved' ? 'var(--primary-text)' : 'var(--secondary-text)', fontWeight: activeTab === 'saved' ? 'bold' : 'normal', display: 'flex', alignItems: 'center', gap: '5px' }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>bookmark_border</span> SAVED
           </div>

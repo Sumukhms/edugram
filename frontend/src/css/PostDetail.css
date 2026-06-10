@@ -4,138 +4,213 @@
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.65);
-  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.8); /* Darker backdrop */
+  backdrop-filter: blur(8px); /* Glassmorphism background */
+  z-index: 200;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
   box-sizing: border-box;
+  animation: fadeInModal 0.3s ease;
 }
 
 .showComment .container {
   display: flex;
   width: 100%;
-  max-width: 950px;
-  height: 600px;
-  max-height: 90vh;
+  max-width: 1100px; /* Wider for a cinematic feel */
+  height: 80vh; /* Taller */
+  max-height: 800px;
   background-color: var(--container-background);
-  border-radius: var(--border-radius);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   overflow: hidden;
   position: relative;
-  top: auto;
-  left: auto;
-  transform: none;
+  animation: scaleUpModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .postPic {
-  background-color: var(--bg-primary);
+  background-color: #000; /* Real black for cinematic media */
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1.5;
+  flex: 1.5; /* 60% of the width */
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .postPic img,
-.postPic video { /* This is the fix */
+.postPic video { 
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain;
+  object-fit: contain; /* Prevents awkward cropping */
   display: block;
 }
 
 .details {
   width: 100%;
-  height: inherit;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1; /* 40% of the width */
+  background: var(--container-background);
 }
 
 .details .card-header {
-  padding: 14px 16px;
+  padding: 16px 20px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--border-color) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .details .card-pic img {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+  border: 2px solid var(--accent-color);
 }
 
 .details .card-header h5 {
-    margin: 0;
-    font-weight: 600;
+  margin: 0;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.5px;
 }
 
 .comment-section {
   flex-grow: 1;
   text-align: left;
-  padding: 16px;
+  padding: 20px;
   overflow-y: auto;
-  border-bottom: 1px solid var(--border-color) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.1));
+}
+
+/* Custom Scrollbar for comments */
+.comment-section::-webkit-scrollbar {
+  width: 6px;
+}
+.comment-section::-webkit-scrollbar-track {
+  background: transparent;
+}
+.comment-section::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
 }
 
 .comm {
   font-size: 14px;
-  margin-bottom: 15px;
-  line-height: 1.4;
+  margin-bottom: 16px;
+  line-height: 1.5;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 10px 12px;
+  border-radius: 8px;
 }
 
 .commenter {
-  font-weight: 600;
-  margin-right: 8px;
+  font-weight: 700;
+  margin-right: 5px;
+  color: var(--primary-text);
 }
 
 .details .card-content {
-    padding: 10px 16px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.add-comment {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+}
+
+.add-comment input {
+  flex-grow: 1;
+  background: transparent;
+  border: none;
+  color: var(--primary-text);
+  padding: 10px;
+  outline: none;
+  font-size: 14px;
+}
+
+.add-comment .comment {
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  font-weight: bold;
+  cursor: pointer;
+  padding: 8px 12px;
+  transition: opacity 0.2s;
+}
+
+.add-comment .comment:hover {
+  opacity: 0.8;
 }
 
 .close-comment {
-  position: fixed;
-  top: 20px;
-  right: 20px;
+  position: absolute; /* Place it nicely outside the box */
+  top: 25px;
+  right: 25px;
   color: white;
   border: none;
   cursor: pointer;
-  background: none;
+  background: rgba(0, 0, 0, 0.5);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+  transition: transform 0.3s ease;
+}
+
+.close-comment:hover {
+  transform: scale(1.1) rotate(90deg);
+  background: var(--error-color);
 }
 
 .material-symbols-outlined-comment {
-  font-size: 40px;
+  font-size: 24px;
 }
 
 .deletePost {
   margin-left: auto;
   cursor: pointer;
   color: var(--secondary-text);
+  transition: color 0.2s ease;
 }
 
 .deletePost:hover {
-    color: var(--error-color);
+  color: var(--error-color);
 }
 
-/* Add this to the end of frontend/src/css/PostDetail.css */
-
+/* Mobile Responsiveness */
 @media screen and (max-width: 768px) {
   .showComment .container {
     flex-direction: column;
-    height: 90vh; /* Adjust height for vertical layout */
+    height: 95vh;
     width: 95vw;
   }
 
   .postPic {
-    flex: 1; /* Allow it to shrink */
-    max-height: 45%; /* Limit image/video height */
+    flex: none;
+    height: 40%;
   }
 
   .details {
-    flex: 1;
-    height: auto;
+    flex: none;
+    height: 60%;
+  }
+  
+  .close-comment {
+    top: 10px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
   }
 }

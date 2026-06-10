@@ -1,5 +1,5 @@
 .profile {
-  max-width: 1000px; /* Increased from 935px */
+  max-width: 1000px;
   margin: 40px auto;
   padding: 0 20px;
 }
@@ -10,44 +10,64 @@
   box-shadow: var(--card-shadow);
   position: relative;
   z-index: 1;
-  padding: 0; /* Remove padding to allow banner to touch edges */
-  overflow: hidden; /* Keep children within rounded corners */
+  padding: 0;
+  overflow: hidden;
 }
 
 .profile-banner {
-  height: 250px; /* Increased banner height */
+  height: 300px; /* Taller cinematic banner */
   background-size: cover;
   background-position: center;
   position: relative;
 }
 
+/* Cinematic Gradient Overlay */
+.profile-banner::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(to top, var(--container-background) 0%, transparent 100%);
+  z-index: 1;
+}
+
 .edit-banner-btn {
   position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background-color: rgba(0, 0, 0, 0.5);
+  bottom: 15px;
+  right: 15px;
+  background-color: rgba(0, 0, 0, 0.6);
   color: white;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
+  z-index: 2;
+  backdrop-filter: blur(5px);
 }
 
 .profile-banner:hover .edit-banner-btn {
   opacity: 1;
 }
+.edit-banner-btn:hover {
+  background-color: var(--primary-color);
+  transform: scale(1.1);
+}
 
 .changePic {
   position: relative;
-  background-color: var(--container-background);
+  background-color: rgba(11, 25, 44, 0.9);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  box-shadow: var(--card-shadow);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   padding: 40px;
   width: 90%;
   max-width: 450px;
@@ -55,65 +75,89 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  animation: modalPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .profile-frame {
   display: flex;
   flex-direction: row;
-  align-items: flex-end; /* Align items to the bottom */
+  align-items: flex-end;
   justify-content: flex-start;
-  padding: 0 40px 30px 40px; /* Adjust padding */
-}
-
-.profile-pic {
-  margin-right: 40px;
-  margin-top: -85px; /* Adjust overlap for bigger pic */
-  flex-shrink: 0;
+  padding: 0 50px 30px 50px;
   position: relative;
   z-index: 2;
 }
 
+.profile-pic {
+  margin-right: 40px;
+  margin-top: -100px; /* Straddle the banner line */
+  flex-shrink: 0;
+  position: relative;
+  z-index: 3;
+}
+
 .profile-pic img {
-  width: 170px; /* Increased profile picture size */
-  height: 170px; /* Increased profile picture size */
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
   object-fit: cover;
   cursor: pointer;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-  border: 5px solid var(--container-background); /* Thicker border */
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.25); /* Subtle gold glow */
+  border: 4px solid var(--container-background);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-pic img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 35px rgba(212, 175, 55, 0.4);
 }
 
 .profile-data {
   text-align: left;
-  padding-bottom: 10px; /* Add some padding to align with pic */
+  padding-bottom: 10px;
+  width: 100%;
 }
 
 .profile-data-top {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .profile-data-top h1 {
-  font-size: 32px; /* Slightly larger name */
-  font-weight: 300;
+  font-size: 36px;
+  font-weight: 400;
   margin: 0;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.profile-bio {
+  margin-bottom: 20px;
 }
 
 .profile-info {
   display: flex;
-  gap: 40px;
+  gap: 30px;
   justify-content: flex-start;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 15px 25px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: inline-flex;
 }
 
 .profile-info p {
   margin: 0;
-  font-size: 16px;
+  font-size: 15px;
+  color: var(--secondary-text);
 }
 
 .profile-info span {
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--primary-text);
+  font-size: 18px;
+  margin-right: 5px;
 }
 
 .followBtn,
@@ -121,7 +165,7 @@
   cursor: pointer;
   font-weight: 600;
   padding: 10px 28px;
-  border-radius: 8px;
+  border-radius: 20px; /* Pill shape */
   font-size: 0.9rem;
   margin-left: 20px;
   transition: all 0.25s ease;
@@ -130,52 +174,86 @@
 .followBtn {
   border: none;
   color: white;
-  background: var(--accent-color);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover-color));
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
 }
 
 .followBtn:hover {
-  background: var(--accent-hover-color);
   transform: translateY(-2px);
-  box-shadow: 0 8px 15px -10px var(--accent-color);
-}
-
-.followBtn:active {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px -10px var(--accent-color);
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
 }
 
 .unfollowBtn {
   border: 1px solid var(--border-color);
   color: var(--primary-text);
-  background: var(--container-background);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .unfollowBtn:hover {
-  background-color: var(--surface-hover);
-  border-color: #adb5bd;
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.unfollowBtn:active {
-  transform: scale(0.98);
-  background-color: #e9ecef;
+/* Tabs */
+.profile-tabs {
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 50px;
+  margin-top: 10px;
+  position: relative;
+}
+
+.profile-tabs div {
+  padding: 20px 10px;
+  cursor: pointer;
+  color: var(--secondary-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  transition: color 0.3s ease;
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.profile-tabs div:hover {
+  color: var(--primary-text);
+}
+
+.profile-tabs div.active {
+  color: var(--primary-text);
+  font-weight: bold;
+}
+
+.profile-tabs div.active::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--primary-color);
+  box-shadow: 0 2px 10px var(--primary-color);
 }
 
 .gallery-section {
   padding: 40px;
-  border-top: 1px solid var(--border-color);
 }
 
 .gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
+  gap: 15px;
 }
 
 .profile-empty-state {
-    margin-top: 0;
-    box-shadow: none;
-    padding: 20px;
+  margin-top: 20px;
+  box-shadow: none;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  border: 1px dashed var(--border-color);
 }
 
 .item {
@@ -183,6 +261,8 @@
   width: 100%;
   padding-bottom: 100%;
   cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .item img,
@@ -193,13 +273,25 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 4px;
+  transition: transform 0.4s ease, filter 0.4s ease;
 }
 
-/* === MOBILE STYLES FOR PROFILE === */
+.item:hover img,
+.item:hover video {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+/* Modal Pop In Animation */
+@keyframes modalPopIn {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* === MOBILE STYLES === */
 @media screen and (max-width: 768px) {
   .profile-banner {
-    height: 120px;
+    height: 150px;
   }
   .profile-frame {
     flex-direction: column;
@@ -207,52 +299,38 @@
     text-align: center;
     padding: 0 20px 20px 20px;
   }
-
   .profile-pic {
     margin-right: 0;
-    margin-top: -60px; /* Adjust overlap for mobile */
+    margin-top: -60px;
   }
-
   .profile-pic img {
     width: 120px;
     height: 120px;
   }
-
-  .profile-data {
-    text-align: center;
-    padding-bottom: 0;
-    margin-top: 10px;
-  }
-
   .profile-data-top {
     flex-direction: column;
   }
-
   .profile-data-top h1 {
     margin-bottom: 15px;
   }
-
-  .followBtn,
-  .unfollowBtn {
+  .followBtn, .unfollowBtn {
     margin-left: 0;
     width: 100%;
   }
-
   .profile-info {
     justify-content: center;
-    gap: 20px;
+    gap: 15px;
+    padding: 10px;
+    flex-wrap: wrap;
   }
-
   .gallery-section {
     padding: 20px;
   }
-
   .gallery {
-    gap: 10px;
+    gap: 5px;
   }
 }
 
-/* === STYLES FOR PROFILE PIC PREVIEW === */
 .image-preview-container {
   margin-bottom: 20px;
   width: 200px;
@@ -269,9 +347,8 @@
   object-fit: cover;
 }
 
-/* Styles for Banner Preview in Modal */
 .banner-preview.image-preview-container {
-    width: 100%;
-    height: 150px;
-    border-radius: 8px;
+  width: 100%;
+  height: 150px;
+  border-radius: 8px;
 }
