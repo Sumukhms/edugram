@@ -35,6 +35,29 @@ export default function PostDetail({ item, toggleDetails }) {
       .catch(() => toast.error("Error posting comment"));
   };
 
+  const deleteComment = (postId, commentId) => {
+    if (window.confirm("Delete this comment?")) {
+      fetch(`${API_BASE}/deleteComment`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("jwt"),
+        },
+        body: JSON.stringify({ postId, commentId }),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.error) {
+            toast.error(result.error);
+          } else {
+            toast.success("Comment deleted");
+            toggleDetails();
+          }
+        })
+        .catch((err) => toast.error("Error deleting comment"));
+    }
+  };
+
   const removePost = async (postId) => {
     if (window.confirm("Do you really want to delete the post?")) {
       try {
@@ -105,12 +128,19 @@ export default function PostDetail({ item, toggleDetails }) {
           >
             {item.comments?.length > 0 ? (
               item.comments.map((comment) => (
-                <p className="comm" key={comment._id}>
-                  <span className="commenter" style={{ fontWeight: "bolder" }}>
-                    {comment.postedBy?.name || "Anonymous"}
+                <p className="comm" key={comment._id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span>
+                    <span className="commenter" style={{ fontWeight: "bolder" }}>
+                      {comment.postedBy?.name || "Anonymous"}
+                    </span>
+                    <span style={{ margin: "0 5px" }}>:</span>
+                    <span className="commentText">{comment.comment}</span>
                   </span>
-                  <span style={{ margin: "0 5px" }}>:</span>
-                  <span className="commentText">{comment.comment}</span>
+                  {(comment.postedBy?._id === user._id || item.postedBy._id === user._id) && (
+                    <span className="material-symbols-outlined" onClick={() => deleteComment(item._id, comment._id)} style={{ fontSize: '18px', color: 'var(--error-color)', cursor: 'pointer' }}>
+                      delete
+                    </span>
+                  )}
                 </p>
               ))
             ) : (

@@ -236,6 +236,44 @@ const validateObjectId = (id) => {
   return mongoose.Types.ObjectId.isValid(id);
 };
 
+// Delete Comment Route
+router.put("/deleteComment", requireLogin, async (req, res) => {
+  try {
+    const { postId, commentId } = req.body;
+
+    if (!postId || !commentId) {
+      return res.status(422).json({ error: "Missing postId or commentId" });
+    }
+
+    const post = await POST.findById(postId);
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    const comment = post.comments.find(c => c._id.toString() === commentId);
+    if (!comment) {
+      return res.status(404).json({ error: "Comment not found" });
+    }
+
+    // Check ownership: Either the user owns the comment, or the user owns the post
+    if (comment.postedBy.toString() === req.user._id.toString() || post.postedBy.toString() === req.user._id.toString()) {
+      const updatedPost = await POST.findByIdAndUpdate(
+        postId,
+        { $pull: { comments: { _id: commentId } } },
+        { new: true }
+      )
+        .populate("comments.postedBy", "_id name")
+        .populate("postedBy", "_id name photo");
+        
+      return res.json(updatedPost);
+    } else {
+      return res.status(403).json({ error: "Unauthorized to delete this comment" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Server error", details: err.message });
+  }
+});
+
 // Delete Post Route
 router.delete("/deletePost/:postId", requireLogin, async (req, res) => {
   try {

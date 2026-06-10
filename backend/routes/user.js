@@ -111,6 +111,20 @@ router.put("/uploadBannerPic", requireLogin, async (req, res) => {
     }
 });
 
+// NEW: to update user bio
+router.put("/updateBio", requireLogin, async (req, res) => {
+    try {
+        const result = await USER.findByIdAndUpdate(req.user._id, {
+            $set: { bio: req.body.bio }
+        }, {
+            new: true
+        });
+        res.json(result);
+    } catch (err) {
+        res.status(422).json({ error: err.message });
+    }
+});
+
 // Get followers list
 router.get("/user/:id/followers", requireLogin, async (req, res) => {
     try {

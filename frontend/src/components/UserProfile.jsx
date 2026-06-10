@@ -164,6 +164,13 @@ export default function UserProfile() {
                 {isFollow ? "Unfollow" : "Follow"}
               </button>
             </div>
+            
+            <div className="profile-bio" style={{ marginBottom: '15px' }}>
+              <p style={{ margin: 0, whiteSpace: 'pre-wrap', color: 'var(--secondary-text)', fontSize: '14px', maxWidth: '300px' }}>
+                {user.bio || "This user hasn't added a bio yet."}
+              </p>
+            </div>
+
             <div className="profile-info">
               <p>
                 <span>{pic.length}</span> posts

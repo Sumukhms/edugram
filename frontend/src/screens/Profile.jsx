@@ -34,7 +34,9 @@ export default function Profile() {
   const [modalData, setModalData] = useState({ title: "", users: [] });
   const [activeTab, setActiveTab] = useState("posts");
   const [savedPosts, setSavedPosts] = useState([]);
-  
+  const [bioInput, setBioInput] = useState("");
+  const [isEditingBio, setIsEditingBio] = useState(false);
+
   // ... (keep all constant declarations and functions)
   const defaultProfilePic =
     "https://cdn-icons-png.flaticon.com/128/17231/17231410.png";
@@ -96,6 +98,7 @@ export default function Profile() {
         if (!result) return;
         setPic(result.posts || []);
         setUser(result.user);
+        setBioInput(result.user.bio || "");
         setLoading(false);
       })
       .catch((err) => {
@@ -124,6 +127,28 @@ export default function Profile() {
       });
     }
   }, [activeTab]);
+
+  const updateBio = () => {
+    fetch(`${API_BASE}/updateBio`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({ bio: bioInput })
+    })
+    .then(res => res.json())
+    .then(result => {
+      setUser(prev => ({ ...prev, bio: result.bio }));
+      setIsEditingBio(false);
+      const currentUserData = JSON.parse(localStorage.getItem("user"));
+      currentUserData.bio = result.bio;
+      localStorage.setItem("user", JSON.stringify(currentUserData));
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  };
 
   // UPDATED LOADING CHECK
   if (loading || !user) {
@@ -159,6 +184,31 @@ export default function Profile() {
             <div className="profile-data-top">
               <h1>{user.name}</h1>
             </div>
+            
+            <div className="profile-bio" style={{ marginBottom: '15px' }}>
+              {isEditingBio ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <textarea 
+                    value={bioInput} 
+                    onChange={(e) => setBioInput(e.target.value)}
+                    placeholder="Write a short bio about your academic background..."
+                    style={{ width: '100%', maxWidth: '300px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px', color: 'var(--primary-text)', minHeight: '60px' }}
+                  />
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button className="primaryBtn" onClick={updateBio} style={{ padding: '5px 15px', fontSize: '12px' }}>Save</button>
+                    <button className="primaryBtn" onClick={() => { setIsEditingBio(false); setBioInput(user.bio || ""); }} style={{ background: 'transparent', border: '1px solid var(--border-color)', padding: '5px 15px', fontSize: '12px' }}>Cancel</button>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                  <p style={{ margin: 0, whiteSpace: 'pre-wrap', color: 'var(--secondary-text)', fontSize: '14px', maxWidth: '300px' }}>
+                    {user.bio || "No bio added yet. Click edit to share your background."}
+                  </p>
+                  <span className="material-symbols-outlined" onClick={() => setIsEditingBio(true)} style={{ fontSize: '16px', cursor: 'pointer', color: 'var(--accent-color)' }}>edit</span>
+                </div>
+              )}
+            </div>
+
             <div className="profile-info">
               <p><span>{pic.length}</span> posts</p>
               <p style={{ cursor: "pointer" }} onClick={() => showFollows("followers")}>
