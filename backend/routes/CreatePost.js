@@ -141,17 +141,19 @@ router.put("/like", requireLogin, async (req, res) => {
       return res.status(400).json({ error: "Invalid Post ID" });
     }
 
-    const post = await POST.findById(postId);
-    if (!post) {
+    // Use $addToSet to prevent race conditions and duplicate likes at the DB level
+    const updatedPost = await POST.findByIdAndUpdate(
+      postId,
+      { $addToSet: { likes: req.user._id } },
+      { new: true }
+    )
+      .populate("postedBy", "_id name photo")
+      .populate("comments.postedBy", "_id name");
+
+    if (!updatedPost) {
       return res.status(404).json({ error: "Post not found" });
     }
 
-    if (post.likes.includes(req.user._id)) {
-      return res.status(400).json({ error: "Post already liked" });
-    }
-
-    post.likes.push(req.user._id);
-    const updatedPost = await post.save();
     res.json(updatedPost);
   } catch (err) {
     res.status(500).json({ error: "Server error", details: err.message });
@@ -243,11 +245,18 @@ router.delete("/deletePost/:postId", requireLogin, async (req, res) => {
       return res.status(400).json({ error: "Invalid post ID format" });
     }
 
-    const deletedPost = await POST.findByIdAndDelete(postId);
+    const post = await POST.findById(postId);
 
-    if (!deletedPost) {
+    if (!post) {
       return res.status(404).json({ error: "Post not found" });
     }
+
+    // CRITICAL FIX: Verify the user deleting the post actually owns the post
+    if (post.postedBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Unauthorized to delete this post" });
+    }
+
+    const deletedPost = await POST.findByIdAndDelete(postId);
 
     res.json({ message: "Post deleted successfully", deletedPost });
   } catch (err) {

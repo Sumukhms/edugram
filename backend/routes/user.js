@@ -33,10 +33,14 @@ router.get("/user/:id", async (req, res) => {
 
 // to follow user
 router.put("/follow", requireLogin, async (req, res) => {
+    if (req.user._id.toString() === req.body.followId) {
+        return res.status(400).json({ error: "You cannot follow yourself" });
+    }
+
     try {
         await USER.findByIdAndUpdate(
             req.body.followId,
-            { $push: { followers: req.user._id } },
+            { $addToSet: { followers: req.user._id } },
             { new: true }
         );
 
@@ -55,6 +59,10 @@ router.put("/follow", requireLogin, async (req, res) => {
 
 // to unfollow user
 router.put("/unfollow", requireLogin, async (req, res) => {
+    if (req.user._id.toString() === req.body.followId) {
+        return res.status(400).json({ error: "You cannot unfollow yourself" });
+    }
+
     try {
         await USER.findByIdAndUpdate(
             req.body.followId,
