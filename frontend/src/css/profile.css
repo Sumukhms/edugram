@@ -1,53 +1,76 @@
 .profile {
-  max-width: 1000px; /* Increased from 935px */
+  max-width: 1000px;
   margin: 40px auto;
   padding: 0 20px;
 }
 
 .profile-container {
-  background-color: var(--container-background);
-  border-radius: var(--border-radius);
-  box-shadow: var(--card-shadow);
+  background-color: rgba(18, 18, 42, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
   position: relative;
   z-index: 1;
-  padding: 0; /* Remove padding to allow banner to touch edges */
-  overflow: hidden; /* Keep children within rounded corners */
+  padding: 0;
+  overflow: hidden;
 }
 
 .profile-banner {
-  height: 250px; /* Increased banner height */
+  height: 250px;
   background-size: cover;
   background-position: center;
   position: relative;
+  background: linear-gradient(-45deg, #0a0a1a, #1a1a3a, #2a1b4d, #1a1a3a);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+.profile-banner::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(18, 18, 42, 0.9), transparent);
 }
 
 .edit-banner-btn {
   position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background-color: rgba(0, 0, 0, 0.5);
+  bottom: 15px;
+  right: 15px;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
-  border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: var(--transition-normal);
+  z-index: 10;
 }
 
 .profile-banner:hover .edit-banner-btn {
   opacity: 1;
 }
 
+.edit-banner-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
 .changePic {
   position: relative;
-  background-color: var(--container-background);
-  border-radius: var(--border-radius);
-  box-shadow: var(--card-shadow);
+  background-color: rgba(18, 18, 42, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   padding: 40px;
   width: 90%;
   max-width: 450px;
@@ -60,32 +83,41 @@
 .profile-frame {
   display: flex;
   flex-direction: row;
-  align-items: flex-end; /* Align items to the bottom */
+  align-items: flex-end;
   justify-content: flex-start;
-  padding: 0 40px 30px 40px; /* Adjust padding */
+  padding: 0 40px 30px 40px;
+  position: relative;
 }
 
 .profile-pic {
   margin-right: 40px;
-  margin-top: -85px; /* Adjust overlap for bigger pic */
+  margin-top: -85px;
   flex-shrink: 0;
   position: relative;
   z-index: 2;
 }
 
 .profile-pic img {
-  width: 170px; /* Increased profile picture size */
-  height: 170px; /* Increased profile picture size */
+  width: 170px;
+  height: 170px;
   border-radius: 50%;
   object-fit: cover;
   cursor: pointer;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-  border: 5px solid var(--container-background); /* Thicker border */
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+  border: 4px solid transparent;
+  background: linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box,
+              var(--accent-gradient) border-box;
+  transition: var(--transition-normal);
+}
+
+.profile-pic img:hover {
+  box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+  transform: scale(1.02);
 }
 
 .profile-data {
   text-align: left;
-  padding-bottom: 10px; /* Add some padding to align with pic */
+  padding-bottom: 10px;
 }
 
 .profile-data-top {
@@ -96,15 +128,18 @@
 }
 
 .profile-data-top h1 {
-  font-size: 32px; /* Slightly larger name */
-  font-weight: 300;
+  font-size: 32px;
+  font-weight: 600;
   margin: 0;
+  color: var(--text-primary);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
 
 .profile-info {
   display: flex;
   gap: 40px;
   justify-content: flex-start;
+  color: var(--text-secondary);
 }
 
 .profile-info p {
@@ -114,6 +149,7 @@
 
 .profile-info span {
   font-weight: 600;
+  color: var(--text-primary);
 }
 
 .followBtn,
@@ -121,49 +157,44 @@
   cursor: pointer;
   font-weight: 600;
   padding: 10px 28px;
-  border-radius: 8px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.9rem;
   margin-left: 20px;
-  transition: all 0.25s ease;
+  transition: var(--transition-normal);
 }
 
 .followBtn {
   border: none;
   color: white;
-  background: var(--accent-color);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background: var(--accent-gradient);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 }
 
 .followBtn:hover {
-  background: var(--accent-hover-color);
   transform: translateY(-2px);
-  box-shadow: 0 8px 15px -10px var(--accent-color);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
 }
 
 .followBtn:active {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px -10px var(--accent-color);
+  transform: translateY(0);
 }
 
 .unfollowBtn {
-  border: 1px solid var(--border-color);
-  color: var(--primary-text);
-  background: var(--container-background);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(5px);
 }
 
 .unfollowBtn:hover {
-  background-color: #f8f9fa;
-  border-color: #adb5bd;
-}
-
-.unfollowBtn:active {
-  transform: scale(0.98);
-  background-color: #e9ecef;
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #ef4444;
 }
 
 .gallery-section {
   padding: 40px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .gallery {
@@ -173,9 +204,11 @@
 }
 
 .profile-empty-state {
-    margin-top: 0;
-    box-shadow: none;
-    padding: 20px;
+  margin-top: 0;
+  box-shadow: none;
+  padding: 40px 20px;
+  background: transparent;
+  border: none;
 }
 
 .item {
@@ -183,6 +216,15 @@
   width: 100%;
   padding-bottom: 100%;
   cursor: pointer;
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: var(--transition-normal);
+}
+
+.item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.5);
 }
 
 .item img,
@@ -193,13 +235,17 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 4px;
+  transition: var(--transition-slow);
 }
 
-/* === MOBILE STYLES FOR PROFILE === */
+.item:hover img,
+.item:hover video {
+  transform: scale(1.05);
+}
+
 @media screen and (max-width: 768px) {
   .profile-banner {
-    height: 120px;
+    height: 150px;
   }
   .profile-frame {
     flex-direction: column;
@@ -207,59 +253,50 @@
     text-align: center;
     padding: 0 20px 20px 20px;
   }
-
   .profile-pic {
     margin-right: 0;
-    margin-top: -60px; /* Adjust overlap for mobile */
+    margin-top: -60px;
   }
-
   .profile-pic img {
     width: 120px;
     height: 120px;
   }
-
   .profile-data {
     text-align: center;
     padding-bottom: 0;
-    margin-top: 10px;
+    margin-top: 15px;
   }
-
   .profile-data-top {
     flex-direction: column;
   }
-
   .profile-data-top h1 {
     margin-bottom: 15px;
   }
-
   .followBtn,
   .unfollowBtn {
     margin-left: 0;
     width: 100%;
   }
-
   .profile-info {
     justify-content: center;
     gap: 20px;
   }
-
   .gallery-section {
     padding: 20px;
   }
-
   .gallery {
-    gap: 10px;
+    gap: 15px;
   }
 }
 
-/* === STYLES FOR PROFILE PIC PREVIEW === */
 .image-preview-container {
   margin-bottom: 20px;
   width: 200px;
   height: 200px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid var(--border-color);
+  border: 2px solid var(--accent-primary);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
   flex-shrink: 0;
 }
 
@@ -269,9 +306,8 @@
   object-fit: cover;
 }
 
-/* Styles for Banner Preview in Modal */
 .banner-preview.image-preview-container {
-    width: 100%;
-    height: 150px;
-    border-radius: 8px;
+  width: 100%;
+  height: 150px;
+  border-radius: var(--border-radius-sm);
 }

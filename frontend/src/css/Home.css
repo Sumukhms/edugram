@@ -1,21 +1,19 @@
-/* General container for single-column feeds like "My Following" */
 .home {
-  max-width: 680px; /* Increased width */
+  max-width: 680px;
   margin: 30px auto;
 }
 
-/* New Layout Styles for the main Home page with sidebar */
 .home-layout {
   display: flex;
   justify-content: center;
   margin: 30px auto;
-  max-width: 1020px; /* Increased width to accommodate */
+  max-width: 1020px;
   padding: 0 20px;
   box-sizing: border-box;
 }
 
 .home-feed {
-  max-width: 680px; /* Increased width */
+  max-width: 680px;
   width: 100%;
 }
 
@@ -32,61 +30,69 @@
 .card {
   max-width: 100%;
   margin-bottom: 30px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--glass-border);
   border-radius: var(--border-radius);
-  background-color: var(--container-background);
-  box-shadow: var(--card-shadow);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  background-color: rgba(18, 18, 42, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  transition: var(--transition-normal);
+  overflow: hidden;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+  border-color: rgba(99, 102, 241, 0.2);
 }
 
 .card-header {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
 }
 
 .card-header h5 {
   margin: 0;
   padding-left: 12px;
   font-weight: 600;
+  color: var(--text-primary);
 }
 
 .card-pic img {
-  width: 35px;
-  height: 35px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid transparent;
+  background: linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box,
+              var(--accent-gradient) border-box;
 }
 
-/* === MODIFIED STYLES FOR IMAGE HEIGHT === */
 .card-image {
   width: 100%;
-  max-height: 600px; /* Set a maximum height for the media container */
+  max-height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background-color: #f0f2f5; /* A light background for any empty space */
+  background-color: #05050a; /* Deep dark for letterboxing */
 }
 
 .card-image img,
 .card-image video {
   width: 100%;
-  height: auto; /* Let height adjust automatically */
-  object-fit: cover; /* Ensures the image covers the container */
-  max-height: 600px; /* Also apply max-height here */
+  height: auto;
+  object-fit: cover;
+  max-height: 600px;
 }
-/* ========================================= */
 
 .card-content {
   text-align: left;
-  line-height: 1.5;
-  padding: 10px 16px;
+  line-height: 1.6;
+  padding: 16px;
+  color: var(--text-primary);
 }
 
 .card-content p {
@@ -96,9 +102,10 @@
 .add-comment {
   display: flex;
   align-items: center;
-  padding: 8px 16px;
-  border-top: 1px solid var(--border-color);
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255,255,255,0.05);
   position: relative;
+  background: rgba(255,255,255,0.02);
 }
 
 .add-comment input {
@@ -106,6 +113,9 @@
   border: none;
   outline: none;
   background: transparent;
+  color: var(--text-primary);
+  margin: 0;
+  padding: 8px 0;
 }
 
 .comment {
@@ -113,8 +123,14 @@
   background-color: transparent;
   font-weight: 600;
   cursor: pointer;
-  color: var(--accent-color);
+  color: var(--accent-primary);
   font-size: 14px;
+  transition: var(--transition-fast);
+}
+
+.comment:hover {
+  color: var(--accent-secondary);
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
 }
 
 .picker-container {
@@ -125,13 +141,20 @@
 }
 
 .material-symbols-outlined-red {
-  color: var(--error-color);
+  color: #ef4444;
   font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 24;
+  filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4));
 }
 
 .material-symbols-outlined {
   cursor: pointer;
-  transition: transform 0.2s ease;
+  color: var(--text-primary);
+  transition: var(--transition-fast);
+}
+
+.material-symbols-outlined:hover {
+  transform: scale(1.15);
+  color: var(--accent-primary);
 }
 
 .material-symbols-outlined:active {
@@ -140,48 +163,48 @@
 
 .loading-spinner {
   text-align: center;
-  padding: 20px;
-  color: #666;
+  padding: 30px;
+  color: var(--text-muted);
 }
 
 .error-container {
-  color: #ff4444;
+  color: #ef4444;
   padding: 20px;
   text-align: center;
-  background: #ffeeee;
-  border-radius: 4px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--border-radius-sm);
   margin: 20px;
 }
 
 .load-more-btn {
   display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
-  background: var(--accent-color);
+  margin: 30px auto;
+  padding: 12px 28px;
+  background: var(--accent-gradient);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-weight: 600;
   font-size: 1rem;
+  transition: var(--transition-normal);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
 }
 
 .load-more-btn:hover {
-  background: var(--accent-hover-color);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
 }
 
 @keyframes like-animation {
   0% { transform: scale(1); }
-  50% { transform: scale(1.4); }
+  50% { transform: scale(1.4); filter: brightness(1.2); }
   100% { transform: scale(1); }
 }
 
 .like-animation {
   animation-name: like-animation;
-  animation-duration: 0.3s;
-  animation-timing-function: ease-in-out;
-}
-
-.material-symbols-outlined:hover {
-  transform: scale(1.1);
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }

@@ -4,8 +4,10 @@
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.65);
-  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,12 +18,13 @@
 .showComment .container {
   display: flex;
   width: 100%;
-  max-width: 950px;
-  height: 600px;
+  max-width: 1000px;
+  height: 650px;
   max-height: 90vh;
-  background-color: var(--container-background);
+  background-color: var(--bg-secondary);
   border-radius: var(--border-radius);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.1);
   overflow: hidden;
   position: relative;
   top: auto;
@@ -30,15 +33,16 @@
 }
 
 .postPic {
-  background-color: black;
+  background-color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 1.5;
+  position: relative;
 }
 
 .postPic img,
-.postPic video { /* This is the fix */
+.postPic video {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
@@ -51,87 +55,98 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+  background: var(--bg-secondary);
 }
 
 .details .card-header {
-  padding: 14px 16px;
+  padding: 16px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--border-color) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.05) !important;
 }
 
 .details .card-pic img {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 14px;
 }
 
 .details .card-header h5 {
-    margin: 0;
-    font-weight: 600;
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .comment-section {
   flex-grow: 1;
   text-align: left;
-  padding: 16px;
+  padding: 20px;
   overflow-y: auto;
-  border-bottom: 1px solid var(--border-color) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.05) !important;
 }
 
 .comm {
   font-size: 14px;
-  margin-bottom: 15px;
-  line-height: 1.4;
+  margin-bottom: 18px;
+  line-height: 1.5;
+  color: var(--text-primary);
 }
 
 .commenter {
   font-weight: 600;
-  margin-right: 8px;
+  margin-right: 10px;
+  color: var(--text-primary);
 }
 
 .details .card-content {
-    padding: 10px 16px;
+  padding: 14px 16px;
 }
 
 .close-comment {
   position: fixed;
   top: 20px;
-  right: 20px;
-  color: white;
+  right: 25px;
+  color: rgba(255,255,255,0.7);
   border: none;
   cursor: pointer;
   background: none;
+  transition: var(--transition-fast);
+  z-index: 1001;
+}
+
+.close-comment:hover {
+  color: #fff;
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));
 }
 
 .material-symbols-outlined-comment {
-  font-size: 40px;
+  font-size: 36px;
 }
 
 .deletePost {
   margin-left: auto;
   cursor: pointer;
-  color: var(--secondary-text);
+  color: var(--text-muted);
+  transition: var(--transition-fast);
 }
 
 .deletePost:hover {
-    color: var(--error-color);
+  color: var(--error-color);
 }
-
-/* Add this to the end of frontend/src/css/PostDetail.css */
 
 @media screen and (max-width: 768px) {
   .showComment .container {
     flex-direction: column;
-    height: 90vh; /* Adjust height for vertical layout */
+    height: 90vh;
     width: 95vw;
   }
 
   .postPic {
-    flex: 1; /* Allow it to shrink */
-    max-height: 45%; /* Limit image/video height */
+    flex: 1;
+    max-height: 40%;
   }
 
   .details {

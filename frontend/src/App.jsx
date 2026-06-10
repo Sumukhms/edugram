@@ -13,6 +13,13 @@ import { LoginContext } from './context/LoginContext';
 import Modal from './components/Modal';
 import UserProfile from './components/UserProfile';
 import MyFollowingPost from './screens/MyfollowingPost';
+import LandingPage from './components/LandingPage';
+
+const ConditionalNavbar = ({ login }) => {
+  const location = useLocation();
+  if (location.pathname === '/landing') return null;
+  return <Navbar login={login} />;
+};
 
 // We create a separate component for routes to use the `useLocation` hook
 const AnimatedRoutes = () => {
@@ -28,6 +35,7 @@ const AnimatedRoutes = () => {
         <CSSTransition key={location.key} classNames="fade" timeout={300}>
           <Routes location={location}>
             <Route path='/' element={<Home />} />
+            <Route path='/landing' element={<LandingPage />} />
             <Route path='/signup' element={<Signup />} />
             <Route path='/signin' element={<Signin />} />
             <Route exact path='/profile' element={<Profile />} />
@@ -49,7 +57,7 @@ function App() {
     <BrowserRouter>
       <div className="App">
         <LoginContext.Provider value={{ setUserLogin, setModalOpen }}>
-          <Navbar login={userLogin} />
+          <ConditionalNavbar login={userLogin} />
           <AnimatedRoutes /> {/* Use the new animated routes component */}
           <ToastContainer theme='dark' />
           {modalOpen && <Modal setModalOpen={setModalOpen}></Modal>}

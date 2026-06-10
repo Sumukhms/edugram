@@ -47,7 +47,7 @@ export default function Home() {
     })
       .then((res) => {
         if (res.status === 401) {
-          navigate("/signin");
+          navigate("/landing");
           return null;
         }
         if (res.status === 404) {
@@ -88,7 +88,7 @@ export default function Home() {
       setUser(storedUser);
       fetchPosts(true);
     } else {
-      navigate("/signin");
+      navigate("/landing");
     }
   }, [navigate]);
 
