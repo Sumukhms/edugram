@@ -28,7 +28,6 @@ export default function MyFollowingPost() {
   const [user, setUser] = useState(null);
   const [comments, setComments] = useState({});
   const [show, setShow] = useState(false);
-  const [item, setItem] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
   const [currentPostId, setCurrentPostId] = useState(null);
 
@@ -67,7 +66,6 @@ export default function MyFollowingPost() {
 
   const toggleComment = (posts) => {
     setShow(!show);
-    setItem(posts);
   };
 
   const handleCommentChange = (postId, text) => {

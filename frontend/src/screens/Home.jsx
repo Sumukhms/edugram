@@ -90,12 +90,14 @@ export default function Home() {
     } else {
       navigate("/landing");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
   useEffect(() => {
     if (skip > 0) {
       fetchPosts();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skip]);
 
   const handleLoadMore = () => {
