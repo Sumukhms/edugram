@@ -352,3 +352,24 @@
   height: 150px;
   border-radius: 8px;
 }
+
+/* Modal Button Fixes */
+.action-div {
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.upload-btn {
+  background: transparent;
+  border: none;
+  width: 100%;
+  padding: 16px 0;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: var(--primary-text);
+}
+
+.upload-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
