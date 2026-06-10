@@ -1,106 +1,100 @@
 .darkBg {
-  background-color: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  width: 100vw;
-  height: 100vh;
-  z-index: 500;
+  position: fixed;
   top: 0;
   left: 0;
-  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(8, 18, 33, 0.85); /* Deep dark overlay */
+  z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .centered {
-  position: relative;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  width: 400px;
+  max-width: 100%;
+  text-align: center;
+  overflow: hidden;
+  animation: fadeInUp 0.3s ease-out;
 }
 
 .modal {
-  width: 90%;
-  max-width: 350px;
-  padding: 30px 25px;
-  background: rgba(18, 18, 42, 0.95);
-  backdrop-filter: blur(20px);
-  color: var(--text-primary);
-  z-index: 510;
-  border-radius: var(--border-radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  text-align: center;
+  padding: 0;
+}
+
+.modalHeader {
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color-light);
 }
 
 .heading {
-  margin: 0 0 15px 0;
-  font-weight: 600;
-  font-size: 22px;
+  margin: 0;
+  font-family: 'Merriweather', serif;
+  font-size: 18px;
   color: var(--text-primary);
 }
 
 .modalContent {
-  padding: 10px 0;
-  font-size: 15px;
-  line-height: 1.5;
+  padding: 30px 20px;
   color: var(--text-secondary);
-  margin-bottom: 25px;
+  line-height: 1.5;
+  font-size: 15px;
+}
+
+.modalActions {
+  display: flex;
+  border-top: 1px solid var(--border-color-light);
 }
 
 .actionsContainer {
   display: flex;
-  justify-content: center;
-  gap: 15px;
+  width: 100%;
 }
 
 .logOutBtn, .cancelBtn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 15px;
   cursor: pointer;
   font-weight: 600;
-  padding: 12px 20px;
-  border-radius: var(--border-radius-sm);
   font-size: 15px;
-  border: none;
   transition: var(--transition-fast);
-  flex-grow: 1;
 }
 
 .logOutBtn {
-  color: #fff;
-  background: #ef4444;
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+  color: var(--error-color);
+  border-right: 1px solid var(--border-color-light);
 }
 
 .logOutBtn:hover {
-  background: #dc2626;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.5);
+  background-color: rgba(230, 57, 70, 0.1);
 }
 
 .cancelBtn {
   color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .cancelBtn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
+  background-color: var(--surface-hover);
 }
 
 .closeBtn {
-  cursor: pointer;
   position: absolute;
   top: 15px;
   right: 15px;
-  background: none;
-  border: none;
-  padding: 5px;
-  font-size: 24px;
-  color: var(--text-muted);
-  line-height: 1;
+  cursor: pointer;
+  color: var(--text-secondary);
   transition: var(--transition-fast);
 }
 
 .closeBtn:hover {
-  color: var(--text-primary);
-  transform: scale(1.1);
+  color: var(--error-color);
 }
