@@ -1,69 +1,53 @@
 :root {
   /* Prestigious Academia Theme */
+  --primary-color: #D4AF37; /* Champagne Gold */
+  --primary-hover-color: #E5C158;
+  --background-color: #081221; /* Deep Oxford Blue */
+  --container-background: #0B192C; /* Lighter Oxford Blue for cards */
+  --primary-text: #F8F9FA; /* Crisp white */
+  --secondary-text: #CED4DA;
+  --border-color: rgba(212, 175, 55, 0.2); /* Subtle Gold */
+  --error-color: #E63946;
+
+  --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  
+  --border-radius: 8px; /* Sharper */
+  --accent-color: var(--primary-color);
+  --accent-hover-color: var(--primary-hover-color);
+
+  /* Landing Page Compatibility */
   --bg-primary: #081221;
   --bg-secondary: #0B192C;
-  --bg-tertiary: #112540;
-  
-  --surface-primary: #0B192C;
-  --surface-hover: #112540;
-  --surface-active: #152b4a;
-  
   --text-primary: #F8F9FA;
   --text-secondary: #CED4DA;
   --text-muted: #6C757D;
-  
-  --accent-primary: #D4AF37; /* Champagne Gold */
+  --accent-primary: #D4AF37;
   --accent-secondary: #E5C158;
-  --accent-gradient: linear-gradient(135deg, #D4AF37, #F3E5AB); /* Subtle gold shift */
-  
-  --error-color: #E63946;
-  --success-color: #2A9D8F;
-  --warning-color: #E9C46A;
-  
-  --border-color: rgba(212, 175, 55, 0.2); /* Subtle gold border */
   --border-color-light: rgba(255, 255, 255, 0.05);
-  
-  --border-radius: 8px;
   --border-radius-sm: 4px;
-  --border-radius-lg: 12px;
-  
   --transition-fast: all 0.15s ease;
   --transition-normal: all 0.3s ease;
-  --transition-slow: all 0.5s ease;
-
-  /* Backward compatibility aliases */
-  --container-background: #0B192C;
-  --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  --primary-color: #D4AF37;
-  --primary-hover-color: #E5C158;
-  --primary-gradient: #081221;
-  --secondary-text: #CED4DA;
-  --background-color: #081221;
-  --accent-color: #D4AF37;
-  --accent-hover-color: #E5C158;
 }
 
-* {
-  box-sizing: border-box;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 body {
   margin: 0;
-  font-family: 'Merriweather', 'Lora', serif; /* Classic serif for a prestigious feel */
-  color: var(--text-primary);
+  font-family: 'Merriweather', 'Lora', serif;
+
+  color: var(--primary-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--background-color);
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Merriweather', serif;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-}
-
-p, span, input, button, a {
-  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Clean sans-serif for reading */
 }
 
 a {
@@ -71,61 +55,6 @@ a {
   color: inherit;
 }
 
-/* Scrollbar styling for academic theme */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--surface-hover);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-primary);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
 .main-content {
-  animation: fadeIn 0.4s ease-out;
-}
-
-/* Global utility classes */
-.glass-card {
-  background: var(--container-background);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  box-shadow: var(--card-shadow);
-}
-
-.gradient-text {
-  color: var(--accent-primary);
-}
-
-.glow-btn {
-  background: var(--accent-primary);
-  color: #081221;
-  border: none;
-  font-weight: 600;
-  transition: var(--transition-normal);
-}
-.glow-btn:hover {
-  background: var(--accent-secondary);
-  transform: translateY(-1px);
+  animation: fadeIn 0.5s ease-out;
 }

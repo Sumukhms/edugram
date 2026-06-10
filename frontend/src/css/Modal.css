@@ -1,100 +1,86 @@
 .darkBg {
-  position: fixed;
-  top: 0;
-  left: 0;
+  background-color: rgba(0, 0, 0, 0.65);
   width: 100vw;
   height: 100vh;
-  background-color: rgba(8, 18, 33, 0.85); /* Deep dark overlay */
-  z-index: 1000;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
-  box-sizing: border-box;
 }
 
 .centered {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-  width: 400px;
-  max-width: 100%;
-  text-align: center;
-  overflow: hidden;
-  animation: fadeInUp 0.3s ease-out;
+  position: relative;
 }
 
 .modal {
-  padding: 0;
-}
-
-.modalHeader {
+  width: 90%;
+  max-width: 320px;
   padding: 20px;
-  border-bottom: 1px solid var(--border-color-light);
+  background: var(--container-background);
+  color: var(--primary-text); /* This fixes the invisible text */
+  z-index: 10;
+  border-radius: var(--border-radius);
+  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 .heading {
-  margin: 0;
-  font-family: 'Merriweather', serif;
-  font-size: 18px;
-  color: var(--text-primary);
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--primary-text);
 }
 
 .modalContent {
-  padding: 30px 20px;
-  color: var(--text-secondary);
-  line-height: 1.5;
-  font-size: 15px;
-}
-
-.modalActions {
-  display: flex;
-  border-top: 1px solid var(--border-color-light);
+  padding: 10px 0;
+  font-size: 16px;
+  color: var(--secondary-text);
+  margin-bottom: 20px;
 }
 
 .actionsContainer {
   display: flex;
-  width: 100%;
+  justify-content: center;
+  gap: 15px; /* Adds space between buttons */
 }
 
 .logOutBtn, .cancelBtn {
-  flex: 1;
-  background: none;
-  border: none;
-  padding: 15px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 15px;
-  transition: var(--transition-fast);
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  border: none;
+  transition: opacity 0.25s ease;
+  flex-grow: 1; /* Makes buttons take up equal space */
 }
 
 .logOutBtn {
-  color: var(--error-color);
-  border-right: 1px solid var(--border-color-light);
-}
-
-.logOutBtn:hover {
-  background-color: rgba(230, 57, 70, 0.1);
+  color: #fff;
+  background: var(--error-color); /* Red for destructive action */
 }
 
 .cancelBtn {
-  color: var(--text-primary);
+  color: var(--primary-text);
+  background: #e4e6eb; /* Light grey for secondary action */
 }
 
-.cancelBtn:hover {
-  background-color: var(--surface-hover);
+.logOutBtn:hover, .cancelBtn:hover {
+  opacity: 0.8;
 }
 
 .closeBtn {
-  position: absolute;
-  top: 15px;
-  right: 15px;
   cursor: pointer;
-  color: var(--text-secondary);
-  transition: var(--transition-fast);
-}
-
-.closeBtn:hover {
-  color: var(--error-color);
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  padding: 5px;
+  font-size: 28px;
+  color: var(--secondary-text);
+  line-height: 1;
 }

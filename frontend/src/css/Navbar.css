@@ -3,17 +3,17 @@
   justify-content: space-around;
   align-items: center;
   padding: 5px 20px;
-  height: 70px;
+  height: 75px;
   box-sizing: border-box;
-  background-color: var(--bg-secondary);
+  background-color: var(--container-background);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 2px solid var(--accent-primary);
 }
 
 #edu-logo {
-  height: 45px;
+  height: 60px;
   width: auto;
   object-fit: contain;
   cursor: pointer;
@@ -38,73 +38,69 @@
 }
 
 .nav-menu a {
-  color: var(--text-secondary);
-  font-size: 15px;
-  font-weight: 600;
-  transition: var(--transition-fast);
+  color: var(--primary-text);
+  font-size: 16px;
+  transition: color 0.2s ease;
 }
 
 .nav-menu a:hover {
-  color: var(--accent-primary);
+  color: var(--accent-color);
 }
 
 .primaryBtn {
   cursor: pointer;
-  font-weight: 600;
-  padding: 10px 24px;
+  font-weight: bolder;
+  padding: 9px 20px;
   font-size: 0.9rem;
   border: none;
-  color: var(--bg-primary);
-  background: var(--accent-primary);
-  border-radius: var(--border-radius-sm);
+  color: white;
+  background: var(--accent-color);
+  border-radius: 8px;
   margin-left: 0;
-  transition: var(--transition-fast);
+  transition: all 0.25s ease;
 }
 
 .primaryBtn:hover {
-  background: var(--accent-secondary);
-  transform: translateY(-1px);
+  background: var(--accent-hover-color);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px -10px var(--accent-color);
 }
 
 .primaryBtn:active {
-  transform: translateY(0);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px -10px var(--accent-color);
 }
 
 /* --- SEARCH BAR STYLES --- */
 .search-container {
   position: relative;
-  width: 280px;
+  width: 250px;
 }
 
 .search-container input {
   width: 100%;
-  padding: 10px 16px;
-  border-radius: var(--border-radius-sm);
+  padding: 8px 12px;
+  border-radius: 8px;
   border: 1px solid var(--border-color);
   background-color: var(--bg-primary);
-  color: var(--text-primary);
   outline: none;
   font-size: 14px;
-  transition: var(--transition-fast);
-}
-
-.search-container input:focus {
-  border-color: var(--accent-primary);
 }
 
 .search-results {
   position: absolute;
-  top: calc(100% + 5px);
+  top: 100%;
   left: 0;
   width: 100%;
-  background-color: var(--bg-secondary);
+  background-color: var(--container-background);
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-sm);
+  border-radius: 0 0 8px 8px;
+  margin-top: 5px;
   padding: 5px 0;
   list-style: none;
-  box-shadow: var(--card-shadow);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 101;
-  max-height: 350px;
+  max-height: 300px;
   overflow-y: auto;
 }
 
@@ -114,14 +110,14 @@
 
 .search-results li a {
   display: block;
-  padding: 10px 16px;
+  padding: 10px 12px;
   text-decoration: none;
-  color: var(--text-primary);
-  transition: var(--transition-fast);
+  color: var(--primary-text);
+  transition: background-color 0.2s ease;
 }
 
 .search-results li a:hover {
-  background-color: var(--surface-hover);
+  background-color: var(--bg-primary);
 }
 
 .search-result-item {
@@ -130,13 +126,13 @@
 }
 
 .search-result-item img {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  margin-right: 12px;
+  margin-right: 10px;
   object-fit: cover;
-  border: 1px solid var(--border-color);
 }
+
 
 /* --- MOBILE STYLES --- */
 @media screen and (max-width: 800px) {
@@ -144,7 +140,7 @@
     height: auto;
     flex-wrap: wrap;
     justify-content: space-between;
-    padding: 15px;
+    padding: 10px 15px;
   }
   
   .nav-menu {
@@ -153,18 +149,18 @@
   
   .search-container {
     width: 100%;
-    order: 3;
-    margin-top: 15px;
+    order: 3; /* Make search bar the last item */
+    margin-top: 10px;
   }
   
   #edu-logo {
-    height: 35px;
+    height: 40px;
   }
   
   .nav-mobile {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 15px;
   }
   
   .nav-mobile li {
@@ -173,17 +169,12 @@
   }
   
   .nav-mobile a {
-    color: var(--text-secondary);
+    color: var(--primary-text);
   }
   
   .nav-mobile .material-symbols-outlined {
     font-size: 28px;
     cursor: pointer;
-    transition: var(--transition-fast);
-  }
-  
-  .nav-mobile .material-symbols-outlined:hover {
-    color: var(--accent-primary);
   }
   
   .logout-mobile-btn {
@@ -192,6 +183,6 @@
     padding: 0;
     margin: 0;
     cursor: pointer;
-    color: var(--text-secondary);
+    color: var(--primary-text);
   }
 }

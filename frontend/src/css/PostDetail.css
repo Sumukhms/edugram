@@ -1,11 +1,11 @@
 .showComment {
+  width: 100vw;
+  height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(8, 18, 33, 0.9);
-  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.65);
+  z-index: 100;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,127 +15,127 @@
 
 .showComment .container {
   display: flex;
-  width: 900px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 950px;
   height: 600px;
   max-height: 90vh;
-  background-color: var(--bg-secondary);
+  background-color: var(--container-background);
   border-radius: var(--border-radius);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-  border: 1px solid var(--border-color);
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
 }
 
 .postPic {
-  flex: 1.5;
   background-color: var(--bg-primary);
   display: flex;
-  justify-content: center;
   align-items: center;
-  border-right: 1px solid var(--border-color-light);
+  justify-content: center;
+  flex: 1.5;
 }
 
-.postPic img, .postPic video {
-  width: 100%;
-  height: 100%;
+.postPic img,
+.postPic video { /* This is the fix */
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
+  display: block;
 }
 
 .details {
-  flex: 1;
+  width: 100%;
+  height: inherit;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-secondary);
+  flex: 1;
 }
 
 .details .card-header {
-  padding: 15px 20px;
-  border-bottom: 1px solid var(--border-color-light);
+  padding: 14px 16px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid var(--border-color) !important;
 }
 
 .details .card-pic img {
-  width: 36px;
-  height: 36px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 12px;
 }
 
-.deletePost {
-  cursor: pointer;
-  color: var(--text-muted);
-  transition: var(--transition-fast);
-}
-
-.deletePost:hover {
-  color: var(--error-color);
+.details .card-header h5 {
+    margin: 0;
+    font-weight: 600;
 }
 
 .comment-section {
-  flex: 1;
+  flex-grow: 1;
+  text-align: left;
+  padding: 16px;
   overflow-y: auto;
-  padding: 20px;
-  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color) !important;
 }
 
 .comm {
+  font-size: 14px;
   margin-bottom: 15px;
-}
-
-.comm .commenter {
-  font-weight: 600;
-  margin-right: 10px;
-  color: var(--text-primary);
-  text-decoration: none;
-}
-
-.comm .commentText {
-  color: var(--text-secondary);
-  word-break: break-word;
   line-height: 1.4;
 }
 
-.details .card-content {
-  padding: 15px 20px;
-  border-top: 1px solid var(--border-color-light);
-  background-color: var(--bg-secondary);
+.commenter {
+  font-weight: 600;
+  margin-right: 8px;
 }
 
-.details .card-content p {
-  margin: 5px 0;
+.details .card-content {
+    padding: 10px 16px;
 }
 
 .close-comment {
-  position: absolute;
+  position: fixed;
   top: 20px;
-  right: 30px;
-  color: var(--text-primary);
+  right: 20px;
+  color: white;
+  border: none;
   cursor: pointer;
-  z-index: 1010;
+  background: none;
 }
 
 .material-symbols-outlined-comment {
   font-size: 40px;
-  transition: var(--transition-fast);
 }
 
-.material-symbols-outlined-comment:hover {
-  color: var(--accent-primary);
-  transform: scale(1.1);
+.deletePost {
+  margin-left: auto;
+  cursor: pointer;
+  color: var(--secondary-text);
 }
 
-@media (max-width: 800px) {
+.deletePost:hover {
+    color: var(--error-color);
+}
+
+/* Add this to the end of frontend/src/css/PostDetail.css */
+
+@media screen and (max-width: 768px) {
   .showComment .container {
     flex-direction: column;
-    height: 85vh;
+    height: 90vh; /* Adjust height for vertical layout */
+    width: 95vw;
   }
+
   .postPic {
-    flex: 1;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color-light);
+    flex: 1; /* Allow it to shrink */
+    max-height: 45%; /* Limit image/video height */
   }
+
   .details {
     flex: 1;
-    max-height: 50%;
+    height: auto;
   }
 }

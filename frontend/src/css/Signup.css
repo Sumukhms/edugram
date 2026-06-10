@@ -4,45 +4,41 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: var(--bg-primary);
+  background: var(--primary-gradient);
   padding: 40px 20px;
   box-sizing: border-box;
 }
 
 .form, .form2 {
-  background-color: var(--bg-secondary);
-  padding: 40px;
+  background-color: var(--container-background);
+  backdrop-filter: blur(10px);
+  padding: 30px 40px;
   border-radius: var(--border-radius);
-  box-shadow: var(--card-shadow);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
   box-sizing: border-box;
   text-align: center;
-  border: 1px solid var(--border-color);
-}
-
-.form {
-  border-top: 4px solid var(--accent-primary);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .form2 {
-  margin-top: 20px;
-  padding: 20px;
-  color: var(--text-secondary);
-  font-size: 14px;
+    margin-top: 15px;
+    padding: 20px;
 }
 
 .signUpLogo {
   width: 150px;
   object-fit: contain;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .loginPara {
-  color: var(--text-secondary);
-  font-size: 15px;
-  line-height: 1.5;
-  margin: 0px 10px 25px 10px;
+  color: var(--secondary-text);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  margin: 0px 10px 20px 10px;
 }
 
 .form > div {
@@ -51,24 +47,21 @@
 }
 
 #submit-btn {
-  background: var(--accent-primary);
+ background: var(--accent-color); /* Updated from gradient */
   border: none;
-  border-radius: var(--border-radius-sm);
-  color: var(--bg-primary);
-  font-weight: 600;
-  padding: 14px 10px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  padding: 12px 10px;
   width: 100%;
   cursor: pointer;
-  margin-top: 20px;
+  margin-top: 15px;
   font-size: 16px;
-  transition: var(--transition-fast);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 #submit-btn:hover {
-  background: var(--accent-secondary);
-  transform: translateY(-1px);
-}
-
-#submit-btn:active {
-  transform: translateY(0);
+    background: var(--accent-hover-color); /* Updated */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2)
 }
